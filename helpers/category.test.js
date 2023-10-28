@@ -1,3 +1,4 @@
+//category.test.js
 const { mapCategory } = require("../helpers/category");
 const { BadRequestError } = require("../expressErrors");
 

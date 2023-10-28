@@ -1,3 +1,4 @@
+//db.js
 /** Database setup. */
 
 const { Client } = require("pg");

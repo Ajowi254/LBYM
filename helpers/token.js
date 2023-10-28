@@ -1,3 +1,4 @@
+//token.js
 const jwt = require("jsonwebtoken");
 
 /** Return signed JWT token from user data. */

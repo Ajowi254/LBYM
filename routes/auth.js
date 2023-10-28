@@ -1,3 +1,4 @@
+//auth.js
 /** Routes for authentication. */
 
 const express = require("express");

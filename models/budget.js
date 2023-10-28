@@ -1,3 +1,4 @@
+//budget.js
 const db = require("../db");
 
 const { NotFoundError, BadRequestError } = require("../expressErrors");

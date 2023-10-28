@@ -1,3 +1,4 @@
+//auth.test.js
 require('dotenv').config();
 const { authenticateJWT, ensureCorrectUser } = require("../middleware/auth");
 const { UnauthorizedError } = require("../expressErrors");

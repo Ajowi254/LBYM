@@ -1,3 +1,4 @@
+//category.js
 const { BadRequestError } = require("../expressErrors");
 
 /** Maps Plaid personal_finance_category string to database category
