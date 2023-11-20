@@ -1,0 +1,40 @@
+.Dashboard {
+  display: flex;
+  flex-direction: column; 
+}
+
+.Dashboard-row {
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+}
+
+.Dashboard-bar {
+  width: 55%;
+}
+
+.Dashboard-pie {
+  width: 40%;
+}
+
+.Dashboard-table {
+
+ width: 90%;
+ margin: 0 auto;
+}  
+
+@media (max-width: 768px) {
+  .Dashboard-row {
+    flex-direction: column; 
+    align-items: flex-start; 
+  }
+
+  .Dashboard-bar,
+  .Dashboard-pie,
+  .Dashboard-table 
+   {
+    width: 40%;
+    margin-bottom: 20px; 
+  }
+}

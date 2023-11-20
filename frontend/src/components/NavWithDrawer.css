@@ -1,0 +1,9 @@
+.NavWithDrawer a {
+  text-decoration: none;
+  color: black;
+}
+
+.NavWithDrawer a.active {
+  text-decoration: underline;
+}
+
