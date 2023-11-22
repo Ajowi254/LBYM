@@ -25,13 +25,12 @@ router.post("/register", async function (req, res, next) {
     }
     const user = await User.register(req.body);
     const token = createToken(user);
-    return res.status(201).json({user, token});
+    return res.status(201).json({user, token}).type("application/json");
 
   } catch (err) {
-    return next(err);
+    return res.status(err.status || 500).json({error: err.message});
   }
 })
-
 /** POST /auth/login:   { username, password } => { token }
  * Returns JWT token which can be used to authenticate further requests.
  */
@@ -46,12 +45,10 @@ router.post("/login", async function (req, res, next) {
     const {username, password} = req.body;
     const user = await User.authenticate(username, password);
     const token = createToken(user);
-    return res.json({token});
+    return res.json({token}).type("application/json");
 
   } catch (err) {
-    return next(err);
+    return res.status(err.status || 500).json({error: err.message});
   }
 })
-
-
 module.exports = router;

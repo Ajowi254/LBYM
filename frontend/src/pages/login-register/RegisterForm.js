@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import ExpenseBudApi from '../../api/api'; // import your API class
 
-import errorMap from '../../utils/errorMap';
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -19,7 +19,7 @@ const INITIAL_STATE = {
   email: ''
 }
 
-function RegisterForm({register}) {
+function RegisterForm() {
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [formErrors, setFormErrors] = useState({});
   const history = useHistory();
@@ -29,18 +29,18 @@ function RegisterForm({register}) {
     setFormData(data => ({...data, [name]: value}));
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let result = await register(formData);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let result = await ExpenseBudApi.register(formData); // call the register function from your API class
     if (result.success) {
-      history.push('/'); 
+      history.push('/login'); 
       setFormData(INITIAL_STATE);
-      setFormErrors({});
+      setFormErrors([]);
     } else {
-      let errors = errorMap(result.err);
-      setFormErrors(errors);
+      setFormErrors(result.err);
     }
   }
+
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">
@@ -57,7 +57,7 @@ function RegisterForm({register}) {
           autoFocus
           value={formData.firstName}
           onChange={handleChange}
-          error={formErrors.firstName}
+          error={!!formErrors.firstName} // convert to boolean
           helperText={formErrors.firstName? 'First Name cannot be blank': null}
         />
         <TextField
@@ -69,8 +69,8 @@ function RegisterForm({register}) {
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
-          error={formErrors.lastName}
-          helperText={formErrors.firstName? 'Last Name cannot be blank': null}
+          error={!!formErrors.lastName} // convert to boolean
+          helperText={formErrors.lastName? 'Last Name cannot be blank': null}
         />
         <TextField
           margin="dense"
@@ -81,8 +81,8 @@ function RegisterForm({register}) {
           name="username"
           value={formData.username}
           onChange={handleChange}
-          error={formErrors.username}
-          helperText={formErrors.username? 'Username needs to be between 5-20 characters': null}
+          error={!!formErrors.username} // convert to boolean
+          helperText={formErrors.username ? 'Username needs to be between 5-20 characters' : null}
         />
         <TextField
           margin="dense"
@@ -94,8 +94,8 @@ function RegisterForm({register}) {
           id="password"
           value={formData.password}
           onChange={handleChange}
-          error={formErrors.password}
-          helperText={formErrors.password? 'Password needs to be between 5-20 characters': null}
+          error={!!formErrors.password} // convert to boolean
+          helperText={formErrors.password ? 'Password needs to be between 5-20 characters' : null}
         />
         <TextField
           margin="dense"
@@ -106,8 +106,8 @@ function RegisterForm({register}) {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          error={formErrors.email}
-          helperText={formErrors.email? 'Invalid email': null}
+          error={!!formErrors.email} // convert to boolean
+          helperText={formErrors.email ? 'Invalid email': null}
         />
         <Button
           type="submit"
@@ -125,9 +125,7 @@ function RegisterForm({register}) {
           </Grid>
         </Grid>
       </Box>
-    
     </Container>
-   
   )
 }
 

@@ -4,10 +4,12 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 
 class ExpenseBudApi {
   static token;
-
   static async request(endpoint, data = {}, method = "get") {
     const url = `${BASE_URL}/${endpoint}`;
-    const headers = { Authorization: `Bearer ${this.token}` };
+    const headers = { 
+      Authorization: `Bearer ${this.token}`,
+      "Content-Type": "application/json"
+    };
     const params = (method === "get") ? data : {};
 
     try {
@@ -18,6 +20,7 @@ class ExpenseBudApi {
       throw Array.isArray(message) ? message : [message];
     }
   }
+
   /** User */
 
   static async register(data) {

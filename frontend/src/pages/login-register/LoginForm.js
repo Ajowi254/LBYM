@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import ExpenseBudApi from '../../api/api'; // import your API class
 
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
@@ -15,7 +16,7 @@ const INITIAL_STATE = {
   password: ''
 }
 
-function LoginForm({login}) {
+function LoginForm() {
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [formErrors, setFormErrors] = useState([]);
   const history = useHistory();
@@ -27,7 +28,7 @@ function LoginForm({login}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let result = await login(formData);
+    let result = await ExpenseBudApi.login(formData); // call the login function from your API class
     if (result.success) {
       history.push('/'); 
       setFormData(INITIAL_STATE);
@@ -36,8 +37,6 @@ function LoginForm({login}) {
       setFormErrors(result.err);
     }
   }
-
-
 
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
@@ -55,8 +54,8 @@ function LoginForm({login}) {
           autoFocus
           value={formData.username}
           onChange={handleChange}
-          error={formErrors.length}
-          helperText={formErrors.length? 'Incorrect username/password': null}
+          error={!!formErrors.username} // convert to boolean
+          helperText={formErrors.username ? 'Username needs to be between 5-20 characters' : null}
         />
         <TextField
           margin="dense"
@@ -68,8 +67,8 @@ function LoginForm({login}) {
           id="password"
           value={formData.password}
           onChange={handleChange}
-          error={formErrors.length}
-          helperText={formErrors.length? 'Incorrect username/password': null}
+          error={!!formErrors.password} // convert to boolean
+          helperText={formErrors.password ? 'Password needs to be between 5-20 characters' : null}
         />
         <Button
           type="submit"
@@ -85,16 +84,9 @@ function LoginForm({login}) {
               {"Don't have an account? Register"}
             </Link>
           </Grid>
-          {/* <Grid item>
-            <Link href="#" variant="body2">
-              {"Forgot password?"}
-            </Link>
-          </Grid> */}
         </Grid>
       </Box>
-    
     </Container>
-   
   )
 }
 
