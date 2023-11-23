@@ -11,7 +11,6 @@ class User {
       Returns { id, username, first_name, last_name, email } 
       Throws UnauthorizedError if user not found or wrong credentials.
   */
-
       static async authenticate(username, password) {
         const result = await db.query(`
           SELECT id, username, password, first_name, last_name, email
@@ -21,8 +20,7 @@ class User {
         );
     
         const user = result.rows[0];
-    
-        if (user) {
+          if (user) {
           const isValid = await bcrypt.compare(password, user.password);
           if (isValid) {
             delete user.password;
@@ -67,7 +65,6 @@ class User {
   /** Find all users.
       Returns [{ id, username, first_name, last_name, email }, ...]
   */
-
   static async findAll() {
     const result = await db.query(`
       SELECT id, username, first_name AS "firstName", last_name AS "lastName", email
@@ -77,7 +74,6 @@ class User {
 
     return result.rows;
   }
-
   /** Given user id, return data about the user.
       Returns { id, username, first_name, last_name, email } 
       where budgets is { id, amount, category }
@@ -85,7 +81,6 @@ class User {
 
       Throws NotFoundError if the user is not found.
   */
-
   static async get(user_id) {
     const userRes = await db.query(`
       SELECT id, username, first_name AS "firstName", last_name AS "lastName", email
@@ -95,7 +90,6 @@ class User {
     );
 
     const user = userRes.rows[0];
-
     if (!user) throw new NotFoundError(`No user id: ${user_id}`);
 
     return user;
@@ -144,7 +138,6 @@ class User {
 
     return user;
   }
-
   /** Delete the given user from the database; returns the username. */
 
   static async remove(user_id) {
@@ -178,5 +171,4 @@ class User {
     return result.rows[0] || null;
   }
 }
-
 module.exports = User;
