@@ -1,3 +1,4 @@
+//errormap.js
 /** Function that accepts an array of validation error and extracts the name of the error field (the word immediately follows 'instance.'). Returns an object of field name that have errors set to true. 
  * ['instance.firstName does not match pattern "^(?!\\\\s)[A-Za-z]*$"', 'instance.lastName does not match pattern "^(?!\\\\s)[A-Za-z]*$"']  =>  {firstName: true, lastName: true} 
  */ 

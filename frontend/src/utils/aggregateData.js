@@ -1,3 +1,4 @@
+//aggregatedata.js
 function groupAndAggregateData(data) {
   const aggregatedData = {};
 

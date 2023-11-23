@@ -41,8 +41,8 @@ app.use(function (err, req, res, next) {
 
   return res.status(status).json({
     error: {message, status}
-  }).type("application/json");
+  });
 });
 
 
-module.exports = app; 
+module.exports = app;

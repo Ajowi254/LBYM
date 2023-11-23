@@ -1,3 +1,4 @@
+//loginform.js
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ExpenseBudApi from '../../api/api'; // import your API class
@@ -15,29 +16,35 @@ const INITIAL_STATE = {
   username:'',
   password: ''
 }
-
 function LoginForm() {
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [formErrors, setFormErrors] = useState([]);
   const history = useHistory();
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData(data => ({...data, [name]: value}));
+    const { name, value } = e.target;
+    setFormData(data => ({ ...data, [name]: value }));
   }
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let result = await ExpenseBudApi.login(formData); // call the login function from your API class
-    if (result.success) {
-      history.push('/'); 
-      setFormData(INITIAL_STATE);
-      setFormErrors([]);
-    } else {
-      setFormErrors(result.err);
+    try {
+      const result = await ExpenseBudApi.login(formData);
+      
+      if (result.token) {
+        // Assuming your login function returns a token
+        const token = result.token;
+        // Store the token in your preferred way (e.g., localStorage)
+        
+        // Redirect to the next page or perform any other necessary action
+        history.push('/');
+        setFormData(INITIAL_STATE);
+        setFormErrors([]);
+      }
+    } catch (error) {
+      setFormErrors([error.message]); // Adjust this based on your error response structure
     }
   }
-
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">

@@ -1,3 +1,4 @@
+//routes.js
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import RegisterForm from '../pages/login-register/RegisterForm';

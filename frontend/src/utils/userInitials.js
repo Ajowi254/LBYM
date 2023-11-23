@@ -1,3 +1,4 @@
+//userInitials.js
 /** Function that accepts a current user object and returns user's initials capitalized.
  * To be used in Avatar displayed in navbar.
  */ 

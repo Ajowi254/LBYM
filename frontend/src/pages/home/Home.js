@@ -1,3 +1,4 @@
+//home.js
 import { useContext } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import UserContext from '../../context/UserContext';

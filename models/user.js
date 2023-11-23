@@ -1,4 +1,4 @@
-//user.js
+// user.js
 const db = require("../db");
 const bcrypt = require("bcrypt");
 const { UnauthorizedError, BadRequestError, NotFoundError } = require("../expressErrors");
@@ -12,27 +12,26 @@ class User {
       Throws UnauthorizedError if user not found or wrong credentials.
   */
 
-  static async authenticate(username, password) {
-    // find user
-    const result = await db.query(`
-      SELECT id, username, password, first_name, last_name, email
-      FROM users
-      WHERE username = $1`, 
-      [username]
-    );
-
-    const user = result.rows[0];
-
-    // if user is found, compare hashed password from db to new hash from password passed in
-    if (user) {
-      const isValid = await bcrypt.compare(password, user.password);
-      if (isValid === true) {
-        delete user.password;
-        return user;
+      static async authenticate(username, password) {
+        const result = await db.query(`
+          SELECT id, username, password, first_name, last_name, email
+          FROM users
+          WHERE username = $1`, 
+          [username]
+        );
+    
+        const user = result.rows[0];
+    
+        if (user) {
+          const isValid = await bcrypt.compare(password, user.password);
+          if (isValid) {
+            delete user.password;
+            return user;
+          }
+        }
+    
+        throw new UnauthorizedError('Invalid username/password');
       }
-    }
-    throw new UnauthorizedError('Invalid username/password');
-  }
 
   /** Register user with data. 
       Returns { id, username, first_name, last_name, email } 
@@ -58,7 +57,7 @@ class User {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email`,
       [username, hashedPassword, firstName, lastName, email]
-    )
+    );
     
     const user = result.rows[0];
 
@@ -79,12 +78,12 @@ class User {
     return result.rows;
   }
 
-  /** Given user id, return data about user.
+  /** Given user id, return data about the user.
       Returns { id, username, first_name, last_name, email } 
       where budgets is { id, amount, category }
       and expenses is { id, amount. date, vendor, description, category }
 
-      Throws NotFoundError if user not found.
+      Throws NotFoundError if the user is not found.
   */
 
   static async get(user_id) {
@@ -93,7 +92,7 @@ class User {
       FROM users
       WHERE id = $1`,
       [user_id]
-    )
+    );
 
     const user = userRes.rows[0];
 
@@ -103,11 +102,11 @@ class User {
   } 
 
   /** Update user data.
-      Allows for partial update, data can include:
+      Allows for partial update; data can include:
        { firstName, lastName, username, email }
-      Requires user password to confirm changes. 
+      Requires the user password to confirm changes. 
       Returns {id, username, first_name, last_name, email} 
-      Throws NotFoundError if user not found, and UnauthorizedError if incorrect password is entered.
+      Throws NotFoundError if the user is not found and UnauthorizedError if an incorrect password is entered.
   */
 
   static async update(user_id, password, data) {
@@ -116,35 +115,37 @@ class User {
       FROM users
       WHERE id = $1`,
       [user_id]
-    ) 
-    if(isCorrectUser.rows.length === 0) throw new NotFoundError(`No user id: ${user_id}`);
+    );
+
+    if (isCorrectUser.rows.length === 0) throw new NotFoundError(`No user id: ${user_id}`);
     
-    const isCorrectPassword = await bcrypt.compare(password, isCorrectUser.rows[0].password)
+    const isCorrectPassword = await bcrypt.compare(password, isCorrectUser.rows[0].password);
     
-    if(!isCorrectPassword) throw new UnauthorizedError('Invalid password');
+    if (!isCorrectPassword) throw new UnauthorizedError('Invalid password');
 
     const { setCols, values } = partialUpdateSql(
       data, 
       {
-      firstName: "first_name",
-      lastName: "last_name"
-      });
+        firstName: "first_name",
+        lastName: "last_name"
+      }
+    );
       
-      const idPosition = "$" + (values.length+1);
+    const idPosition = "$" + (values.length + 1);
 
-      const sqlQuery = `
-        UPDATE users 
-        SET ${setCols} 
-        WHERE id = ${idPosition} 
-        RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email`;
-      const result = await db.query(sqlQuery, [...values, user_id]);
-      const user = result.rows[0];
+    const sqlQuery = `
+      UPDATE users 
+      SET ${setCols} 
+      WHERE id = ${idPosition} 
+      RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email`;
+    
+    const result = await db.query(sqlQuery, [...values, user_id]);
+    const user = result.rows[0];
 
-      return user;
+    return user;
   }
 
-  
-  /** Delete given user from database; returns username. */
+  /** Delete the given user from the database; returns the username. */
 
   static async remove(user_id) {
     let result = await db.query(`
@@ -153,13 +154,29 @@ class User {
       WHERE id = $1
       RETURNING username`,
       [user_id]
-    )
+    );
+
     const user = result.rows[0];
     if (!user) throw new NotFoundError(`No user id: ${user_id}`);
 
     return user.username;
-   }
+  }
 
+  /** Find user by username.
+      Returns { id, username, first_name, last_name, email } or null if not found.
+  */
+  static async findByUsername(username) {
+    const result = await db.query(
+      `
+      SELECT id, username, first_name, last_name, email
+      FROM users
+      WHERE username = $1
+    `,
+      [username]
+    );
+
+    return result.rows[0] || null;
+  }
 }
 
 module.exports = User;

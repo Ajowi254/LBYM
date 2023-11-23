@@ -1,6 +1,7 @@
 //auth.js
+const bcrypt = require('bcrypt');
 /** Routes for authentication. */
-
+const jwt = require("jsonwebtoken")
 const express = require("express");
 const router = new express.Router();
 const jsonschema = require("jsonschema");
@@ -23,17 +24,15 @@ router.post("/register", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const user = await User.register(req.body);
-    const token = createToken(user);
-    return res.status(201).json({user, token}).type("application/json");
 
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const user = await User.register({ ...req.body, password: hashedPassword });
+    const token = createToken(user);
+    return res.status(201).json({ token });
   } catch (err) {
-    return res.status(err.status || 500).json({error: err.message});
+    return next(err);
   }
-})
-/** POST /auth/login:   { username, password } => { token }
- * Returns JWT token which can be used to authenticate further requests.
- */
+});
 
 router.post("/login", async function (req, res, next) {
   try {
@@ -42,13 +41,18 @@ router.post("/login", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const {username, password} = req.body;
-    const user = await User.authenticate(username, password);
-    const token = createToken(user);
-    return res.json({token}).type("application/json");
 
+    const user = await User.authenticate(req.body.username, req.body.password);
+    
+    if (user) {
+      const token = createToken(user);
+      return res.json({ token });
+    }
+
+    throw new UnauthorizedError("Invalid username/password");
   } catch (err) {
-    return res.status(err.status || 500).json({error: err.message});
+    return next(err);
   }
-})
+});
+
 module.exports = router;
