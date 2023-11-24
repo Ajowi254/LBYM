@@ -1,7 +1,7 @@
 //registerform.js
+import ExpenseBudApi from '../../api/api';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ExpenseBudApi from '../../api/api'; // import your API class
 
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
@@ -13,39 +13,56 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 const INITIAL_STATE = {
-  username:'',
+  username: '',
   password: '',
   firstName: '',
   lastName: '',
-  email: ''
-}
+  email: '',
+};
 
 function RegisterForm() {
   const [formData, setFormData] = useState(INITIAL_STATE);
-  const [formErrors, setFormErrors] = useState({});
+  const [registrationError, setRegistrationError] = useState({});
   const history = useHistory();
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData(data => ({...data, [name]: value}));
-  }
+    const { name, value } = e.target;
+    setFormData((data) => ({ ...data, [name]: value }));
+  };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let result = await ExpenseBudApi.register(formData); // call the register function from your API class
-    if (result.success) {
-      history.push('/login'); 
-      setFormData(INITIAL_STATE);
-      setFormErrors([]);
-    } else {
-      setFormErrors(result.err);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setRegistrationError({}); // Reset registration errors
+
+    try {
+      const response = await ExpenseBudApi.register(formData);
+
+      if (response.data && response.data.token) {
+        localStorage.setItem('userToken', response.data.token);
+        window.location.href = '/dashboard';
+      } else {
+        setRegistrationError({
+          message: 'Token not found in the response data.',
+        });
+        // Handle this case, maybe show a user-friendly error message on the webpage
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setRegistrationError({
+          message: 'Registration failed. Check your inputs.',
+        });
+        // Display this error on the webpage
+      } else {
+        console.error('Unexpected error:', error);
+        // Handle other errors
+      }
     }
-  }
+  };
 
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">
-            Register
+        Register
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
@@ -58,8 +75,6 @@ function RegisterForm() {
           autoFocus
           value={formData.firstName}
           onChange={handleChange}
-          error={!!formErrors.firstName} // convert to boolean
-          helperText={formErrors.firstName? 'First Name cannot be blank': null}
         />
         <TextField
           margin="dense"
@@ -70,8 +85,6 @@ function RegisterForm() {
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
-          error={!!formErrors.lastName} // convert to boolean
-          helperText={formErrors.lastName? 'Last Name cannot be blank': null}
         />
         <TextField
           margin="dense"
@@ -82,8 +95,6 @@ function RegisterForm() {
           name="username"
           value={formData.username}
           onChange={handleChange}
-          error={!!formErrors.username} // convert to boolean
-          helperText={formErrors.username ? 'Username needs to be between 5-20 characters' : null}
         />
         <TextField
           margin="dense"
@@ -95,8 +106,6 @@ function RegisterForm() {
           id="password"
           value={formData.password}
           onChange={handleChange}
-          error={!!formErrors.password} // convert to boolean
-          helperText={formErrors.password ? 'Password needs to be between 5-20 characters' : null}
         />
         <TextField
           margin="dense"
@@ -107,8 +116,6 @@ function RegisterForm() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          error={!!formErrors.email} // convert to boolean
-          helperText={formErrors.email ? 'Invalid email': null}
         />
         <Button
           type="submit"
@@ -118,6 +125,11 @@ function RegisterForm() {
         >
           Register
         </Button>
+        {registrationError.message && (
+          <div style={{ color: 'red', marginTop: '10px' }}>
+            {registrationError.message}
+          </div>
+        )}
         <Grid container>
           <Grid item>
             <Link href="/login" variant="body2">
@@ -127,7 +139,7 @@ function RegisterForm() {
         </Grid>
       </Box>
     </Container>
-  )
+  );
 }
 
 export default RegisterForm;

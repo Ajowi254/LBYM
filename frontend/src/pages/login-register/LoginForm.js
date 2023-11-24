@@ -1,7 +1,7 @@
 //loginform.js
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ExpenseBudApi from '../../api/api'; // import your API class
+import ExpenseBudApi from '../../api/api';
 
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
@@ -13,43 +13,50 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 const INITIAL_STATE = {
-  username:'',
-  password: ''
-}
+  username: '',
+  password: '',
+};
+
 function LoginForm() {
   const [formData, setFormData] = useState(INITIAL_STATE);
-  const [formErrors, setFormErrors] = useState([]);
+  const [loginError, setLoginError] = useState('');
   const history = useHistory();
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(data => ({ ...data, [name]: value }));
-  }
-  
+    setFormData((data) => ({ ...data, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoginError(''); // Reset login error
+
     try {
-      const result = await ExpenseBudApi.login(formData);
-      
-      if (result.token) {
-        // Assuming your login function returns a token
-        const token = result.token;
-        // Store the token in your preferred way (e.g., localStorage)
-        
-        // Redirect to the next page or perform any other necessary action
-        history.push('/');
-        setFormData(INITIAL_STATE);
-        setFormErrors([]);
+      const token = await ExpenseBudApi.login(formData);
+
+      if (token) {
+        console.log('Generated token:', token);
+        localStorage.setItem('userToken', token);
+        history.push('/dashboard');
+      } else {
+        setLoginError('Token not found in the response data.');
+        // Handle this case, maybe show a user-friendly error message on the webpage
       }
     } catch (error) {
-      setFormErrors([error.message]); // Adjust this based on your error response structure
+      if (error.response && error.response.status === 401) {
+        setLoginError('Invalid username/password');
+        // Display this error on the webpage
+      } else {
+        console.error('Unexpected error:', error);
+        // Handle other errors
+      }
     }
-  }
+  };
+
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">
-            Login
+        Login
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
@@ -62,8 +69,6 @@ function LoginForm() {
           autoFocus
           value={formData.username}
           onChange={handleChange}
-          error={!!formErrors.username} // convert to boolean
-          helperText={formErrors.username ? 'Username needs to be between 5-20 characters' : null}
         />
         <TextField
           margin="dense"
@@ -75,17 +80,13 @@ function LoginForm() {
           id="password"
           value={formData.password}
           onChange={handleChange}
-          error={!!formErrors.password} // convert to boolean
-          helperText={formErrors.password ? 'Password needs to be between 5-20 characters' : null}
         />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
           Login
         </Button>
+        {loginError && (
+          <div style={{ color: 'red', marginTop: '10px' }}>{loginError}</div>
+        )}
         <Grid container>
           <Grid item xs>
             <Link href="/register" variant="body2">
@@ -95,7 +96,7 @@ function LoginForm() {
         </Grid>
       </Box>
     </Container>
-  )
+  );
 }
 
 export default LoginForm;

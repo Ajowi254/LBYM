@@ -17,7 +17,7 @@ class ExpenseBudApi {
     try {
       return (await axios({ url, method, data, params, headers })).data;
     } catch (err) {
-      console.error("API Error:", err.response);
+      console.error('Unexpected error during login', err);
       let message = err.response.data.error.message;
       throw Array.isArray(message) ? message : [message];
     }
@@ -26,14 +26,24 @@ class ExpenseBudApi {
   /** User */
 
   static async register(data) {
+    try{
     let res = await this.request(`auth/register`, data, 'post');
     return res.token;
+  }catch (error) {
+    console.error('Unexpected error during registeration', error);
+    throw error;
   }
+}
 
   static async login(data) {
-    let res = await this.request(`auth/login`, data, 'post');
+    try{
+    const res = await this.request(`auth/login`, data, 'post');
     return res.token;
+  }catch (error) {
+    console.error('Unexpected error during login',error)
+    throw error;
   }
+}
 
   static async getCurrentUser(id) {
     let res = await this.request(`users/${id}`);
