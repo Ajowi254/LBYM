@@ -1,8 +1,8 @@
 //loginform.js
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import ExpenseBudApi from '../../api/api';
-
+import UserContext from '../../context/UserContext';
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -18,6 +18,7 @@ const INITIAL_STATE = {
 };
 
 function LoginForm() {
+  const { setCurrentUser } = useContext(UserContext);
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [loginError, setLoginError] = useState('');
   const history = useHistory();
@@ -30,13 +31,19 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginError(''); // Reset login error
-  
+
     try {
       const token = await ExpenseBudApi.login(formData);
-  
+
       if (token) {
         console.log('Generated token:', token);
         localStorage.setItem('userToken', token);
+        // Set the token in the API instance
+        ExpenseBudApi.token = token;
+        // Update the currentUser context
+        const user = await ExpenseBudApi.getCurrentUser(formData.username);
+        setCurrentUser(user);
+
         history.push('/dashboard');
       } else {
         setLoginError('Token not found in the response data.');
