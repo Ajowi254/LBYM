@@ -102,9 +102,6 @@ async function commonAfterEach() {
 async function commonAfterAll() {
   await db.end();
 }
-
-
-
 module.exports = {
   commonBeforeAll,
   commonBeforeEach,

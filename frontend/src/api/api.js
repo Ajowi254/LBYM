@@ -1,8 +1,6 @@
 //api.js
 import axios from "axios";
-
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
-
 class ExpenseBudApi {
   static token;
 
@@ -26,15 +24,19 @@ class ExpenseBudApi {
   /** User */
 
   static async register(data) {
-    try{
-    let res = await this.request(`auth/register`, data, 'post');
-    return res.token;
-  }catch (error) {
-    console.error('Unexpected error during registeration', error);
-    throw error;
+    try {
+      let res = await this.request(`auth/register`, data, 'post');
+      return res.token;
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        throw new Error('Username already exists');
+      } else {
+        console.error('Unexpected error during registration', error);
+        throw error;
+      }
+    }
   }
-}
-
+  
   static async login(data) {
     try{
     const res = await this.request(`auth/login`, data, 'post');
@@ -130,5 +132,4 @@ class ExpenseBudApi {
     return res.deleted;
   }
 }
-
 export default ExpenseBudApi;

@@ -1,8 +1,8 @@
 //registerform.js
+import { AxiosError } from 'axios';
 import ExpenseBudApi from '../../api/api';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -34,31 +34,33 @@ function RegisterForm() {
     e.preventDefault();
     setRegistrationError({}); // Reset registration errors
 
-    try {
-      const response = await ExpenseBudApi.register(formData);
+    // Validate user input
+    if (!formData.username || !formData.email) {
+      setRegistrationError({
+        message: 'Username and email are required.',
+      });
+      return;
+    }
 
-      if (response.data && response.data.token) {
-        localStorage.setItem('userToken', response.data.token);
-        window.location.href = '/dashboard';
-      } else {
-        setRegistrationError({
-          message: 'Token not found in the response data.',
-        });
-        // Handle this case, maybe show a user-friendly error message on the webpage
-      }
+    try {
+      const token = await ExpenseBudApi.register(formData);
+      localStorage.setItem('userToken', token);
+      history.push('/login'); // Redirect to login page after successful registration
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setRegistrationError({
-          message: 'Registration failed. Check your inputs.',
-        });
-        // Display this error on the webpage
-      } else {
-        console.error('Unexpected error:', error);
-        // Handle other errors
+      if (error instanceof AxiosError) {
+        // Access the error message from the server response
+        const errorMessage = error.response.data.error;
+        if (errorMessage.includes('Username already exists')) {
+          setRegistrationError({
+            message: 'Username already exists. Please choose a different username.',
+          });
+        } else {
+          console.error('Unexpected error:', errorMessage);
+          // Handle other errors
+        }
       }
     }
   };
-
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">
@@ -141,5 +143,4 @@ function RegisterForm() {
     </Container>
   );
 }
-
 export default RegisterForm;

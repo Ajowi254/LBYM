@@ -30,10 +30,10 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginError(''); // Reset login error
-
+  
     try {
       const token = await ExpenseBudApi.login(formData);
-
+  
       if (token) {
         console.log('Generated token:', token);
         localStorage.setItem('userToken', token);
@@ -52,7 +52,7 @@ function LoginForm() {
       }
     }
   };
-
+  
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">

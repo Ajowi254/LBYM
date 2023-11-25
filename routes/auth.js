@@ -17,7 +17,7 @@ const { BadRequestError } = require("../expressErrors");
  * Returns user and JWT token which can be used to authenticate further requests.
  */
 
-router.post("/register", async function (req, res, next) {
+router.post('/register', async function(req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userRegisterSchema);
     if (!validator.valid) {
@@ -25,12 +25,15 @@ router.post("/register", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = await User.register({ ...req.body, password: hashedPassword });
-    const token = createToken(user);
+    const newUser = await User.register(req.body);
+    const token = createToken(newUser);
     return res.status(201).json({ token });
   } catch (err) {
-    return next(err);
+    if (err.code === '23505') {
+      return res.status(400).json({ message: 'Username already exists' });
+    } else {
+      return next(err);
+    }
   }
 });
 
