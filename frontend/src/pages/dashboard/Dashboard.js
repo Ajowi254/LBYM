@@ -1,6 +1,5 @@
 //dashboard.js
 import { useState, useEffect, useContext } from 'react';
-
 import UserContext from "../../context/UserContext";
 import ExpenseBudApi from '../../api/api';
 import BarChart from "../../components/BarChart";
@@ -53,7 +52,6 @@ function Dashboard() {
   useEffect(() => {
     const aggregatedExpenses = groupAndAggregateData(expenses);
     const aggregatedBudgets = budgetByCategory(budgets);
-
     const datasets = [
       {
       label: 'Expense',
@@ -67,12 +65,10 @@ function Dashboard() {
       borderWidth: 3
       }
     ]
-
     const barData = {
       labels: aggregatedExpenses.map(expense => expense.category),
       datasets: datasets
     };
-
     const pieData = {
       labels: aggregatedExpenses.map(expense => expense.category),
       datasets: [datasets[0]]
@@ -84,7 +80,6 @@ function Dashboard() {
 
   const [barData, setBarData] = useState({labels: '', datasets: [] });
   const [pieData, setPieData] = useState({labels: '', datasets: [] });
-
   if (!infoLoaded) return <LoadingSpinner />
 
   return (
@@ -143,11 +138,8 @@ function Dashboard() {
         </>
           
         )
-      }
-     
-      
+      } 
     </div>
   )
 }
-
 export default Dashboard;

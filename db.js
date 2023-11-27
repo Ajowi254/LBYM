@@ -11,10 +11,12 @@ if (process.env.NODE_ENV === "test") {
   DB_URI = process.env.DATABASE_URL || `postgresql://spuser:Spuser@localhost/expensebud`;
 }
 
-let db = new Client({
+const db = new Client({
   connectionString: DB_URI
 });
 
-db.connect();
+db.connect()
+  .then(() => console.log('Connected to the database'))
+  .catch(err => console.error('Error connecting to the database', err));
 
 module.exports = db;

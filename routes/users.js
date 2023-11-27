@@ -1,6 +1,5 @@
 //users.js
 /** Routes for users. */
-
 const express = require("express");
 const router = new express.Router();
 const jsonschema = require("jsonschema");
@@ -8,7 +7,7 @@ const jsonschema = require("jsonschema");
 const User = require("../models/user");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 const { BadRequestError } = require("../expressErrors");
-const { ensureCorrectUser } = require('../middleware/auth');
+const { ensureCorrectUser,authenticateJWT } = require('../middleware/auth');
 
 /** GET /users/:userId => { user }
  * Returns { username, firstName, lastName, email, budgets, expenses}
@@ -17,15 +16,14 @@ const { ensureCorrectUser } = require('../middleware/auth');
  * Authorization required: same user as logged in user
  */
 
-router.get("/:userId", ensureCorrectUser, async function (req, res, next) {
-  try {
-    const user = await User.get(req.params.userId);
-    return res.json({ user });
-
-  } catch(err) {
-    return next(err);
-  }
-})
+      router.get("/:userId", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
+        try {
+          const user = await User.get(req.params.userId);
+          return res.json({ user });
+        } catch(err) {
+          return next(err);
+        }
+      });
 
 /** PATCH /users/:userId { user } => { user }
  * Data can include: { username, firstName, lastName, email }
@@ -63,5 +61,6 @@ router.delete("/:userId", ensureCorrectUser, async function (req, res, next) {
     return next(err);
   }
 })
+// Inside the GET /users/:userId route
 
 module.exports = router;

@@ -27,8 +27,6 @@ app.use("/users/:userId/expenses", expensesRoutes);
 app.use("/users/:userId/budgets", budgetsRoutes);
 app.use("/users/:userId/accounts", accountsRoutes); 
 
-
-
 /** Handle 404 errors */
 app.use(function (req, res, next) {
   return next(new NotFoundError());
