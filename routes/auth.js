@@ -40,30 +40,20 @@ router.post('/register', async function(req, res, next) {
 // auth.js
 
 router.post("/login", async function (req, res, next) {
-  const { username, password } = req.body;
-
   try {
-    console.log("Attempting login for username:", username);
-
     const validator = jsonschema.validate(req.body, userAuthSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
+    const {username, password} = req.body;
     const user = await User.authenticate(username, password);
+    const token = createToken(user);
+    return res.json({token});
 
-    if (user) {
-      console.log("User authenticated successfully. User ID:", user.id);
-      const token = createToken(user.id);
-      return res.json({ token });
-    }
-
-    console.log("Invalid username/password");
-    throw new UnauthorizedError("Invalid username/password");
   } catch (err) {
-    console.error("Unexpected error during login:", err);
     return next(err);
   }
-});
+})
+
 module.exports = router;

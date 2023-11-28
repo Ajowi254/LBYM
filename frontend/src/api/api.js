@@ -37,15 +37,10 @@ class ExpenseBudApi {
     }
   }
   
-  static async login(data) {
-    try{
-    const res = await this.request(`auth/login`, data, 'post');
+  static async login(data){
+    let res = await this.request(`auth/login`, data, 'post')
     return res.token;
-  }catch (error) {
-    console.error('Unexpected error during login',error)
-    throw error;
   }
-}
 
   static async getCurrentUser(id) {
     let res = await this.request(`users/${id}`);

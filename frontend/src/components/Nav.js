@@ -39,7 +39,7 @@ function Navbar({logout, drawerWidth, handleDrawerToggle}) {
         >
           {currentUser? <MenuIcon />: null }
         </IconButton>
-        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}><Link to="/">LYBM</Link></Typography>
+        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}><Link to="/">LBYM</Link></Typography>
         {currentUser
         ?(<>
            <Link to="/profile"><Avatar sx={{width: 36, height: 36}}>{initials}</Avatar></Link>

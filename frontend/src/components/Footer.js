@@ -23,7 +23,7 @@ function Footer() {
       }}>
       <Toolbar>
         <Typography variant="body2" color="inherit">
-          LYBM. 2023 | <a href="https://github.com/Ajowi254/LYBM-project" target="_blank" rel="noreferrer"><GitHubIcon color='secondary'/></a>
+          LBYM. 2023 | <a href="https://github.com/Ajowi254/LYBM-project" target="_blank" rel="noreferrer"><GitHubIcon color='secondary'/></a>
         </Typography>
       </Toolbar>
     </AppBar>
