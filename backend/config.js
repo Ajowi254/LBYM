@@ -1,4 +1,5 @@
 //config.js
+
 const { Configuration, PlaidApi, PlaidEnvironments } = require("plaid");
 
 const configuration = new Configuration({

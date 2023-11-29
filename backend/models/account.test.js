@@ -1,7 +1,7 @@
 //account.test.js
 const Account = require("./account");
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressErrors");
+const { BadRequestError, NotFoundError } = require("./expressErrors");
 const {
   commonBeforeAll,
   commonBeforeEach,

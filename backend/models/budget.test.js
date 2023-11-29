@@ -1,7 +1,7 @@
 //budget.test.js
 const Budget = require("./budget");
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressErrors");
+const { BadRequestError, NotFoundError } = require("./expressErrors");
 const {
   commonBeforeAll,
   commonBeforeEach,

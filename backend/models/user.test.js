@@ -1,7 +1,7 @@
 //user.test.js
 const User = require("./user");
 const db = require("../db");
-const { UnauthorizedError, BadRequestError, NotFoundError } = require("../expressErrors");
+const { UnauthorizedError, BadRequestError, NotFoundError } = require("./expressErrors");
 const {
   commonBeforeAll,
   commonBeforeEach,

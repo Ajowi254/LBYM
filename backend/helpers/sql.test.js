@@ -1,6 +1,6 @@
 //sql.test.js
 const { partialUpdateSql } = require("./sql");
-const { BadRequestError } = require("../expressErrors");
+const { BadRequestError } = require("./expressErrors");
 
 describe('partialUpdateSql', () => {
   it('should generate setCols and values correctly', () => {

@@ -1,6 +1,6 @@
 //category.test.js
 const { mapCategory } = require("../helpers/category");
-const { BadRequestError } = require("../expressErrors");
+const { BadRequestError } = require("./expressErrors");
 
 describe('mapCategory', () => {
   it('should map "entertainment" to category_id 1', () => {

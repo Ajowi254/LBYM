@@ -20,7 +20,7 @@ router.post('/create_link_token', async function (req, res, next) {
     client_name: 'Plaid App',
     products: ['auth', 'transactions'],
     language: 'en',
-    redirect_uri: 'http://localhost:3000/',
+    redirect_uri: 'http://localhost:3002/',
     country_codes: ['US'],
   };
   
