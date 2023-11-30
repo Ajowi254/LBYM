@@ -1,11 +1,10 @@
-# ExpenseBud
-
-This repository is completed as part of Springboard Software Engineering Career Track capstone two. The backend can be found [here](https://github.com/hsiangj/capstone-two-backend "ExpenseBud Backend"). 
+# LBYM
+This repository is completed as part of Springboard Software Engineering Career Track capstone two. The backend can be found [here]. 
 
 ### Application Description
-"ExpenseBud" is a web app for users to easily track their expenses and budget goals. Aside from manual entries of expenses, users could connect with their financial institutions to import transactions via the [Plaid API](https://plaid.com/docs/). Both the expenses and budgets data are visualized in a simple to understand dashboard for high level overview. 
+"LBYM" is a web app for users to easily track their expenses and budget goals. Aside from manual entries of expenses, users could connect with their financial institutions to import transactions via the [Plaid API](https://plaid.com/docs/). Both the expenses and budgets data are visualized in a simple to understand dashboard for high level overview. 
 
-View the application [here](https://expensebud.onrender.com/ "ExpenseBud") on Render. Best viewed on desktop. 
+View the application [here]() on Render. Best viewed on desktop. 
 
 ### Preview
 Home page before signup/login    

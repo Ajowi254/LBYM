@@ -1,7 +1,7 @@
 {
   "name": "capstone2-backend",
   "version": "1.0.0",
-  "description": "This repository is completed as part of Springboard Software Engineering Career Track capstone two. The frontend can be found [here](https://github.com/hsiangj/capstone-two-frontend \"ExpenseBud Frontend\").",
+  "description": "This repository is completed as part of LBYM\").",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
@@ -28,11 +28,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hsiangj/capstone-two-backend.git"
-  },
-  "keywords": [],
-  "bugs": {
-    "url": "https://github.com/hsiangj/capstone-two-backend/issues"
-  },
-  "homepage": "https://github.com/hsiangj/capstone-two-backend#readme"
+    "url": "https://github.com/Ajowi254/LBYM"
+  }
 }

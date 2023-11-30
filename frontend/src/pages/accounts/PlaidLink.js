@@ -30,8 +30,6 @@ function PlaidAuth({plaidData, onLinkSuccess}) {
   return accessToken && (<PlaidLink />)
 }
 
-
-
 function PlaidLink({onLinkSuccess}) {
   const [linkToken, setLinkToken] = useState();
   const [publicToken, setPublicToken] = useState();

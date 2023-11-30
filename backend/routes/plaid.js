@@ -10,25 +10,24 @@ const Expense = require("../models/expense");
 const { mapCategory } = require("../helpers/category");
 
 router.post('/create_link_token', async function (req, res, next) {
-  // Get the client_user_id by searching for the current user
   const userId = String(res.locals.user.id) || null;
   const plaidRequest = {
     user: {
-      // This should correspond to a unique id for the current user.
       client_user_id: userId
     },
     client_name: 'Plaid App',
     products: ['auth', 'transactions'],
     language: 'en',
-    redirect_uri: 'http://localhost:3002/',
+    redirect_uri: 'http://localhost:3000/',
     country_codes: ['US'],
+    environment: process.env.REACT_APP_PLAID_ENVIRONMENT, // Change to REACT_APP_PLAID_ENVIRONMENT
   };
   
   try {
     const createTokenResponse = await plaidClient.linkTokenCreate(plaidRequest);
     return res.json(createTokenResponse.data);
   } catch (err) {
-    console.error('create_link_token error')
+    console.error('create_link_token error', err);
     return next(err);
   }
 });
