@@ -13,6 +13,7 @@ import NavWithDrawer from './components/NavWithDrawer';
 import LoadingSpinner from './components/LoadingSpinner';
 import Footer from './components/Footer';
 import theme from './theme/theme';
+import FeedbackPopup from './components/FeedbackPopup'; // Import the FeedbackPopup component
 
 import { ThemeProvider } from '@mui/material/styles';
 
@@ -20,6 +21,7 @@ function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [userToken, setUserToken] = useLocalStorage("expensebud_token");
   const [currentUser, setCurrentUser] = useState(null);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false); // Add this line
 
   async function register(registerData){
     try {
@@ -56,6 +58,10 @@ function App() {
           let { id } = decodeToken(userToken);
           let currentUser = await ExpenseBudApi.getCurrentUser(id);
           setCurrentUser(currentUser);
+          const feedbackGiven = localStorage.getItem('feedbackGiven');
+          if (!feedbackGiven) {
+            setShowFeedbackPopup(true);
+          }
         } catch (err) {
         console.error('Error loading current user', err);
         setCurrentUser(null);
@@ -65,8 +71,12 @@ function App() {
     }
     setInfoLoaded(false);
     getCurrentUser();
-  }, [userToken])
+  }, [userToken]);
 
+  const handleFeedbackClose = () => {
+    setShowFeedbackPopup(false);
+    localStorage.setItem('feedbackGiven', 'true');
+  };
 
   if (!infoLoaded) return <LoadingSpinner />
 
@@ -78,12 +88,12 @@ function App() {
             <NavWithDrawer logout={logout}/>
             <Routes register={register} login={login} />
             <Footer />
+            {showFeedbackPopup && <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />}
           </ThemeProvider>
         </UserContext.Provider>
       </BrowserRouter>
     </div>
   )  
-
 }
 
 export default App;

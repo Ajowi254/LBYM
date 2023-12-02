@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+      "userId": {
+        "type": "string",
+        "description": "ID of the user providing feedback",
+        "minLength": 1
+      },
+      "selectedOption": {
+        "type": "string",
+        "description": "User's selected feedback option",
+        "enum": [
+          "peer-referral",
+          "search-engine",
+          "social-media",
+          "chris-loves-julia",
+          "lbym-blog",
+          "other"
+        ]
+      }
+    },
+    "required": ["userId", "selectedOption"]
+  }
