@@ -1,0 +1,158 @@
+body {
+  margin: auto;
+  font-size: 16px;
+}
+
+body * {
+  /*border: 1px solid black;*/
+}
+
+.category {
+  background-color: #aae8dcc2;
+}
+
+.category,
+.costItem {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: center;
+  border-bottom: 1px solid grey;
+}
+
+.costItem {
+  padding: 10px 0 0 0;
+}
+
+.category ~ .costItem {
+  padding-bottom: 10px;
+}
+
+.category div,
+.costItem div {
+  margin: 5px;
+  padding: 3px 5px;
+}
+
+.categoryName,
+.budgeted,
+.available {
+  font-weight: bold;
+}
+
+.categoryName {
+  font-size: 19px;
+}
+
+.button {
+  display: inline;
+  margin-left: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  padding: 1px 4px;
+  color: grey;
+  border: 2px solid grey;
+  border-radius: 100%;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.categoryForm {
+  display: none;
+  position: absolute;
+  background-color: #bcf;
+  margin-top: 3px;
+  padding: 5px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  z-index: 2;
+}
+
+.number,
+.budgeted,
+.available {
+  text-align: center;
+}
+
+.number {
+  background-color: #00cc00;
+  border-radius: 20px;
+  font-weight: normal;
+}
+
+@media screen and (min-width: 700px) {
+  body {
+    width: 700px;
+  }
+  .cost-item-checkbox {
+    grid-column-start: 1;
+    grid-column-end: 2;
+  }
+
+  .categoryName {
+    grid-column-start: 1;
+    grid-column-end: 6;
+  }
+  .costItemName {
+    grid-column-start: 2;
+    grid-column-end: 6;
+  }
+
+  .budgeted {
+    grid-column-start: 8;
+    grid-column-end: 10;
+  }
+
+  .available {
+    grid-column-start: 11;
+    grid-column-end: 13;
+  }
+}
+
+@media screen and (min-width: 401px) and (max-width: 699px) {
+  body {
+    width: 400px;
+  }
+
+  .cost-item-checkbox {
+    grid-column-start: 1;
+    grid-column-end: 2;
+  }
+
+  .categoryName {
+    grid-column-start: 1;
+    grid-column-end: 5;
+  }
+
+  .costItemName {
+    grid-column-start: 2;
+    grid-column-end: 5;
+  }
+
+  .budgeted {
+    grid-column-start: 6;
+    grid-column-end: 9;
+  }
+
+  .available {
+    grid-column-start: 10;
+    grid-column-end: 13;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  body {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  .category,
+  .costItem {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+
+  .cost-item-checkbox {
+    display: none;
+  }
+}
