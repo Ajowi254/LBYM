@@ -32,9 +32,9 @@ function BudgetList() {
 
   return (
     <div>
-      {organizedBudgets.map((budget) => (
-        <Budget key={budget.name} budget={budget} />
-      ))}
+      {organizedBudgets.length > 0 && (
+        <Budget key="all" budget={organizedBudgets} />
+      )}
     </div>
   );
 }
