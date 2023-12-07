@@ -1,30 +1,38 @@
 import React, { useState } from 'react';
 import './budget.css';
+import HouseIcon from '@mui/icons-material/House';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import FlightIcon from '@mui/icons-material/Flight';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 function Budget() {
   const initialCategories = [
     {
       name: 'Bills',
       items: [
-        { name: 'Rent', budgeted: 0 },
-        { name: 'Food', budgeted: 0 },
+        { name: 'Rent', budgeted: 0, icon: <HouseIcon style={{ color: '#3498db' }} /> },
+        { name: 'Food', budgeted: 0, icon: <FastfoodIcon style={{ color: '#e74c3c' }} /> },
         { name: 'Water', budgeted: 0 },
       ],
     },
     {
       name: 'Wants',
       items: [
-        { name: 'Emergency Fund', budgeted: 0 },
-        { name: 'Groceries', budgeted: 0 },
-        { name: 'Transportation', budgeted: 0 },
+        { name: 'Emergency Fund', budgeted: 0, icon: <MonetizationOnIcon style={{ color: '#f39c12' }} /> },
+        { name: 'Groceries', budgeted: 0, icon: <LocalGroceryStoreIcon style={{ color: '#2ecc71' }} /> },
+        { name: 'Transportation', budgeted: 0, icon: <DirectionsCarIcon style={{ color: '#3498db' }} /> },
       ],
     },
     {
       name: 'Needs',
       items: [
-        { name: 'Vacation', budgeted: 0 },
-        { name: 'Dining Out', budgeted: 0 },
-        { name: 'LBYM Subscription', budgeted: 0 },
+        { name: 'Vacation', budgeted: 0, icon: <FlightIcon style={{ color: '#3498db' }} /> },
+        { name: 'Dining Out', budgeted: 0, icon: <LocalDiningIcon style={{ color: '#9b59b6' }} /> },
+        { name: 'LBYM Subscription', budgeted: 0, icon: <ReceiptIcon style={{ color: '#e74c3c' }} /> },
       ],
     },
   ];
@@ -108,6 +116,7 @@ function Budget() {
 
           {category.items.map((item, index) => (
             <div key={index} className="costItem">
+              <div className="costItemIcon">{item.icon ? item.icon : null}</div>
               <div className="costItemName">{item.name}</div>
               <button className="button" onClick={() => handleDeleteItem(categoryIndex, index)}>
                 -

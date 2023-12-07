@@ -1,4 +1,4 @@
-// budget.css
+
 body {
   margin: auto;
   font-size: 16px;
@@ -80,7 +80,7 @@ body * {
   font-weight: normal;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 100px) {
   .category,
   .costItem {
     grid-template-columns: 1fr;
