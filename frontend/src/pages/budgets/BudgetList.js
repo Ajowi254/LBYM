@@ -1,42 +1,82 @@
-import React, { useState, useEffect, useContext } from 'react';
-import UserContext from '../../context/UserContext';
-import ExpenseBudApi from '../../api/api';
-import Budget from './Budget';
+//budgetlist.js
+import { useEffect, useState, useContext } from "react";
+
+import UserContext from "../../context/UserContext";
+import ExpenseBudApi from "../../api/api";
+import BudgetCard from "./BudgetCard";
+
+import Typography from '@mui/material/Typography';
 
 function BudgetList() {
-  const [budgets, setBudgets] = useState([]);
   const { currentUser } = useContext(UserContext);
+  const [budgets, setBudgets] = useState([]);
+
+  const editBudget = async(budgetId, editData) => {
+    try {
+      await ExpenseBudApi.updateBudget(currentUser.id, budgetId, editData);
+      setBudgets(budgets => budgets.map( budget => 
+        budget.budget_id === budgetId
+        ? {...budget, amount: editData }
+        : budget ))
+      return {success: true};
+    } catch (err) {
+      return {success: false, err};
+    }
+  }
+
+  const addBudget = async(addData) => {
+    try {
+      await ExpenseBudApi.addBudget(currentUser.id, addData);
+      setBudgets(budgets => budgets.map( budget => 
+        budget.category_id === addData.category_id
+        ? {...budget, ...addData}
+        : budget));
+      return {success: true};
+    } catch (err) {
+      return {success: false, err};
+    }
+  } 
+  
 
   useEffect(() => {
-    async function fetchBudgets() {
+    async function getAllBudgets() {
       try {
-        const userId = currentUser.id;
-        const fetchedBudgets = await ExpenseBudApi.getAllBudgets(userId);
-        setBudgets(fetchedBudgets);
-      } catch (error) {
-        console.error('Error fetching budgets', error);
+        let budgets = await ExpenseBudApi.getAllBudgets(currentUser.id);
+        setBudgets(budgets);
+      } catch (err) {
+        console.error(err);
       }
     }
+    getAllBudgets();
+  }, [])
 
-    if (currentUser) {
-      fetchBudgets();
-    }
-  }, [currentUser]);
-
-  // Organize budgets into three categories
-  const organizedBudgets = [
-    { name: 'Bills', items: budgets.filter(budget => budget.name === 'Rent' || budget.name === 'Food') },
-    { name: 'Wants', items: budgets.filter(budget => budget.name === 'Taxes' || budget.name === 'Emergency Fund') },
-    { name: 'Needs', items: budgets.filter(budget => budget.name === 'Vacation' || budget.name === 'LBYM Subscription') },
-  ];
 
   return (
     <div>
-      {organizedBudgets.length > 0 && (
-        <Budget key="all" budget={organizedBudgets} />
-      )}
+      <Typography component="h1" variant="h5">
+            Budgets
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        Enter a positive number in each of the category to set a desired budget.
+      </Typography>
+        {budgets.map(b => (
+          <BudgetCard 
+            key={b.category} 
+            id={b.budget_id}
+            amount={b.amount}
+            category={b.category}
+            category_id={b.category_id} 
+            edit={editBudget}
+            add={addBudget}
+          />
+         
+        ))}
     </div>
-  );
+    
+    
+
+  )
 }
+
 
 export default BudgetList;
