@@ -1,4 +1,3 @@
-//nav.js
 import { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
@@ -11,11 +10,8 @@ import Avatar from '@mui/material/Avatar'
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import MenuIcon from '@mui/icons-material/Menu';
-import IconButton from '@mui/material/IconButton';
 
-
-function Navbar({logout, drawerWidth, handleDrawerToggle}) {
+function Navbar({logout}) {
   const { currentUser } = useContext(UserContext);
   const initials = userInitials(currentUser);
 
@@ -25,20 +21,11 @@ function Navbar({logout, drawerWidth, handleDrawerToggle}) {
         position="fixed"
         sx={{
           backgroundColor: '#045681',
-          width: currentUser? { sm: `calc(100% - ${drawerWidth}px)` } : {},
-          ml: currentUser? { sm: `${drawerWidth}px` } : {},
+          width: '100%',
+          height: '64px' // Add this line to set a fixed height for the AppBar
         }}
     >
       <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="start"
-          onClick={handleDrawerToggle}
-          sx={{ mr: 2, display: { sm: 'none' } }}
-        >
-          {currentUser? <MenuIcon />: null }
-        </IconButton>
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}><Link to="/">LBYM</Link></Typography>
         {currentUser
         ?(<>
@@ -57,4 +44,3 @@ function Navbar({logout, drawerWidth, handleDrawerToggle}) {
 }
 
 export default Navbar;
-

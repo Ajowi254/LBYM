@@ -11,7 +11,7 @@ import useLocalStorage from './hooks/useLocalStorage';
 import Routes from './routes/Routes';
 import NavWithDrawer from './components/NavWithDrawer';
 import LoadingSpinner from './components/LoadingSpinner';
-import Footer from './components/Footer';
+//import Footer from './components/Footer';
 import theme from './theme/theme';
 import FeedbackPopup from './components/FeedbackPopup'; // Import the FeedbackPopup component
 
@@ -87,7 +87,7 @@ function App() {
           <ThemeProvider theme={theme}>
             <NavWithDrawer logout={logout}/>
             <Routes register={register} login={login} />
-            <Footer />
+      
             {showFeedbackPopup && <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />}
           </ThemeProvider>
         </UserContext.Provider>

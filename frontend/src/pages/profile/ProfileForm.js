@@ -1,6 +1,5 @@
 //profileform.js
-import { useState, useContext } from "react";
-
+import { useState, useContext, useRef } from "react";
 import UserContext from "../../context/UserContext";
 import ExpenseBudApi from "../../api/api";
 import FlashMsg from "../../components/FlashMsg";
@@ -14,16 +13,18 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
-
 function ProfileForm() {
   const {currentUser, setCurrentUser } = useContext(UserContext);
+  const uploadedImage = useRef(null);
+  const imageUploader = useRef(null);
 
   const INITIAL_STATE = {
     username: currentUser.username,
     firstName: currentUser.firstName,
     lastName: currentUser.lastName,
     password: '',
-    email: currentUser.email
+    email: currentUser.email,
+    profileImg: ''
   }
 
   const [formData, setFormData] = useState(INITIAL_STATE);
@@ -35,7 +36,21 @@ function ProfileForm() {
     "formData=", formData,
     "formErrors=", formErrors
   )
-  
+
+  const handleImageUpload = e => {
+    const [file] = e.target.files;
+    if (file) {
+      const reader = new FileReader();
+      const {current} = uploadedImage;
+      current.file = file;
+      reader.onload = (e) => {
+        current.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+      setFormData(data => ({...data, profileImg: file}));
+    }
+  };
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     setFormData(data => ({...data, [name]: value}));
@@ -79,6 +94,13 @@ function ProfileForm() {
             Profile
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        <div style={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px"}}>
+          <div style={{width: "100px", height: "100px", border: "1px solid black", position: "relative", marginBottom: "10px"}}>
+            <img ref={uploadedImage} style={{width: "100%", height: "100%"}} />
+            <div style={{position: "absolute", right: "0", bottom: "0", backgroundColor: "white", cursor: "pointer"}} onClick={() => imageUploader.current.click()}>+</div>
+          </div>
+          <input type="file" accept="image/*" onChange={handleImageUpload} ref={imageUploader} style={{display: "none"}} />
+        </div>
         <TextField
           margin="dense"
           fullWidth
@@ -155,9 +177,7 @@ function ProfileForm() {
       </Box>
       {saveStatus && <FlashMsg type='success' messages={['Changes updated successfully.']} />}
     </Container>
-    
   )
 }
-
 
 export default ProfileForm;

@@ -7,3 +7,17 @@
   text-decoration: underline;
 }
 
+.NavWithDrawer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 50px; /* Adjust this value according to your needs */
+}
+
+.main-content {
+  padding-bottom: 50px; /* Adjust this value according to the height of your bottom nav bar */
+}

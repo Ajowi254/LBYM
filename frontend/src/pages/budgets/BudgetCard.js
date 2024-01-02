@@ -1,30 +1,19 @@
 //budgetcard.js
-import { useState } from "react";
-
+import React, { useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import FlashMsg from "../../components/FlashMsg";
+import { BiCart, BiRestaurant, BiShoppingBag, BiMotorcycle, BiGroup, BiCar } from 'react-icons/bi';
 
-import Box from "@mui/material/Box";
-import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
-import SaveIcon from '@mui/icons-material/Save';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-
-
-function BudgetCard({id, amount=null, category, category_id, edit, add}) {
-
+function BudgetCard({ id, amount, category, category_id, edit, add }) {
   const [editAmount, setEditAmount] = useState(amount);
-  const [isEditing, setIsEditing] = useState(false);
   const [formError, setFormError] = useState(false);
   const [saveStatus, setSaveStatus] = useState(false);
 
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-  }
-
-  const handleChange = (e) => {
-    setEditAmount(e.target.value);
-  }
+  const handleSliderChange = (e) => {
+    const value = e.target.value;
+    setEditAmount(value);
+    e.target.style.setProperty('--value', `${value}%`);
+  };
 
   const handleEdit = async(e) => {
     e.preventDefault();
@@ -44,42 +33,27 @@ function BudgetCard({id, amount=null, category, category_id, edit, add}) {
         setSaveStatus(true);
       }
     }
-    setIsEditing(false);
-   
-  }
-
-  let jsx = (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <TextField value={editAmount} />
-      <IconButton onClick={toggleEdit}>
-        <EditIcon fontSize="small" />
-      </IconButton>
-    </Box>
-  )
-
-  if(isEditing){
-    jsx = (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <TextField onChange={handleChange} value={editAmount} />
-        <IconButton onClick={handleEdit}>
-          <SaveIcon fontSize="small" />
-        </IconButton>
-      </Box>
-    )
   }
 
   return (
-    <Box className="BudgetCard" sx={{ mt: 2 }}>
-      <Typography component="h3" fontWeight="bold" sx={{pr: 1}}>
-        {category}    
-      </Typography>
-      {jsx}
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      {formError && <FlashMsg type='error' messages={['Please enter a valid number and try again.']} />}
-      {saveStatus && <FlashMsg type='success' messages={['Budget saved.']} />}
-      </Box>
-    </Box>
-  )
+    <div className="budget-card">
+      {category === 'Groceries' && <BiCart size={30} />}
+      {category === 'Eating Out' && <BiRestaurant size={30} />}
+      {/* Add the rest of your icons... */}
+      <h5>{category}</h5>
+      <Form onSubmit={handleEdit}>
+        <Form.Group controlId="formBasicRange">
+          <Form.Label>Amount: ${editAmount}</Form.Label>
+          <Form.Control type="range" className="slider" value={editAmount} min="0" max="1000" step="10" onChange={handleSliderChange} />
+        </Form.Group>
+        <Button variant="primary" type="submit" style={{backgroundColor: '#0f766e'}}>
+          Save
+        </Button>
+      </Form>
+      {formError && <FlashMsg message="An error occurred while saving." />}
+      {saveStatus && <FlashMsg message="Saved successfully." />}
+    </div>
+  );
 }
 
 export default BudgetCard;

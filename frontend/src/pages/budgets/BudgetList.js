@@ -57,7 +57,7 @@ function BudgetList() {
             Budgets
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        Enter a positive number in each of the category to set a desired budget.
+       Set your desired budget!
       </Typography>
         {budgets.map(b => (
           <BudgetCard 
