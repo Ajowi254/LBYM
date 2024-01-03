@@ -1,3 +1,4 @@
+//NAV.JS
 import { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
@@ -11,7 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-function Navbar({logout}) {
+function Navbar({logout, profileImg}) { // Import the profileImg prop
   const { currentUser } = useContext(UserContext);
   const initials = userInitials(currentUser);
 
@@ -29,7 +30,7 @@ function Navbar({logout}) {
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}><Link to="/">LBYM</Link></Typography>
         {currentUser
         ?(<>
-           <Link to="/profile"><Avatar sx={{width: 36, height: 36}}>{initials}</Avatar></Link>
+           <Link to="/profile"><Avatar sx={{width: 36, height: 36}} src={profileImg}>{initials}</Avatar></Link>
            <Button color="inherit"><Link to="/" onClick={logout}>Logout</Link></Button>
            </>
           )
