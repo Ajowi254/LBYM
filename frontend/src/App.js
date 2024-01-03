@@ -1,4 +1,4 @@
-//App.js
+// App.js
 import { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { decodeToken } from 'react-jwt';
@@ -11,9 +11,8 @@ import useLocalStorage from './hooks/useLocalStorage';
 import Routes from './routes/Routes';
 import NavWithDrawer from './components/NavWithDrawer';
 import LoadingSpinner from './components/LoadingSpinner';
-//import Footer from './components/Footer';
 import theme from './theme/theme';
-import FeedbackPopup from './components/FeedbackPopup'; // Import the FeedbackPopup component
+import FeedbackPopup from './components/FeedbackPopup';
 
 import { ThemeProvider } from '@mui/material/styles';
 
@@ -21,7 +20,7 @@ function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [userToken, setUserToken] = useLocalStorage("expensebud_token");
   const [currentUser, setCurrentUser] = useState(null);
-  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false); // Add this line
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
 
   async function register(registerData){
     try {
@@ -63,8 +62,8 @@ function App() {
             setShowFeedbackPopup(true);
           }
         } catch (err) {
-        console.error('Error loading current user', err);
-        setCurrentUser(null);
+          console.error('Error loading current user', err);
+          setCurrentUser(null);
         }
       }
       setInfoLoaded(true);
@@ -83,17 +82,16 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <UserContext.Provider value={{currentUser, setCurrentUser}}>
+        <UserContext.Provider value={{ currentUser, setCurrentUser }}>
           <ThemeProvider theme={theme}>
-            <NavWithDrawer logout={logout}/>
+            <NavWithDrawer logout={logout} />
             <Routes register={register} login={login} />
-      
             {showFeedbackPopup && <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />}
           </ThemeProvider>
         </UserContext.Provider>
       </BrowserRouter>
     </div>
-  )  
+  );
 }
 
 export default App;

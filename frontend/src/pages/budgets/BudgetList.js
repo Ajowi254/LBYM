@@ -54,10 +54,8 @@ function BudgetList() {
   return (
     <div>
       <Typography component="h1" variant="h5">
-            Budgets
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-       Set your desired budget!
       </Typography>
         {budgets.map(b => (
           <BudgetCard 

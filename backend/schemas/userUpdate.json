@@ -24,6 +24,16 @@
         "minLength": 6,
         "maxLength": 50,
         "format": "email"
+      },
+      "profile_pic_url": {
+        "type": "string",
+        "format": "uri"
+      },
+      "profile_pic_filename": {
+        "type": "string"
+      },
+      "profile_pic_id": {
+        "type": "string"
       }
   },
   "examples": [{
@@ -31,6 +41,9 @@
       "password": "test123",
       "firstName": "testfirst",
       "lastName": "testlast",
-      "email": "test3@test.com"
+      "email": "test3@test.com",
+      "profile_pic_url": "http://example.com/profile_pic.png",
+      "profile_pic_filename": "profile_pic.png",
+      "profile_pic_id": "12345"
   }]
 }

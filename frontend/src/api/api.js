@@ -126,5 +126,29 @@ class ExpenseBudApi {
     let res = await this.request(`users/${userId}/expenses/${expenseId}`, data, 'delete');
     return res.deleted;
   }
+   /** Image Upload */
+   static async uploadImage(userId, file) {
+    const url = `${BASE_URL}/users/${userId}/profile_pic`;
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await axios.put(url, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    return response.data;
+  }
+
+  /** Delete Profile Picture */
+  static async deleteProfilePic(userId) {
+    const url = `${BASE_URL}/users/${userId}/profile_pic`;
+
+    const response = await axios.delete(url, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    return response.data;
+  }
 }
+
 export default ExpenseBudApi;

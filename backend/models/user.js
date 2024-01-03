@@ -3,6 +3,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 const { UnauthorizedError, BadRequestError, NotFoundError } = require("../expressErrors");
 const { partialUpdateSql } = require("../helpers/sql");
+const cloudinary = require('cloudinary').v2;
 const BCRYPT_WORK_FACTOR = +process.env.BCRYPT_WORK_FACTOR;
 
 class User {
@@ -170,5 +171,54 @@ class User {
 
     return result.rows[0] || null;
   }
+  // New route for uploading and updating profile picture
+  static async updateProfilePic(userId, url, filename, id) {
+    // Check if the user already has a profile picture
+    const oldProfilePic = await db.query(
+      `SELECT profile_pic_id FROM users WHERE id = $1`,
+      [userId]
+    );
+
+    // If yes, delete the old one from cloudinary
+    if (oldProfilePic.rows[0].profile_pic_id) {
+      await cloudinary.uploader.destroy(oldProfilePic.rows[0].profile_pic_id);
+    }
+
+    // Update the profile picture data in the database
+    const result = await db.query(
+      `UPDATE users SET profile_pic_url = $1, profile_pic_filename = $2, profile_pic_id = $3 WHERE id = $4 RETURNING profile_pic_url, profile_pic_filename, profile_pic_id`,
+      [url, filename, id, userId]
+    );
+
+    return result.rows[0];
+  }
+
+  // Delete the profile picture
+  static async deleteProfilePic(userId) {
+    // Get the profile picture data from the database
+    const profilePic = await db.query(
+      `SELECT profile_pic_id FROM users WHERE id = $1`,
+      [userId]
+    );
+
+    // Delete the image from cloudinary by its public id
+    await cloudinary.uploader.destroy(profilePic.rows[0].profile_pic_id);
+
+    // Delete the profile picture data from the database
+    await db.query(
+      `UPDATE users SET profile_pic_url = NULL, profile_pic_filename = NULL, profile_pic_id = NULL WHERE id = $1 RETURNING profile_pic_url, profile_pic_filename, profile_pic_id`,
+      [userId]
+    );
+
+    return { message: 'Profile picture deleted successfully' };
+  }
 }
+
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
+});
+
 module.exports = User;

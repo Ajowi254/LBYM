@@ -3,27 +3,28 @@
 const express = require("express");
 const router = new express.Router();
 const jsonschema = require("jsonschema");
+const { parser } = require("../config"); // Import the parser
 
 const User = require("../models/user");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 const { BadRequestError } = require("../expressErrors");
-const { ensureCorrectUser,authenticateJWT } = require('../middleware/auth');
+const { ensureCorrectUser, authenticateJWT } = require('../middleware/auth');
 
 /** GET /users/:userId => { user }
  * Returns { username, firstName, lastName, email, budgets, expenses}
  *   where budgets is { id, amount, category }
-      and expenses is { id, amount. date, vendor, description, category }
+ *   and expenses is { id, amount. date, vendor, description, category }
  * Authorization required: same user as logged in user
  */
 
-      router.get("/:userId", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
-        try {
-          const user = await User.get(req.params.userId);
-          return res.json({ user });
-        } catch(err) {
-          return next(err);
-        }
-      });
+router.get("/:userId", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
+  try {
+    const user = await User.get(req.params.userId);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 /** PATCH /users/:userId { user } => { user }
  * Data can include: { username, firstName, lastName, email }
@@ -41,12 +42,11 @@ router.patch("/:userId", ensureCorrectUser, async function (req, res, next) {
     const { password } = req.body;
     delete req.body.password;
     const user = await User.update(req.params.userId, password, req.body);
-    return res.json({ user })
-
-  } catch(err) {
+    return res.json({ user });
+  } catch (err) {
     return next(err);
   }
-})
+});
 
 /** DELETE /users/:userId  =>  { deleted: username }
  * Authorization required: same user as logged in user
@@ -55,12 +55,47 @@ router.patch("/:userId", ensureCorrectUser, async function (req, res, next) {
 router.delete("/:userId", ensureCorrectUser, async function (req, res, next) {
   try {
     const user = await User.remove(req.params.userId);
-    return res.json({ deleted: user })
-
+    return res.json({ deleted: user });
   } catch (err) {
     return next(err);
   }
-})
-// Inside the GET /users/:userId route
+});
+
+// Route for uploading and updating profile picture
+router.put("/:userId/profile_pic", authenticateJWT, ensureCorrectUser, parser.single('image'), async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const image = req.file; // get the image data from cloudinary
+    const result = await User.updateProfilePic(userId, image.url, image.originalname, image.public_id);
+
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// Route for getting the profile picture
+router.get('/:userId/profile_pic', authenticateJWT, ensureCorrectUser, async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const result = await User.getProfilePic(userId);
+
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// Route for deleting the profile picture
+router.delete('/:userId/profile_pic', authenticateJWT, ensureCorrectUser, async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    await User.deleteProfilePic(userId);
+
+    return res.json({ message: 'Profile picture deleted successfully' });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;

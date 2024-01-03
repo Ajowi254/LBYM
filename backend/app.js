@@ -12,6 +12,7 @@ const expensesRoutes = require("./routes/expenses");
 const budgetsRoutes = require("./routes/budgets");
 const accountsRoutes = require("./routes/accounts"); 
 const plaidRoutes = require("./routes/plaid");
+const { parser } = require("./config");
 
 const app = express();
 

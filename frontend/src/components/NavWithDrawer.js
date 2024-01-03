@@ -1,3 +1,4 @@
+//NavWithDrawer.js
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -10,10 +11,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar'; // Import the Avatar component
 
 const drawerItems = ['Dashboard','Accounts', 'Budgets', 'Expenses'];
 
-function NavWithDrawer({logout}) {
+function NavWithDrawer({logout, profileImg}) { // Receive the profileImg prop
   const { currentUser } = useContext(UserContext);
 
   const drawer = (
@@ -36,6 +38,7 @@ function NavWithDrawer({logout}) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)', paddingBottom: '50px' }}>
       <Navbar logout={logout} />
+      <Avatar src={profileImg}>{currentUser.username[0]}</Avatar> // Use the profileImg as the src attribute
       {currentUser && drawer}
     </Box>
   );
