@@ -1,7 +1,8 @@
-//profileform.js
-import { useState, useContext, useRef } from "react";
+// ProfileForm.js
+import React, { useState, useContext, useRef } from "react";
 import UserContext from "../../context/UserContext";
 import ExpenseBudApi from "../../api/api";
+import { uploadImageToCloudinary } from '../../utils/uploadImageToCloudinary';
 import FlashMsg from "../../components/FlashMsg";
 import DialogModal from "../../components/DialogModal";
 import errorMap from "../../utils/errorMap";
@@ -12,9 +13,10 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
 
 function ProfileForm() {
-  const {currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser, setCurrentUser } = useContext(UserContext);
   const uploadedImage = useRef(null);
   const imageUploader = useRef(null);
 
@@ -24,60 +26,55 @@ function ProfileForm() {
     lastName: currentUser.lastName,
     password: '',
     email: currentUser.email,
-    profileImg: ''
-  }
+    profileImg: currentUser.profileImg || ''
+  };
 
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [formErrors, setFormErrors] = useState({});
   const [saveStatus, setSaveStatus] = useState(false);
 
-  console.debug(
-    "ProfileForm",
-    "formData=", formData,
-    "formErrors=", formErrors
-  )
-
-  const handleImageUpload = e => {
+  // Handle Cloudinary Upload
+  const handleImageUpload = async (e) => {
     const [file] = e.target.files;
     if (file) {
-      const reader = new FileReader();
-      const {current} = uploadedImage;
-      current.file = file;
-      reader.onload = (e) => {
-        current.src = e.target.result;
+      try {
+        const imageUrl = await uploadImageToCloudinary(file);
+        await ExpenseBudApi.updateProfilePic(currentUser.id, imageUrl);
+        setCurrentUser((prevUser) => ({ ...prevUser, profileImg: imageUrl }));
+        setFormData({ ...formData, profileImg: imageUrl }); 
+      } catch (error) {
+        console.error('Error uploading image:', error);
       }
-      reader.readAsDataURL(file);
-      setFormData(data => ({...data, profileImg: file}));
+    }
+  };
+
+  const handleDeleteProfilePic = async () => {
+    try {
+      await ExpenseBudApi.deleteProfilePic(currentUser.id);
+      setCurrentUser((prevUser) => ({ ...prevUser, profileImg: null }));
+      setFormData({ ...formData, profileImg: '' });
+    } catch (error) {
+      console.error('Error deleting profile picture:', error);
     }
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData(data => ({...data, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((data) => ({ ...data, [name]: value }));
     setFormErrors([]);
-  }
+  };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let updatedUser;
     try {
-      updatedUser = await ExpenseBudApi.updateProfile(currentUser.id, formData);
-      
+      const updatedUser = await ExpenseBudApi.updateProfile(currentUser.id, formData);
+      setCurrentUser(updatedUser);
+      setSaveStatus(true);
     } catch (err) {
-      if(err.includes('Invalid password')){
-        const index = err.indexOf('Invalid password')
-        err[index] = 'instance.password'
-      } 
-      let errors = errorMap(err)
+      const errors = errorMap(err);
       setFormErrors(errors);
-      return;
     }
-
-    setFormData(data => ({...data, password: ''}));
-    setFormErrors({});
-    setSaveStatus(true);
-    setCurrentUser(updatedUser);
-  }
+  }; // This is where handleSubmit ends
 
   const handleDelete = async() => {
     try {
@@ -86,20 +83,33 @@ function ProfileForm() {
     } catch (err) {
       return {success: false, err};
     }
-  }
+  };
+
 
   return (
     <Container maxWidth="xs" className="ProfileForm">
-      <Typography component="h1" variant="h5">
-            Profile
-      </Typography>
+      <Typography component="h1" variant="h5">Profile</Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-        <div style={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px"}}>
-          <div style={{width: "100px", height: "100px", border: "1px solid black", position: "relative", marginBottom: "10px"}}>
-            <img ref={uploadedImage} style={{width: "100%", height: "100%"}} />
-            <div style={{position: "absolute", right: "0", bottom: "0", backgroundColor: "white", cursor: "pointer"}} onClick={() => imageUploader.current.click()}>+</div>
-          </div>
-          <input type="file" accept="image/*" onChange={handleImageUpload} ref={imageUploader} style={{display: "none"}} />
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" }}>
+          <Avatar
+            ref={uploadedImage}
+            src={formData.profileImg || ''}
+            alt="Profile"
+            style={{ width: "100px", height: "100px", border: "1px solid black" }}
+            onClick={() => imageUploader.current.click()}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            ref={imageUploader}
+            style={{ display: "none" }}
+          />
+          {formData.profileImg && (
+            <Button variant="outlined" onClick={handleDeleteProfilePic} sx={{ mt: 2 }}>
+              Delete Profile Picture
+            </Button>
+          )}
         </div>
         <TextField
           margin="dense"
@@ -168,7 +178,7 @@ function ProfileForm() {
         >
           Save Changes
         </Button>
-        <DialogModal 
+        <DialogModal
           buttonMsg="Delete Account"
           title="Delete Account?"
           content="Deleting your account will delete your access and all your information on this site."
@@ -177,7 +187,7 @@ function ProfileForm() {
       </Box>
       {saveStatus && <FlashMsg type='success' messages={['Changes updated successfully.']} />}
     </Container>
-  )
+  );
 }
 
 export default ProfileForm;

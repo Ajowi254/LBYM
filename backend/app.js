@@ -12,13 +12,12 @@ const expensesRoutes = require("./routes/expenses");
 const budgetsRoutes = require("./routes/budgets");
 const accountsRoutes = require("./routes/accounts"); 
 const plaidRoutes = require("./routes/plaid");
-const { parser } = require("./config");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
@@ -28,20 +27,13 @@ app.use("/users/:userId/expenses", expensesRoutes);
 app.use("/users/:userId/budgets", budgetsRoutes);
 app.use("/users/:userId/accounts", accountsRoutes); 
 
-/** Handle 404 errors */
-app.use(function (req, res, next) {
-  return next(new NotFoundError());
-});
+// Handle 404 errors
+app.use((req, res, next) => next(new NotFoundError()));
 
-/** Generic error handler; anything unhandled goes here. */
-app.use(function (err, req, res, next) {
+// Generic error handler
+app.use((err, req, res, next) => {
   const status = err.status || 500;
-  const message = err.message;
-
-  return res.status(status).json({
-    error: {message, status}
-  });
+  return res.status(status).json({ error: { message: err.message, status } });
 });
-
 
 module.exports = app;

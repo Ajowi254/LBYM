@@ -6,7 +6,8 @@ CREATE TABLE users (
   last_name TEXT NOT NULL,
   email TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  isFirstLogin BOOLEAN DEFAULT true
+  isFirstLogin BOOLEAN DEFAULT true,
+  profile_pic_url TEXT
 );
 
 CREATE TABLE categories (

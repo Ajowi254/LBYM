@@ -2,39 +2,33 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "http://example.com/example.json",
   "type": "object",
-  "required": [],
+  "required": [], 
   "properties": {
-      "username": {
-        "type": "string",
-        "minLength": 5,
-        "maxLength": 20
-      },
-      "firstName": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 30
-      },
-      "lastName": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 30
-      },
-      "email": {
-        "type": "string",
-        "minLength": 6,
-        "maxLength": 50,
-        "format": "email"
-      },
-      "profile_pic_url": {
-        "type": "string",
-        "format": "uri"
-      },
-      "profile_pic_filename": {
-        "type": "string"
-      },
-      "profile_pic_id": {
-        "type": "string"
-      }
+    "username": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 20
+    },
+    "firstName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "lastName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "email": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 50,
+      "format": "email"
+    },
+    "profile_pic_url": {
+      "type": "string",
+      "format": "uri"
+    }
   },
   "examples": [{
       "username": "testuser",
@@ -42,8 +36,8 @@
       "firstName": "testfirst",
       "lastName": "testlast",
       "email": "test3@test.com",
-      "profile_pic_url": "http://example.com/profile_pic.png",
-      "profile_pic_filename": "profile_pic.png",
-      "profile_pic_id": "12345"
-  }]
+      "profile_pic_url": "http://example.com/profile_pic.png"
+    }
+  ]
 }
+

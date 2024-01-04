@@ -126,29 +126,39 @@ class ExpenseBudApi {
     let res = await this.request(`users/${userId}/expenses/${expenseId}`, data, 'delete');
     return res.deleted;
   }
-   /** Image Upload */
-   static async uploadImage(userId, file) {
-    const url = `${BASE_URL}/users/${userId}/profile_pic`;
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await axios.put(url, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+/** Image Upload */
+/** Update user's profile picture URL */
+static async updateProfilePic(userId, imageUrl) {
+  const url = `${BASE_URL}/users/${userId}/profile_pic`;
+  try {
+    const response = await axios.patch(url, { url: imageUrl }, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
+      },
     });
-
     return response.data;
-  }
-
-  /** Delete Profile Picture */
-  static async deleteProfilePic(userId) {
-    const url = `${BASE_URL}/users/${userId}/profile_pic`;
-
-    const response = await axios.delete(url, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    return response.data;
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    throw error;
   }
 }
 
+/** Delete user's profile picture */
+static async deleteProfilePic(userId) {
+  const url = `${BASE_URL}/users/${userId}/profile_pic`;
+  try {
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting profile picture:', error);
+    throw error;
+  }
+}
+}
 export default ExpenseBudApi;
