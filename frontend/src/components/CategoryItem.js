@@ -1,19 +1,37 @@
-// CategoryItem.js
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
+import Slider, { SliderThumb } from '@mui/material/Slider';
+import { styled } from '@mui/material/styles';
 
-function CategoryItem({ icon, name }) {
+// Define a custom thumb component for the slider
+const CustomThumb = styled(SliderThumb)({
+  height: 24,
+  width: 24,
+  backgroundColor: '#fff',
+  border: '2px solid currentColor',
+  '&:hover': {
+    boxShadow: '0 0 0 8px rgba(0, 0, 0, 0.16)',
+  },
+  '& .bar': {
+    height: 9,
+    width: 1,
+    backgroundColor: 'currentColor',
+    marginLeft: 1,
+    marginRight: 1,
+  },
+});
+
+function CategoryItem({ icon, name, budget, onBudgetChange }) {
   return (
     <Box sx={{
       display: 'flex',
-      flexDirection: 'column', // Elements are stacked vertically
-      alignItems: 'flex-start', // Align items to the start of the flex container
-      py: 1, // Padding top and bottom for each item
-      borderBottom: '1px solid #A0A0A0', // The color you want for separation
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      py: 1,
+      borderBottom: '1px solid #A0A0A0',
       '&:last-child': {
-        borderBottom: 'none', // Remove bottom border for the last item
+        borderBottom: 'none',
       },
     }}>
       <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold', fontSize: '0.9rem' }}>
@@ -21,7 +39,16 @@ function CategoryItem({ icon, name }) {
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
         <Box component="img" src={icon} alt={name} sx={{ width: '64px', height: '64px', mr: 2 }} />
-        <LinearProgress sx={{ flexGrow: 1, height: '10px', borderRadius: '5px' }} />
+        <Slider
+          components={{ Thumb: CustomThumb }}
+          value={budget}
+          onChange={(event, newValue) => onBudgetChange(name, newValue)}
+          aria-labelledby="input-slider"
+          min={0}
+          max={1000} // Set the maximum budget value here
+          valueLabelDisplay="auto"
+          sx={{ width: '100%' }} // This will make the slider take the full width available
+        />
       </Box>
     </Box>
   );
