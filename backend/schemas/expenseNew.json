@@ -1,32 +1,30 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "http://example.com/example.json",
+  "$id": "http://example.com/expenseNew.json",
   "type": "object",
-  "required": [
-    "amount",
-    "date",
-    "vendor",
-    "category_id"
-  ],
+  "required": ["amount", "date", "vendor", "category_id"],
   "properties": {
-      "amount": {
-        "type": "number"
-      },
-      "date": {
-        "type": "string"
-      },
-      "vendor": {
-        "type": "string"
-      },
-      "description": {
-        "type": "string"
-      },
-      "category_id": {
-        "type": "integer"
-      },
-      "transaction_id": {
-        "type": "string"
-      }
+    "amount": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "vendor": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category_id": {
+      "type": "integer"
+    },
+    "transaction_id": {
+      "type": "string"
+    },
+    "goal_id": {
+      "type": "integer"
+    }
   }
-
 }

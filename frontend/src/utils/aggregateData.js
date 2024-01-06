@@ -19,11 +19,11 @@ function groupAndAggregateData(data) {
 }
 
 
-function budgetByCategory(arr) {
+function goalByCategory(arr) {
   return arr.reduce((acc, item) => {
     acc[item.category] = item.amount;
     return acc;
   }, {});
 } 
 
-export { groupAndAggregateData, budgetByCategory } ;
+export { groupAndAggregateData, goalByCategory } ;

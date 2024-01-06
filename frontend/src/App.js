@@ -86,7 +86,9 @@ function App() {
           <ThemeProvider theme={theme}>
             <NavWithDrawer logout={logout} />
             <Routes register={register} login={login} />
-            {showFeedbackPopup && <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />}
+            {showFeedbackPopup && (
+              <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />
+            )}
           </ThemeProvider>
         </UserContext.Provider>
       </BrowserRouter>

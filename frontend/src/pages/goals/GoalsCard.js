@@ -1,10 +1,10 @@
-//budgetcard.js
+//goalscard.js
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import FlashMsg from "../../components/FlashMsg";
 import { BiCart, BiRestaurant, BiShoppingBag, BiMotorcycle, BiGroup, BiCar } from 'react-icons/bi';
 
-function BudgetCard({ id, amount, category, category_id, edit, add }) {
+function GoalCard({ id, amount, category, category_id, edit, add }) {
   const [editAmount, setEditAmount] = useState(amount);
   const [formError, setFormError] = useState(false);
   const [saveStatus, setSaveStatus] = useState(false);
@@ -19,15 +19,15 @@ function BudgetCard({ id, amount, category, category_id, edit, add }) {
     e.preventDefault();
     
     if (amount === null) {
-      const addBudget = await add({category_id, amount: +editAmount});
-      if(!addBudget.success) {
+      const addGoal = await add({category_id, amount: +editAmount});
+      if(!addGoal.success) {
         setFormError(true);
       } else {
         setSaveStatus(true);
       }
     } else {
-      const editBudget = await edit(id, {amount: +editAmount});
-      if(!editBudget.success) {
+      const editGoal = await edit(id, {amount: +editAmount});
+      if(!editGoal.success) {
         setFormError(true);
       } else {
         setSaveStatus(true);
@@ -36,7 +36,7 @@ function BudgetCard({ id, amount, category, category_id, edit, add }) {
   }
 
   return (
-    <div className="budget-card">
+    <div className="goal-card">
       {category === 'Groceries' && <BiCart size={30} />}
       {category === 'Eating Out' && <BiRestaurant size={30} />}
       {/* Add the rest of your icons... */}
@@ -56,4 +56,4 @@ function BudgetCard({ id, amount, category, category_id, edit, add }) {
   );
 }
 
-export default BudgetCard;
+export default GoalCard;

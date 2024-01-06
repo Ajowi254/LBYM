@@ -1,4 +1,4 @@
-//users.js
+//models=users.js
 const db = require("../db");
 const bcrypt = require("bcrypt");
 const { UnauthorizedError, BadRequestError, NotFoundError } = require("../expressErrors");
@@ -169,6 +169,29 @@ static async deleteProfilePic(userId) {
   if (!user) throw new NotFoundError(`No user with id: ${userId}`);
   return user;
 }
+  static async getHomepageData(user_id) {
+    // Fetch goals and their progress
+    const goalsResult = await db.query(`
+      SELECT g.id, goal_name, target_amount, current_amount, category_id
+      FROM goals g
+      WHERE user_id = $1`,
+      [user_id]
+    );
+
+    // Fetch expenses aggregated by category
+    const expensesResult = await db.query(`
+      SELECT category_id, SUM(amount) AS total_spent
+      FROM expenses
+      WHERE user_id = $1
+      GROUP BY category_id`,
+      [user_id]
+    );
+
+    return {
+      goals: goalsResult.rows,
+      expensesByCategory: expensesResult.rows,
+    };
+  }
 }
 
 module.exports = User;

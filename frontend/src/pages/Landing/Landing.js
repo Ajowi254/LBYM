@@ -1,16 +1,16 @@
-// Home.js
+// Landing.js
 import { Link } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
 
-import './Home.css';
+import './Landing.css';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 
-function Home() {
+function Landing() {
   const { currentUser } = useContext(UserContext);
   const history = useHistory();
 
@@ -22,10 +22,10 @@ function Home() {
   }, [currentUser]);
 
   return (
-    <div className="Home">
+    <div className="Landing">
       <Toolbar /> 
-      <Grid container className="Home-grid">
-        <Grid item xs={12} md={5} className="Home-grid-img"/>
+      <Grid container className="Landing-grid">
+        <Grid item xs={12} md={5} className="Landing-grid-img"/>
         <Grid item xs={12} md={6} sx={{pl:3}}>
           <Typography component="h1" sx={{fontWeight: 'bold'}}>
             Personal expense tracking & budgeting made simple
@@ -40,4 +40,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Landing;

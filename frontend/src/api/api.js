@@ -57,21 +57,25 @@ class ExpenseBudApi {
     return res.deleted;
   }
 
-  /** Budget */
-
-  static async getAllBudgets(id) {
-    let res = await this.request(`users/${id}/budgets`);
-    return res.budgets;
+  /** Goals */
+  static async getGoals(userId) {
+    let res = await this.request(`users/${userId}/goals`);
+    return res.goals;
   }
 
-  static async updateBudget(userId, budgetId, data) {
-    let res = await this.request(`users/${userId}/budgets/${budgetId}`, data, 'patch');
-    return res.budget;
+  static async addGoal(userId, data) {
+    let res = await this.request(`users/${userId}/goals`, data, 'post');
+    return res.goal;
   }
 
-  static async addBudget(userId, data) {
-    let res = await this.request(`users/${userId}/budgets`, data, 'post');
-    return res.budget;
+  static async updateGoal(userId, goalId, data) {
+    let res = await this.request(`users/${userId}/goals/${goalId}`, data, 'patch');
+    return res.goal;
+  }
+
+  static async deleteGoal(userId, goalId) {
+    let res = await this.request(`users/${userId}/goals/${goalId}`, {}, 'delete');
+    return res.deleted;
   }
 
   /** Plaid */
@@ -126,6 +130,11 @@ class ExpenseBudApi {
     let res = await this.request(`users/${userId}/expenses/${expenseId}`, data, 'delete');
     return res.deleted;
   }
+  /** Home Data */
+  static async getHomeData(userId) {
+    let res = await this.request(`users/${userId}/homepage`);
+    return res;
+  }
 /** Image Upload */
 /** Update user's profile picture URL */
 static async updateProfilePic(userId, imageUrl) {
@@ -140,6 +149,20 @@ static async updateProfilePic(userId, imageUrl) {
     return response.data;
   } catch (error) {
     console.error('Error updating profile picture:', error);
+    throw error;
+  }
+}
+
+static async getCategories() {
+  try {
+    const response = await axios.get(`${BASE_URL}/categories`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
     throw error;
   }
 }

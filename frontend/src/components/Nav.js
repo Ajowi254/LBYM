@@ -17,7 +17,7 @@ function Navbar({ logout }) {
   const initials = currentUser ? userInitials(currentUser) : "";
 
   return (
-    <AppBar component="nav" position="fixed" sx={{ backgroundColor: '#045681', width: '100%', height: '64px' }}>
+    <AppBar component="nav" position="fixed" sx={{ backgroundColor: '#FFFFFF', width: '100%', height: '64px' }}>
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
           <Link to="/">LBYM</Link>

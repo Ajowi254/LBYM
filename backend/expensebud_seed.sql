@@ -1,2 +1,8 @@
 INSERT INTO categories (category) 
-VALUES ('Entertainment'), ('Food & Drink'), ('Medical'), ('Rent & utilities'), ('Transportation'), ('Travel'), ('Other')
+VALUES 
+  ('Groceries'), 
+  ('Eating Out'), 
+  ('Shopping'), 
+  ('Food Delivery'), 
+  ('Going Out'), 
+  ('Ride Share')

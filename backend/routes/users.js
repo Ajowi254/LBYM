@@ -83,5 +83,13 @@ router.delete("/:userId/profile_pic", authenticateJWT, ensureCorrectUser, async 
   }
 });
 
+router.get("/:userId/homepage", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
+  try {
+    const homepageData = await User.getHomepageData(req.params.userId);
+    return res.json(homepageData);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;

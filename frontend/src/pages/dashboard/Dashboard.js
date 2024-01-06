@@ -6,9 +6,8 @@ import BarChart from "../../components/BarChart";
 import PieChart from '../../components/PieChart';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import FlashMsg from '../../components/FlashMsg';
-import ExpenseTable from '../expenses/ExpenseTable';
 import FeedbackPopup from '../../components/FeedbackPopup'; // Import the FeedbackPopup component
-import { groupAndAggregateData, budgetByCategory } from '../../utils/aggregateData';
+import { groupAndAggregateData, goalByCategory } from '../../utils/aggregateData';
 
 import './Dashboard.css';
 import Box from '@mui/material/Box';
@@ -17,7 +16,7 @@ import Typography from '@mui/material/Typography';
 function Dashboard() {
   const { currentUser } = useContext(UserContext);
   const [expenses, setExpenses] = useState([]);
-  const [budgets, setBudgets] = useState([]);
+  const [goals, setBudgets] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [loadingErrors, setLoadingErrors] = useState([]);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -38,8 +37,8 @@ function Dashboard() {
 
     async function getAllBudgets() {
       try {
-        let budgets = await ExpenseBudApi.getAllBudgets(currentUser.id);
-        setBudgets(budgets);
+        let goals = await ExpenseBudApi.getAllBudgets(currentUser.id);
+        setBudgets(goals);
       } catch (err) {
         setLoadingErrors(err);
         console.error(err);
@@ -72,7 +71,7 @@ function Dashboard() {
 
   useEffect(() => {
     const aggregatedExpenses = groupAndAggregateData(expenses);
-    const aggregatedBudgets = budgetByCategory(budgets);
+    const aggregatedBudgets = goalByCategory(goals);
     const datasets = [
       {
         label: 'Expense',
@@ -97,7 +96,7 @@ function Dashboard() {
 
     setBarData(barData);
     setPieData(pieData);
-  }, [expenses, budgets]);
+  }, [expenses, goals]);
 
   const handleFeedbackSubmit = (selectedOption) => {
     setFeedbackOpen(false);
@@ -115,7 +114,7 @@ function Dashboard() {
         Dashboard
       </Typography>
       {loadingErrors && <FlashMsg type="error" messages={loadingErrors} />}
-      {(expenses.length && budgets.length) ? (
+      {(expenses.length && goals.length) ? (
         <>
           <div className="Dashboard-row">
             <div className="Dashboard-bar">
@@ -135,7 +134,7 @@ function Dashboard() {
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Most Recent Expenses
             </Typography>
-            <ExpenseTable data={expenses} showPagination={false} />
+         
           </div>
         </>
       ) : (
@@ -155,7 +154,7 @@ function Dashboard() {
                     <li>Enter transactions manually in the Expenses tab.</li>
                   </ul>
                 </li>
-                <li>Set up budget goals for each category in the Budgets tab.</li>
+                <li>Set up goals for each category in the Budgets tab.</li>
                 <li>View the dashboard!</li>
               </ol>
             </Typography>

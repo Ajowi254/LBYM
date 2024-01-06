@@ -3,12 +3,12 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import RegisterForm from '../pages/login-register/RegisterForm';
 import LoginForm from '../pages/login-register/LoginForm';
-import Home from '../pages/home/Home';
+import Landing from '../pages/Landing/Landing';
 import Dashboard from '../pages/dashboard/Dashboard';
 import ProfileForm from '../pages/profile/ProfileForm';
-import BudgetList from '../pages/budgets/BudgetList';
+import GoalsList from '../pages/goals/GoalsList';
 import AccountList from '../pages/accounts/AccountList';
-import ExpenseList from '../pages/expenses/ExpenseList';
+import HomeList from '../pages/home/HomeList';
 import Main from '../components/Main';
 import PrivateRoute from './PrivateRoute';
 
@@ -16,7 +16,7 @@ function Routes({register, login}) {
   return (
     <Switch>
       <Route exact path="/">
-        <Home />
+        <Landing />
       </Route>
 
       <Route exact path="/register">
@@ -33,9 +33,9 @@ function Routes({register, login}) {
         </Main>
       </PrivateRoute>
 
-      <PrivateRoute exact path="/budgets">
+      <PrivateRoute exact path="/goals">
         <Main>
-        <BudgetList />
+        <GoalsList />
         </Main>
       </PrivateRoute>
 
@@ -45,9 +45,9 @@ function Routes({register, login}) {
         </Main>
       </PrivateRoute>
 
-      <PrivateRoute exact path="/expenses">
+      <PrivateRoute exact path="/home">
         <Main>
-        <ExpenseList />
+        <HomeList />
         </Main>
       </PrivateRoute>
 

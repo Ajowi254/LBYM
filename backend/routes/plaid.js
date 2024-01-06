@@ -4,9 +4,11 @@
 const express = require("express");
 const router = express.Router();
 const { plaidClient } = require("../config");
+const { io } = require('../server');
 
 const Account = require("../models/account");
 const Expense = require("../models/expense");
+const Goal = require("../models/goal");
 const { mapCategory } = require("../helpers/category");
 
 router.post('/create_link_token', async function (req, res, next) {
@@ -74,39 +76,44 @@ router.post('/transactions/sync', async function (req, res, next) {
       include_personal_finance_category: true,
     },
   };
+
   try {
     const transactionResult = await plaidClient.transactionsSync(request);
     let newTransactions = transactionResult.data.added || [];
-   
-    if (newTransactions.length > 0) {
-      for (let transaction of newTransactions) {
-        let convertedId = mapCategory(transaction.personal_finance_category.primary);
-        
-        let data = {
-          amount: transaction.amount,
-          date: transaction.date,
-          vendor: transaction.merchant_name,
-          description: transaction.name,
-          category_id: convertedId,
-          user_id: res.locals.user.id,
-          transaction_id: transaction.transaction_id,
-          account_id: account_id
-        };
+    let expensesCreated = []; // To store created expenses and emit later
+
+    for (let transaction of newTransactions) {
+      let convertedId = mapCategory(transaction.personal_finance_category.primary);
       
-        try {
-          await Expense.create(res.locals.user.id, data);
-        } catch (err) {
-          console.debug('/transactions/sync await expense error at data:', data)
-          return next(err);
-        }
+      let data = {
+        amount: transaction.amount,
+        date: transaction.date,
+        vendor: transaction.merchant_name,
+        description: transaction.name,
+        category_id: convertedId,
+        user_id: res.locals.user.id,
+        transaction_id: transaction.transaction_id,
+        account_id: account_id
+      };
+
+      try {
+        const expense = await Expense.create(res.locals.user.id, data);
+        expensesCreated.push(expense); // Add the new expense to the array
+        await Goal.updateProgress(expense); // Update the goal progress
+      } catch (err) {
+        console.error('/transactions/sync error at data:', data, err);
+        return next(err);
       }
     }
+
+    // After processing all new transactions, emit a WebSocket event with the new expenses
+    io.emit('transactions_synced', { user_id: res.locals.user.id, expenses: expensesCreated });
+
     return res.json(transactionResult.data);
   } catch (err) {
     return next(err);
   }
 });
- 
 router.post('/auth/get', async function (req, res, next) {
   const access_token = req.body.access_token;
   const request = {
@@ -119,5 +126,27 @@ router.post('/auth/get', async function (req, res, next) {
     return next(err);
   }
 });
+// Handle Plaid's webhook for new transactions
+router.post('/transactions/webhook', async function (req, res, next) {
+  try {
+    // Assume we receive the necessary data from Plaid's webhook in req.body
+    const { webhook_code, new_transactions } = req.body;
 
+    if (webhook_code === 'INITIAL_UPDATE' || webhook_code === 'HISTORICAL_UPDATE' || webhook_code === 'DEFAULT_UPDATE') {
+      // Process the new transactions...
+      // For each transaction, map the category, create an expense, update the goal progress
+      // and then emit a WebSocket event with the updated data.
+      
+      // Acknowledge the webhook event
+      res.status(200).json({ acknowledgment: 'Webhook received' });
+
+      // Here, you'd implement logic similar to your existing transaction sync logic
+      // After processing the new transactions, emit an update
+      io.emit('new_transaction', { user_id: 'someUserId', new_transactions }); // Replace 'someUserId' with actual user ID from your authentication system
+    }
+  } catch (err) {
+    console.error('Error handling Plaid webhook:', err);
+    return next(err);
+  }
+});
 module.exports = router;

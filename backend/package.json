@@ -27,6 +27,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "pg": "^8.11.3",
     "plaid": "^15.2.0",
+    "socket.io": "^4.7.3",
     "supertest": "^6.3.3"
   },
   "repository": {

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/goalNew.json",
+  "type": "object",
+  "required": ["goal_name", "target_amount", "category_id", "due_date"],
+  "properties": {
+    "goal_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_amount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "category_id": {
+      "type": "integer"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

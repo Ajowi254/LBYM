@@ -1,4 +1,4 @@
-// account.js
+// models=account.js
 const db = require("../db");
 
 const { BadRequestError, NotFoundError } = require("../expressErrors");
