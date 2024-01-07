@@ -27,8 +27,8 @@
   background-color: #ff6b6b; /* Color for the 'Get Started' button */
   border: none;
   border-radius: 20px; /* Rounded corners for the button */
-  padding: 12px 50px; /* Adjusted padding for the button */
-  margin-bottom: 16px; /* Adjusted space between buttons */
+  padding: 10px 30px; /* Reduced padding for a smaller button */
+  margin: 20px 0; /* Space above and below the button */
   color: #fff;
   cursor: pointer;
   font-size: 16px; /* Adjusted font size for the button */

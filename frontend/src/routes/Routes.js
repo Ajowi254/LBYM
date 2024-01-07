@@ -10,6 +10,8 @@ import GoalsList from '../pages/goals/GoalsList';
 import AccountList from '../pages/accounts/AccountList';
 import HomeList from '../pages/home/HomeList';
 import Main from '../components/Main';
+import Intro from '../components/Intro';
+import ConnectBank from '../components/ConnectBank'; 
 import PrivateRoute from './PrivateRoute';
 
 function Routes({register, login}) {
@@ -21,6 +23,14 @@ function Routes({register, login}) {
 
       <Route exact path="/register">
         <RegisterForm register={register} />
+      </Route>
+
+      <Route exact path="/connect-bank">
+        <ConnectBank />
+      </Route>
+      
+      <Route exact path="/intro">
+        <Intro />
       </Route>
 
       <Route exact path="/login">
