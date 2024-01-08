@@ -5,12 +5,12 @@ const Category = require("../models/category");
 const { authenticateJWT } = require('../middleware/auth'); // Correctly import the middleware
 
 // Get all categories (not user-specific)
-router.get("/categories", authenticateJWT, async function (req, res, next) {
+router.get('/', async function (req, res, next) {
     try {
         const categories = await Category.getAll();
         return res.json({ categories });
     } catch (err) {
-        return next(err);
+        next(err);
     }
 });
 

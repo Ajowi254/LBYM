@@ -1,55 +1,55 @@
-//CategoryItem.js
-import React from 'react';
+//categoryitem.js
+import React, { useState, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Slider, { SliderThumb } from '@mui/material/Slider';
-import { styled } from '@mui/material/styles';
+import Slider from '@mui/material/Slider';
+import './CategoryItem.css';
+import ExpenseBudApi from '../api/api';
 
-// Define a custom thumb component for the slider
-const CustomThumb = styled(SliderThumb)({
-  height: 24,
-  width: 24,
-  backgroundColor: '#fff',
-  border: '2px solid currentColor',
-  '&:hover': {
-    boxShadow: '0 0 0 8px rgba(0, 0, 0, 0.16)',
-  },
-  '& .bar': {
-    height: 9,
-    width: 1,
-    backgroundColor: 'currentColor',
-    marginLeft: 1,
-    marginRight: 1,
-  },
-});
+const CustomThumb = forwardRef((props, ref) => (
+  <div ref={ref} {...props} className="custom-slider-thumb" />
+));
 
-function CategoryItem({ icon, name, budget, onBudgetChange }) {
+function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, onBudgetChange }) {
+  const [budget, setBudget] = useState(initialBudget);
+
+  const handleSliderChange = (event, newValue) => {
+    setBudget(newValue);
+  };
+
+  const handleSliderChangeCommitted = async (event, newValue) => {
+    if (!userId) {
+      console.error('UserId is undefined. Cannot set budget.');
+      return;
+    }
+    try {
+      const updatedBudget = await ExpenseBudApi.setBudget(userId, categoryId, newValue);
+      onBudgetChange(name, updatedBudget.budgetLimit);
+    } catch (error) {
+      console.error('Error updating budget:', error);
+    }
+  };
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      py: 1,
-      borderBottom: '1px solid #A0A0A0',
-      '&:last-child': {
-        borderBottom: 'none',
-      },
-    }}>
-      <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold', fontSize: '0.9rem' }}>
+    <Box className="category-item">
+      <Typography variant="subtitle1" className="category-name">
         {name}
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-        <Box component="img" src={icon} alt={name} sx={{ width: '64px', height: '64px', mr: 2 }} />
+      <Box className="slider-container">
+        <Box component="img" src={icon} alt={name} className="category-icon" />
         <Slider
           components={{ Thumb: CustomThumb }}
-          value={budget}
-          onChange={(event, newValue) => onBudgetChange(name, newValue)}
+          value={typeof budget === 'number' ? budget : 0}
+          onChange={handleSliderChange}
+          onChangeCommitted={handleSliderChangeCommitted}
           aria-labelledby="input-slider"
           min={0}
-          max={1000} // Set the maximum budget value here
-          valueLabelDisplay="auto"
-          sx={{ width: '100%' }} // This will make the slider take the full width available
+          max={1000}
+          valueLabelDisplay="on"
+          track={false}
         />
+        <Typography className="budget-value">
+          ${budget}
+        </Typography>
       </Box>
     </Box>
   );

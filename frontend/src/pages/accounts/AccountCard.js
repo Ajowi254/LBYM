@@ -29,8 +29,6 @@ function AccountCard({ id, type, name, remove, sync, setSyncLoading }) {
       setSyncConfirmed(true); 
     }
   } 
-  
-
   return (
     <Card sx={{ minWidth: 10, width: 190 }} className='AccountList-card'>
       <CardContent>

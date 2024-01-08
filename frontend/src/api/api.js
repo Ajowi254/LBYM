@@ -115,6 +115,16 @@ class ExpenseBudApi {
     let res = await this.request(`users/${id}/expenses`);
     return res.expenses;
   }
+  
+  static async setBudget(userId, categoryId, budgetLimit) {
+    try {
+      let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
+      return res.budget;
+    } catch (error) {
+      console.error('Error setting budget', error);
+      throw error;
+    }
+  }
 
   static async addExpense(userId, data) {
     let res = await this.request(`users/${userId}/expenses`, data, 'post');
@@ -155,11 +165,7 @@ static async updateProfilePic(userId, imageUrl) {
 
 static async getCategories() {
   try {
-    const response = await axios.get(`${BASE_URL}/categories`, {
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    });
+    const response = await axios.get(`${BASE_URL}/categories`); // Removed the Authorization header
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);

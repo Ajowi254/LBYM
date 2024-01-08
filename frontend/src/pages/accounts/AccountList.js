@@ -1,13 +1,11 @@
 //accountlist.js
 import { useState, useEffect, useContext } from 'react';
-
 import UserContext from '../../context/UserContext';
 import PlaidLink from './PlaidLink';
 import ExpenseBudApi from '../../api/api';
 import AccountCard from './AccountCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import FlashMsg from '../../components/FlashMsg';
-
 import './AccountList.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
@@ -62,7 +60,6 @@ function AccountList() {
   if (!infoLoaded) return <LoadingSpinner />
 
   return (
-  
   <div>
     <Typography component="h1" variant="h5">
       Accounts
@@ -99,10 +96,7 @@ function AccountList() {
       </div>
       )}
     </div> 
-    
   </div>
-  
   )
 }
-
 export default AccountList;

@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["budgets"],
+    "properties": {
+      "budgets": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["categoryId", "budgetLimit"],
+          "properties": {
+            "categoryId": {
+              "type": "integer",
+              "description": "The unique identifier of the category."
+            },
+            "budgetLimit": {
+              "type": "number",
+              "description": "The budget limit set for the category.",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    }
+  }
+  

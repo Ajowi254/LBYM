@@ -1,0 +1,64 @@
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    border-bottom: 1px solid #A0A0A0;
+  }
+  
+  .category-item:last-child {
+    border-bottom: none;
+  }
+  
+  .category-name {
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+  
+  .slider-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .category-icon {
+    width: 64px;
+    height: 64px;
+    margin-right: 1rem;
+  }
+  
+  .custom-slider-thumb {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 10px solid #1A535C;
+    ; /* Triangle color, change as needed */
+    position: absolute;
+    cursor: pointer;
+    margin-top: -7px; /* Adjust this value to position the thumb correctly */
+  }
+  
+  /* Additional styling for hover, active, focus states */
+  .custom-slider-thumb:hover {
+    border-top-color: #ccc; /* Color change on hover */
+  }
+  
+  /* Styling to remove the default track fill color */
+  .MuiSlider-track {
+    display: none;
+  }
+  
+  /* Ensure the rail (track line) is always visible */
+  .MuiSlider-rail {
+    opacity: 1; /* Full visibility */
+    background-color: #D0D0D0; /* Rail color, change as needed */
+  }
+  
+  .budget-value {
+    margin-left: 16px; /* Adjust the spacing as needed */
+    font-weight: bold;
+  }
+  
