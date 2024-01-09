@@ -1,4 +1,3 @@
-//categoryitem.js
 import React, { useState, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -10,7 +9,7 @@ const CustomThumb = forwardRef((props, ref) => (
   <div ref={ref} {...props} className="custom-slider-thumb" />
 ));
 
-function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, onBudgetChange }) {
+function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, budgetId, onBudgetChange }) {
   const [budget, setBudget] = useState(initialBudget);
 
   const handleSliderChange = (event, newValue) => {
@@ -19,11 +18,16 @@ function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, onBud
 
   const handleSliderChangeCommitted = async (event, newValue) => {
     if (!userId) {
-      console.error('UserId is undefined. Cannot set budget.');
+      console.error('UserId is undefined. Cannot set or update budget.');
       return;
     }
     try {
-      const updatedBudget = await ExpenseBudApi.setBudget(userId, categoryId, newValue);
+      let updatedBudget;
+      if (budgetId) {
+        updatedBudget = await ExpenseBudApi.updateBudget(userId, categoryId, budget);
+      } else {
+        updatedBudget = await ExpenseBudApi.setBudget(userId, categoryId, budget);
+      }
       onBudgetChange(name, updatedBudget.budgetLimit);
     } catch (error) {
       console.error('Error updating budget:', error);

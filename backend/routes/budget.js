@@ -1,45 +1,43 @@
-//budget.js
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const { ensureCorrectUser } = require('../middleware/auth');
-const jsonschema = require("jsonschema");
-const budgetSetSchema = require("../schemas/budgetSet.json");
-const budgetGetSchema = require("../schemas/budgetGet.json");
 const Budget = require("../models/budget");
-const { BadRequestError } = require("../expressErrors");
 
-// Set budget limit for a category
-router.post("/users/:userId/budgets", ensureCorrectUser, async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, budgetSetSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
+// Set a new budget
+router.post('/', ensureCorrectUser, async function(req, res, next) {
+    try {
+        const { userId } = req.params;
+        const { categoryId, budgetLimit } = req.body;
+        // Use the setBudget function to create a new budget entry
+        const budget = await Budget.setBudget(userId, categoryId, budgetLimit);
+        return res.status(201).json({ budget });
+    } catch (err) {
+        return next(err);
     }
-    const userId = req.params.userId;
-    const { categoryId, budgetLimit } = req.body;
-    const budget = await Budget.setBudget(userId, categoryId, budgetLimit);
-    return res.status(201).json({ budget });
-  } catch (err) {
-    return next(err);
-  }
 });
 
-// Get all budget limits for a user
-router.get("/users/:userId/budgets", ensureCorrectUser, async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.params, budgetGetSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
+// Update an existing budget
+router.patch('/:categoryId', ensureCorrectUser, async function(req, res, next) {
+    try {
+        const { userId, categoryId } = req.params;
+        const { budgetLimit } = req.body;
+        // Use the updateBudget function to update an existing budget entry
+        const budget = await Budget.updateBudget(userId, categoryId, budgetLimit);
+        return res.status(200).json({ budget });
+    } catch (err) {
+        return next(err);
     }
+});
 
-    const userId = req.params.userId; // Ensuring we're using the userId from the route param
-    const budgets = await Budget.getBudgets(userId);
-    return res.json({ budgets });
-  } catch (err) {
-    return next(err);
-  }
+// Get all budgets for a user
+router.get('/', ensureCorrectUser, async function(req, res, next) {
+    try {
+        const { userId } = req.params;
+        const budgets = await Budget.getBudgets(userId);
+        return res.json({ budgets });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 module.exports = router;

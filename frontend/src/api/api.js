@@ -2,7 +2,7 @@
 import axios from "axios";
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 class ExpenseBudApi {
-  static token;
+  static token = localStorage.getItem('token');
 
   static async request(endpoint, data = {}, method = "get") {
     const url = `${BASE_URL}/${endpoint}`;
@@ -116,15 +116,30 @@ class ExpenseBudApi {
     return res.expenses;
   }
   
-  static async setBudget(userId, categoryId, budgetLimit) {
-    try {
-      let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
-      return res.budget;
-    } catch (error) {
-      console.error('Error setting budget', error);
-      throw error;
-    }
+// api.js
+static async setBudget(userId, categoryId, budgetLimit) {
+  let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
+  return res.budget;
+}
+
+static async updateBudget(userId, categoryId, budgetLimit) {
+  let res = await this.request(`users/${userId}/budgets/${categoryId}`, { budgetLimit }, 'patch');
+  return res.budget;
+}
+static async request(endpoint, data = {}, method = "get") {
+  const url = `${BASE_URL}/${endpoint}`;
+  const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
+  const params = (method === "get") ? data : {};
+
+  try {
+    return (await axios({ url, method, data, params, headers })).data;
+  } catch (err) {
+    console.error('API request error:', err);
+    let message = err.response?.data.error.message || "API Error";
+    throw Array.isArray(message) ? message : [message];
   }
+}
+
 
   static async addExpense(userId, data) {
     let res = await this.request(`users/${userId}/expenses`, data, 'post');

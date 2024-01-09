@@ -47,31 +47,25 @@ function App() {
     setUserToken(null);
   }
 
-  useEffect(() => {
-    console.debug("App useEffect load current user");
-    
-    async function getCurrentUser() {
-      if (userToken) {
-        try {
-          ExpenseBudApi.token = userToken;
-          let { id } = decodeToken(userToken);
-          let currentUser = await ExpenseBudApi.getCurrentUser(id);
-          setCurrentUser(currentUser);
-          const feedbackGiven = localStorage.getItem('feedbackGiven');
-          if (!feedbackGiven) {
-            setShowFeedbackPopup(true);
-          }
-        } catch (err) {
-          console.error('Error loading current user', err);
-          setCurrentUser(null);
-        }
+useEffect(() => {
+  async function fetchUserData() {
+    if (userToken) {
+      try {
+        ExpenseBudApi.token = userToken;
+        let { id } = decodeToken(userToken);
+        let currentUserData = await ExpenseBudApi.getCurrentUser(id);
+        setCurrentUser(currentUserData);
+        // Additional logic to fetch and set budget data if necessary
+      } catch (err) {
+        console.error('Error loading current user', err);
+        setCurrentUser(null);
       }
-      setInfoLoaded(true);
     }
-    setInfoLoaded(false);
-    getCurrentUser();
-  }, [userToken]);
-
+    setInfoLoaded(true);
+  }
+  setInfoLoaded(false);
+  fetchUserData();
+}, [userToken]);
   const handleFeedbackClose = () => {
     setShowFeedbackPopup(false);
     localStorage.setItem('feedbackGiven', 'true');

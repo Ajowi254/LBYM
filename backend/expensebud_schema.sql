@@ -30,7 +30,8 @@ CREATE TABLE category_budgets (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
-  budget_limit NUMERIC(10, 2)
+  budget_limit NUMERIC(10, 2),
+  UNIQUE(user_id, category_id)
 );
 
 CREATE TABLE goals (
