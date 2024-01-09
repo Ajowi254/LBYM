@@ -16,18 +16,9 @@ function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, budge
     setBudget(newValue);
   };
 
-  const handleSliderChangeCommitted = async (event, newValue) => {
-    if (!userId) {
-      console.error('UserId is undefined. Cannot set or update budget.');
-      return;
-    }
+  const handleSliderChangeCommitted = async () => {
     try {
-      let updatedBudget;
-      if (budgetId) {
-        updatedBudget = await ExpenseBudApi.updateBudget(userId, categoryId, budget);
-      } else {
-        updatedBudget = await ExpenseBudApi.setBudget(userId, categoryId, budget);
-      }
+      const updatedBudget = await ExpenseBudApi.setOrUpdateBudget(userId, categoryId, budget);
       onBudgetChange(name, updatedBudget.budgetLimit);
     } catch (error) {
       console.error('Error updating budget:', error);

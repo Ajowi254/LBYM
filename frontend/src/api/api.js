@@ -117,15 +117,12 @@ class ExpenseBudApi {
   }
   
 // api.js
-static async setBudget(userId, categoryId, budgetLimit) {
+
+static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
   let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
   return res.budget;
 }
 
-static async updateBudget(userId, categoryId, budgetLimit) {
-  let res = await this.request(`users/${userId}/budgets/${categoryId}`, { budgetLimit }, 'patch');
-  return res.budget;
-}
 static async request(endpoint, data = {}, method = "get") {
   const url = `${BASE_URL}/${endpoint}`;
   const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
