@@ -1,33 +1,38 @@
-//homelist.js
-import React, { useEffect, useState, useContext } from "react";
-// Import UserContext or similar context if you have one
+// HomeList.js
+import React, { useEffect, useState, useContext } from 'react';
 import UserContext from '../../context/UserContext';
-import ExpenseBudApi from "../../api/api";
+import ExpenseBudApi from '../../api/api';
 import Box from '@mui/material/Box';
 import CategoryItem from '../../components/CategoryItem';
 import { getIconPath } from '../../utils/iconUtils';
 
 function HomeList() {
   const [categories, setCategories] = useState([]);
-  const { currentUser } = useContext(UserContext); // Assuming you have UserContext
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const categoriesData = await ExpenseBudApi.getCategories();
-        setCategories(categoriesData.categories.map(category => ({
+    async function fetchCategoriesAndBudgets() {
+      if (currentUser) {
+        // Fetch budgets first to ensure they are available when processing categories
+        const budgetsResponse = await ExpenseBudApi.getBudgets(currentUser.id);
+        const categoriesResponse = await ExpenseBudApi.getCategories();
+        
+        // Combine categories with budgets
+        const categoriesWithBudgets = categoriesResponse.map(category => ({
           ...category,
-          budget: category.budget || 0
-        })));
-      } catch (err) {
-        console.error("Error fetching category data:", err);
+          // Find the budget for this category or default to 0
+          budget: budgetsResponse.find(b => b.categoryId === category.id)?.budgetLimit || 0
+        }));
+
+        setCategories(categoriesWithBudgets);
       }
     }
-    fetchCategories();
-  }, []);
+
+    fetchCategoriesAndBudgets();
+  }, [currentUser]);
 
   const setBudgetForCategory = (categoryName, newBudget) => {
-    setCategories(categories.map(category => {
+    setCategories(prevCategories => prevCategories.map(category => {
       if (category.category === categoryName) {
         return { ...category, budget: newBudget };
       }
@@ -37,13 +42,13 @@ function HomeList() {
 
   return (
     <Box sx={{ width: '100%', maxWidth: '500px', margin: 'auto', pt: 0, backgroundColor: '#F9FEFF' }}>
-      {categories.map((category) => (
+      {categories.map(category => (
         <CategoryItem
           key={category.id}
           icon={getIconPath(category.category)}
           name={category.category}
-          budget={category.budget}
-          userId={currentUser && currentUser.id} // Use the ID from the current user context
+          initialBudget={category.budget}
+          userId={currentUser && currentUser.id}
           categoryId={category.id}
           onBudgetChange={setBudgetForCategory}
         />
@@ -53,4 +58,3 @@ function HomeList() {
 }
 
 export default HomeList;
-

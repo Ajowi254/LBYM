@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
@@ -9,8 +9,13 @@ const CustomThumb = forwardRef((props, ref) => (
   <div ref={ref} {...props} className="custom-slider-thumb" />
 ));
 
-function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, budgetId, onBudgetChange }) {
+function CategoryItem({ icon, name, initialBudget, userId, categoryId, onBudgetChange }) {
   const [budget, setBudget] = useState(initialBudget);
+
+  // Update the budget state when initialBudget changes
+  useEffect(() => {
+    setBudget(initialBudget);
+  }, [initialBudget]);
 
   const handleSliderChange = (event, newValue) => {
     setBudget(newValue);
@@ -24,6 +29,7 @@ function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, budge
       console.error('Error updating budget:', error);
     }
   };
+
   return (
     <Box className="category-item">
       <Typography variant="subtitle1" className="category-name">
@@ -33,7 +39,7 @@ function CategoryItem({ icon, name, initialBudget = 0, userId, categoryId, budge
         <Box component="img" src={icon} alt={name} className="category-icon" />
         <Slider
           components={{ Thumb: CustomThumb }}
-          value={typeof budget === 'number' ? budget : 0}
+          value={budget}
           onChange={handleSliderChange}
           onChangeCommitted={handleSliderChangeCommitted}
           aria-labelledby="input-slider"

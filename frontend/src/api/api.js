@@ -136,7 +136,24 @@ static async request(endpoint, data = {}, method = "get") {
     throw Array.isArray(message) ? message : [message];
   }
 }
+// Inside ExpenseBudApi class
 
+static async getBudgets(userId) {
+  try {
+    const res = await this.request(`users/${userId}/budgets`);
+    if (res && res.budgets) {
+      // Format the response if necessary or directly return the budgets
+      return res.budgets.map(budget => ({
+        categoryId: budget.category_id,
+        budgetLimit: budget.budget_limit
+      }));
+    }
+    return []; // Return an empty array if no budgets are found
+  } catch (error) {
+    console.error('Error fetching budgets:', error);
+    throw error;
+  }
+}
 
   static async addExpense(userId, data) {
     let res = await this.request(`users/${userId}/expenses`, data, 'post');
@@ -175,10 +192,12 @@ static async updateProfilePic(userId, imageUrl) {
   }
 }
 
+// Inside ExpenseBudApi class
+
 static async getCategories() {
   try {
-    const response = await axios.get(`${BASE_URL}/categories`); // Removed the Authorization header
-    return response.data;
+    const res = await this.request('categories');
+    return res.categories; // Ensure this matches the expected format from your API
   } catch (error) {
     console.error('Error fetching categories:', error);
     throw error;
