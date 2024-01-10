@@ -15,17 +15,31 @@ class Category {
   /**
    * Get expenses by category for a specific user.
    */
-  static async getExpensesByCategory(user_id) {
-    const result = await db.query(
-      `SELECT c.id, c.category, SUM(e.amount) as total_expenses
-       FROM categories c
-       LEFT JOIN expenses e ON c.id = e.category_id
-       WHERE e.user_id = $1
-       GROUP BY c.id`,
-      [user_id]
-    );
-    return result.rows;
+  static async getExpensesByCategory(user_id, category_id = null) {
+    if (category_id) {
+      // Fetch expenses for a specific category
+      const result = await db.query(
+        `SELECT SUM(e.amount) as total_expenses
+         FROM expenses e
+         WHERE e.user_id = $1 AND e.category_id = $2
+         GROUP BY e.category_id`,
+        [user_id, category_id]
+      );
+      return result.rows[0] ? result.rows[0].total_expenses : 0; // Return total or 0 if no expenses
+    } else {
+      // Fetch expenses for all categories
+      const result = await db.query(
+        `SELECT c.id, c.category, COALESCE(SUM(e.amount), 0) as total_expenses
+         FROM categories c
+         LEFT JOIN expenses e ON c.id = e.category_id AND e.user_id = $1
+         GROUP BY c.id
+         ORDER BY c.id`,
+        [user_id]
+      );
+      return result.rows;
+    }
   }
+  
   // New method to update the is_over_budget status
   static async updateOverBudgetStatus(categoryId) {
     const result = await db.query(

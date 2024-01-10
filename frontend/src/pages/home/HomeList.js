@@ -1,4 +1,4 @@
-// HomeList.js
+//homelist.js
 import React, { useEffect, useState, useContext } from 'react';
 import UserContext from '../../context/UserContext';
 import ExpenseBudApi from '../../api/api';
@@ -7,38 +7,35 @@ import CategoryItem from '../../components/CategoryItem';
 import { getIconPath } from '../../utils/iconUtils';
 
 function HomeList() {
-  const [categories, setCategories] = useState([]);
   const { currentUser } = useContext(UserContext);
+  const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    async function fetchCategoriesAndBudgets() {
-      if (currentUser) {
-        // Fetch budgets first to ensure they are available when processing categories
-        const budgetsResponse = await ExpenseBudApi.getBudgets(currentUser.id);
-        const categoriesResponse = await ExpenseBudApi.getCategories();
-        
-        // Combine categories with budgets
-        const categoriesWithBudgets = categoriesResponse.map(category => ({
-          ...category,
-          // Find the budget for this category or default to 0
-          budget: budgetsResponse.find(b => b.categoryId === category.id)?.budgetLimit || 0
-        }));
+  // Function to fetch and display categories with aggregated expenses and budgets
+  async function fetchCategoriesAndExpenses() {
+    if (currentUser) {
+      const budgetsResponse = await ExpenseBudApi.getBudgets(currentUser.id);
+      const categoriesResponse = await ExpenseBudApi.getCategories();
 
-        setCategories(categoriesWithBudgets);
-      }
+      // Fetch the aggregated expenses for each category
+      const categoriesWithExpenses = await Promise.all(
+        categoriesResponse.map(async (category) => {
+          const totalSpentResponse = await ExpenseBudApi.getExpensesForCategory(category.id);
+          return {
+            ...category,
+            budget: budgetsResponse.find(b => b.categoryId === category.id)?.budgetLimit || 0,
+            spent: totalSpentResponse.total || 0, // Use the aggregated total from the backend
+          };
+        })
+      );
+
+      setCategories(categoriesWithExpenses);
     }
+  }
 
-    fetchCategoriesAndBudgets();
+  // Call fetchCategoriesAndExpenses when component mounts or currentUser changes
+  useEffect(() => {
+    fetchCategoriesAndExpenses();
   }, [currentUser]);
-
-  const setBudgetForCategory = (categoryName, newBudget) => {
-    setCategories(prevCategories => prevCategories.map(category => {
-      if (category.category === categoryName) {
-        return { ...category, budget: newBudget };
-      }
-      return category;
-    }));
-  };
 
   return (
     <Box sx={{ width: '100%', maxWidth: '500px', margin: 'auto', pt: 0, backgroundColor: '#F9FEFF' }}>
@@ -47,10 +44,9 @@ function HomeList() {
           key={category.id}
           icon={getIconPath(category.category)}
           name={category.category}
-          initialBudget={category.budget}
-          userId={currentUser && currentUser.id}
-          categoryId={category.id}
-          onBudgetChange={setBudgetForCategory}
+          budget={category.budget} // Updated to reflect the correct budget amount
+          spent={category.spent} // Aggregated spent amount from the backend
+          categoryId={category.id} // Included for fetching specific category expenses
         />
       ))}
     </Box>

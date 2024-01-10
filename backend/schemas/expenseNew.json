@@ -4,27 +4,24 @@
   "type": "object",
   "required": ["amount", "date", "vendor", "category_id"],
   "properties": {
-    "amount": {
-      "type": "number"
-    },
-    "date": {
-      "type": "string",
-      "format": "date"
-    },
-    "vendor": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "category_id": {
-      "type": "integer"
-    },
-    "transaction_id": {
-      "type": "string"
-    },
-    "goal_id": {
-      "type": "integer"
-    }
+      "amount": {
+          "type": "number"
+      },
+      "date": {
+          "type": "string",
+          "format": "date"
+      },
+      "vendor": {
+          "type": "string"
+      },
+      "description": {
+          "type": "string"
+      },
+      "category_id": {
+          "type": "integer"
+      },
+      "transaction_id": {
+          "type": "string"
+      }
   }
 }

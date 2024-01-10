@@ -1,59 +1,26 @@
-//goalscard.js
-import React, { useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
-import FlashMsg from "../../components/FlashMsg";
-import { BiCart, BiRestaurant, BiShoppingBag, BiMotorcycle, BiGroup, BiCar } from 'react-icons/bi';
+// GoalCard.js
+import React from 'react';
+import { Card, Button } from 'react-bootstrap';
+import { getIconPath } from '../../utils/iconUtils';
 
-function GoalCard({ id, amount, category, category_id, edit, add }) {
-  const [editAmount, setEditAmount] = useState(amount);
-  const [formError, setFormError] = useState(false);
-  const [saveStatus, setSaveStatus] = useState(false);
-
-  const handleSliderChange = (e) => {
-    const value = e.target.value;
-    setEditAmount(value);
-    e.target.style.setProperty('--value', `${value}%`);
-  };
-
-  const handleEdit = async(e) => {
-    e.preventDefault();
-    
-    if (amount === null) {
-      const addGoal = await add({category_id, amount: +editAmount});
-      if(!addGoal.success) {
-        setFormError(true);
-      } else {
-        setSaveStatus(true);
-      }
-    } else {
-      const editGoal = await edit(id, {amount: +editAmount});
-      if(!editGoal.success) {
-        setFormError(true);
-      } else {
-        setSaveStatus(true);
-      }
-    }
-  }
-
+const GoalCard = ({ goal, handleDeleteGoal }) => {
   return (
-    <div className="goal-card">
-      {category === 'Groceries' && <BiCart size={30} />}
-      {category === 'Eating Out' && <BiRestaurant size={30} />}
-      {/* Add the rest of your icons... */}
-      <h5>{category}</h5>
-      <Form onSubmit={handleEdit}>
-        <Form.Group controlId="formBasicRange">
-          <Form.Label>Amount: ${editAmount}</Form.Label>
-          <Form.Control type="range" className="slider" value={editAmount} min="0" max="1000" step="10" onChange={handleSliderChange} />
-        </Form.Group>
-        <Button variant="primary" type="submit" style={{backgroundColor: '#0f766e'}}>
-          Save
+    <Card className="mb-2">
+      <Card.Body>
+        <Card.Title>
+          <img src={getIconPath(goal.category)} alt={goal.category} className="icon" />
+          {goal.category}
+        </Card.Title>
+        <Card.Text>
+          Goal: ${goal.goal_amount}
+          {goal.description && <p>Description: {goal.description}</p>}
+        </Card.Text>
+        <Button variant="danger" onClick={() => handleDeleteGoal(goal.id)}>
+          Delete
         </Button>
-      </Form>
-      {formError && <FlashMsg message="An error occurred while saving." />}
-      {saveStatus && <FlashMsg message="Saved successfully." />}
-    </div>
+      </Card.Body>
+    </Card>
   );
-}
+};
 
 export default GoalCard;

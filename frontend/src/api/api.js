@@ -6,21 +6,17 @@ class ExpenseBudApi {
 
   static async request(endpoint, data = {}, method = "get") {
     const url = `${BASE_URL}/${endpoint}`;
-    const headers = {
-      Authorization: `Bearer ${this.token}`,
-      "Content-Type": "application/json",
-    };
-    const params = method === "get" ? data : {};
+    const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
+    const params = (method === "get") ? data : {};
 
     try {
       return (await axios({ url, method, data, params, headers })).data;
     } catch (err) {
-      console.error('Unexpected error during login', err);
-      let message = err.response.data.error.message;
+      console.error('API request error:', err);
+      let message = err.response?.data.error.message || "API Error";
       throw Array.isArray(message) ? message : [message];
     }
   }
-
   /** User */
 
   static async register(data) {
@@ -54,27 +50,6 @@ class ExpenseBudApi {
 
   static async deleteUser(id, data) {
     let res = await this.request(`users/${id}`, data, 'delete');
-    return res.deleted;
-  }
-
-  /** Goals */
-  static async getGoals(userId) {
-    let res = await this.request(`users/${userId}/goals`);
-    return res.goals;
-  }
-
-  static async addGoal(userId, data) {
-    let res = await this.request(`users/${userId}/goals`, data, 'post');
-    return res.goal;
-  }
-
-  static async updateGoal(userId, goalId, data) {
-    let res = await this.request(`users/${userId}/goals/${goalId}`, data, 'patch');
-    return res.goal;
-  }
-
-  static async deleteGoal(userId, goalId) {
-    let res = await this.request(`users/${userId}/goals/${goalId}`, {}, 'delete');
     return res.deleted;
   }
 
@@ -217,6 +192,41 @@ static async deleteProfilePic(userId) {
     return response.data;
   } catch (error) {
     console.error('Error deleting profile picture:', error);
+    throw error;
+  }
+}
+// Ensure the getGoals method handles no goals situation by checking for empty response and setting default value.
+static async getGoals(userId) {
+  try {
+    let response = await this.request(`users/${userId}/goals`);
+    return response.goals || []; // Return an empty array if no goals found
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    throw error;
+  }
+}
+
+static async addGoal(userId, data) {
+  let res = await this.request(`users/${userId}/goals`, data, 'post');
+  return res.goal;
+}
+
+static async updateGoal(userId, goalId, data) {
+  let res = await this.request(`users/${userId}/goals/${goalId}`, data, 'patch');
+  return res.updatedGoal;
+}
+
+static async deleteGoal(userId, goalId) {
+  let res = await this.request(`users/${userId}/goals/${goalId}`, {}, 'delete');
+  return res.deleted;
+}
+static async getExpensesForCategory(categoryId) {
+  try {
+    const res = await this.request(`categories/${categoryId}/expenses`);
+    // Ensure the backend sends the total under an expected key, like 'total'
+    return res.total; 
+  } catch (error) {
+    console.error('Error fetching expenses for category:', error);
     throw error;
   }
 }

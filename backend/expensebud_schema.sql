@@ -15,6 +15,7 @@ CREATE TABLE categories (
   category VARCHAR(30) UNIQUE NOT NULL
 );
 
+
 CREATE TABLE accounts (
   id SERIAL PRIMARY KEY, 
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -26,24 +27,13 @@ CREATE TABLE accounts (
   account_type TEXT
 );
 
+
 CREATE TABLE category_budgets (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
   budget_limit NUMERIC(10, 2),
-  UNIQUE(user_id, category_id)
-);
-
-CREATE TABLE goals (
-  id SERIAL PRIMARY KEY,
-  goal_name VARCHAR(50) NOT NULL,
-  target_amount NUMERIC(10, 2) NOT NULL,
-  current_amount NUMERIC(10, 2) DEFAULT 0,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  due_date DATE,
-  is_active BOOLEAN DEFAULT true
+  description TEXT
 );
 
 CREATE TABLE expenses (
@@ -52,9 +42,19 @@ CREATE TABLE expenses (
   date DATE NOT NULL,
   vendor TEXT,
   description TEXT,
-  transaction_id TEXT UNIQUE, 
+  transaction_id TEXT UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE
+);
+
+CREATE TABLE goals (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  category_id INTEGER REFERENCES categories(id),
+  goal_amount NUMERIC(10, 2) NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  due_date DATE
 );

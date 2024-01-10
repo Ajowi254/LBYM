@@ -5,4 +5,5 @@ VALUES
   ('Shopping'), 
   ('Food Delivery'), 
   ('Going Out'), 
-  ('Ride Share')
+  ('Ride Share'),
+  ('Other')

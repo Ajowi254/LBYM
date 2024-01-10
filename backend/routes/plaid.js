@@ -68,10 +68,10 @@ router.post('/exchange_public_token', async function (req, res, next
 });
 
 router.post('/transactions/sync', async function (req, res, next) {
-  const access_token = req.body.access_token;
-  const account_id = req.body.accountId;
+  const accessToken = req.body.access_token;
+  const accountId = req.body.accountId;
   const request = {
-    access_token: access_token,
+    access_token: accessToken,
     options: {
       include_personal_finance_category: true,
     },
@@ -80,40 +80,46 @@ router.post('/transactions/sync', async function (req, res, next) {
   try {
     const transactionResult = await plaidClient.transactionsSync(request);
     let newTransactions = transactionResult.data.added || [];
-    let expensesCreated = []; // To store created expenses and emit later
+    let expensesCreated = [];
 
     for (let transaction of newTransactions) {
-      let convertedId = mapCategory(transaction.personal_finance_category.primary);
-      
-      let data = {
+      let categoryId;
+      try {
+        categoryId = mapCategory(transaction.personal_finance_category.primary);
+      } catch (err) {
+        console.error('Error mapping category:', err.message);
+        // Optionally: Continue to the next transaction or handle the error differently
+        continue; // Skips to the next iteration in the loop
+      }
+
+      let expenseData = {
         amount: transaction.amount,
         date: transaction.date,
         vendor: transaction.merchant_name,
         description: transaction.name,
-        category_id: convertedId,
+        category_id: categoryId,
         user_id: res.locals.user.id,
         transaction_id: transaction.transaction_id,
-        account_id: account_id
+        account_id: accountId
       };
 
       try {
-        const expense = await Expense.create(res.locals.user.id, data);
-        expensesCreated.push(expense); // Add the new expense to the array
-        await Goal.updateProgress(expense); // Update the goal progress
+        const expense = await Expense.create(res.locals.user.id, expenseData);
+        expensesCreated.push(expense);
       } catch (err) {
-        console.error('/transactions/sync error at data:', data, err);
-        return next(err);
+        console.error('/transactions/sync error:', err.message);
+        // Handle specific error (e.g., database error)
       }
     }
 
-    // After processing all new transactions, emit a WebSocket event with the new expenses
     io.emit('transactions_synced', { user_id: res.locals.user.id, expenses: expensesCreated });
-
-    return res.json(transactionResult.data);
+    return res.json({ message: "Transactions synced successfully", expenses: expensesCreated });
   } catch (err) {
+    console.error('Error syncing transactions:', err.message);
     return next(err);
   }
 });
+
 router.post('/auth/get', async function (req, res, next) {
   const access_token = req.body.access_token;
   const request = {

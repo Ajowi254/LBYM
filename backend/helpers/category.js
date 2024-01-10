@@ -1,32 +1,55 @@
 //category.js
-const { BadRequestError } = require("../expressErrors");
-
-/**
- * Maps Plaid personal_finance_category string to database category
- * Returns category_id.
- */
 function mapCategory(plaidCategory) {
-  // This regular expression will convert strings like "Food_and_Drink" to "Food and Drink"
   let regex = /\s+|_+/g;
   plaidCategory = plaidCategory.replace(regex, ' ').toLowerCase();
 
-  // This object should map Plaid categories to your database category IDs
-  let dbCategory = {
-    'groceries': 1,         // Assuming 1 is the ID for Groceries in your database
-    'eating out': 2,        // Assuming 2 is the ID for Eating Out
-    'shopping': 3,          // And so on for the rest of the categories...
-    'food delivery': 4,
-    'going out': 5,
-    'ride share': 6
+  // Expanded mapping from Plaid categories to your application's categories
+  const categoryMapping = {
+    'transportation': 'ride share',
+    'travel': 'ride share',
+    'taxi': 'ride share',
+    'uber': 'ride share',
+    'lyft': 'ride share',
+    'public transit': 'ride share',
+    'subway': 'ride share',
+    'rail': 'ride share',
+    'bus': 'ride share',
+    // Continue adding other Plaid categories that should map to 'ride share'
+    
+    // Other category mappings
+    'restaurants': 'eating out',
+    'fast food': 'eating out',
+    'coffee shop': 'eating out',
+    'bar': 'going out',
+    'vacation': 'going out',
+    'nightlife': 'going out',
+    'entertainment': 'going out',
+    'grocery': 'groceries',
+    'supermarket': 'groceries',
+    'market': 'groceries',
+    'delivery': 'food delivery',
+    'online shopping': 'shopping',
+    'clothing': 'shopping',
+    'electronics': 'shopping',
+    // Continue adding other mappings as necessary
   };
 
-  // Check if the Plaid category exists in dbCategory mapping
-  if (!dbCategory[plaidCategory]) {
-    throw new BadRequestError(`${plaidCategory} does not exist`);
-  }
+  // First, check if the Plaid category is in the mapping and get the corresponding category
+  let appCategory = categoryMapping[plaidCategory] || 'other';
 
-  // Return the database category ID
-  return dbCategory[plaidCategory];
+  // Now map the appCategory to your database category IDs
+  let dbCategory = {
+    'groceries': 1,
+    'eating out': 2,
+    'shopping': 3,
+    'food delivery': 4,
+    'going out': 5,
+    'ride share': 6,
+    'other': 7, // Retain 'other' as a fallback category
+  };
+
+  // Return the category id if it exists, otherwise default to 'other'
+  return dbCategory[appCategory];
 }
 
 module.exports = { mapCategory };

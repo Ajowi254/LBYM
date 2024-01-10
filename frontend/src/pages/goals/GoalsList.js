@@ -1,81 +1,83 @@
-//goalslist.js
-import { useEffect, useState, useContext } from "react";
-
+import React, { useEffect, useState, useContext } from "react";
 import UserContext from "../../context/UserContext";
 import ExpenseBudApi from "../../api/api";
-import GoalsCard from "./GoalsCard";
-
+import GoalsCard from "./GoalsCard"; // Ensure this path is correct
+import GoalForm from "./GoalForm"; // Ensure you have this component
 import Typography from '@mui/material/Typography';
-import GoalCard from "./GoalsCard";
+import Button from '@mui/material/Button';
+import './GoalsList.css'; // Import your custom CSS
 
 function GoalsList() {
   const { currentUser } = useContext(UserContext);
   const [goals, setGoals] = useState([]);
-
-  const editGoal = async(goalId, editData) => {
-    try {
-      await ExpenseBudApi.updateGoal(currentUser.id, goalId, editData);
-      setGoals(goals => goals.map( goal => 
-        goal.goal_id === goalId
-        ? {...goal, amount: editData }
-        : goal ))
-      return {success: true};
-    } catch (err) {
-      return {success: false, err};
-    }
-  }
-
-  const addGoal = async(addData) => {
-    try {
-      await ExpenseBudApi.addGoal(currentUser.id, addData);
-      setGoals(goals => goals.map( goal => 
-        goal.category_id === addData.category_id
-        ? {...goal, ...addData}
-        : goal));
-      return {success: true};
-    } catch (err) {
-      return {success: false, err};
-    }
-  } 
-  
+  const [showForm, setShowForm] = useState(false);
+  const categories = [
+    'Groceries', 'Eating Out', 'Shopping', 'Food Delivery', 'Going Out', 'Ride Share'
+  ];
 
   useEffect(() => {
     async function getAllGoals() {
-      try {
-        let goals = await ExpenseBudApi.getAllGoals(currentUser.id);
-        setGoals(goals);
-      } catch (err) {
-        console.error(err);
+      if (currentUser) {
+        try {
+          const fetchedGoals = await ExpenseBudApi.getGoals(currentUser.id);
+          setGoals(fetchedGoals);
+        } catch (error) {
+          console.error('Error fetching goals:', error);
+        }
       }
     }
     getAllGoals();
-  }, [])
+  }, [currentUser]);
 
+  const handleAddGoal = async (goalData) => {
+    try {
+      const newGoal = await ExpenseBudApi.addGoal(currentUser.id, goalData);
+      setGoals([...goals, newGoal]);
+      setShowForm(false); // Close the form after goal is added
+    } catch (error) {
+      console.error('Error adding goal:', error);
+    }
+  };
+
+  const handleDeleteGoal = async (goalId) => {
+    try {
+      await ExpenseBudApi.deleteGoal(currentUser.id, goalId);
+      setGoals(goals.filter(goal => goal.id !== goalId));
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+    }
+  };
 
   return (
-    <div>
-      <Typography component="h1" variant="h5">
-      </Typography>
-      <Typography variant="subtitle1" gutterBottom>
-      </Typography>
-        {goals.map(b => (
-          <GoalCard 
-            key={b.category} 
-            id={b.goal_id}
-            amount={b.amount}
-            category={b.category}
-            category_id={b.category_id} 
-            edit={editGoal}
-            add={addGoal}
+    <div className="goals-container">
+      <Typography component="h1" variant="h5">Goals</Typography>
+      <Button
+        className="add-goal-button"
+        onClick={() => setShowForm(true)}
+      >
+        + Add
+      </Button>
+      {showForm && (
+        <GoalForm
+          show={showForm}
+          handleClose={() => setShowForm(false)}
+          handleAddGoal={handleAddGoal}
+          categories={categories} // Pass the categories array
+        />
+      )}
+      {goals.length > 0 ? (
+        goals.map(goal => (
+          <GoalsCard 
+            key={goal.id}
+            goal={goal}
+            onDeleteGoal={handleDeleteGoal}
           />
-         
-        ))}
+        ))
+      ) : (
+        <p>No goals yet. Add your first goal!</p>
+      )}
     </div>
-    
-    
-
-  )
+  );
 }
-
 
 export default GoalsList;

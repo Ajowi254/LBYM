@@ -1,34 +1,32 @@
+//categoryitem.js
 import React, { useState, useEffect, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
+import ExpenseBudApi from '../api/api'; // Corrected import path
+
 import './CategoryItem.css';
-import ExpenseBudApi from '../api/api';
 
 const CustomThumb = forwardRef((props, ref) => (
   <div ref={ref} {...props} className="custom-slider-thumb" />
 ));
 
-function CategoryItem({ icon, name, initialBudget, userId, categoryId, onBudgetChange }) {
-  const [budget, setBudget] = useState(initialBudget);
+function CategoryItem({ icon, name, categoryId, budget }) {
+  const [spent, setSpent] = useState(0);
 
-  // Update the budget state when initialBudget changes
   useEffect(() => {
-    setBudget(initialBudget);
-  }, [initialBudget]);
-
-  const handleSliderChange = (event, newValue) => {
-    setBudget(newValue);
-  };
-
-  const handleSliderChangeCommitted = async () => {
-    try {
-      const updatedBudget = await ExpenseBudApi.setOrUpdateBudget(userId, categoryId, budget);
-      onBudgetChange(name, updatedBudget.budgetLimit);
-    } catch (error) {
-      console.error('Error updating budget:', error);
+    async function loadSpent() {
+      try {
+        const expenses = await ExpenseBudApi.getExpensesForCategory(categoryId);
+        setSpent(expenses.total || 0); // Set to 0 if there are no expenses
+      } catch (error) {
+        console.error("Error loading expenses:", error);
+        // Handle the error appropriately
+      }
     }
-  };
+
+    loadSpent();
+  }, [categoryId]);
 
   return (
     <Box className="category-item">
@@ -39,17 +37,27 @@ function CategoryItem({ icon, name, initialBudget, userId, categoryId, onBudgetC
         <Box component="img" src={icon} alt={name} className="category-icon" />
         <Slider
           components={{ Thumb: CustomThumb }}
-          value={budget}
-          onChange={handleSliderChange}
-          onChangeCommitted={handleSliderChangeCommitted}
+          value={spent}
           aria-labelledby="input-slider"
           min={0}
-          max={1000}
+          max={budget}
           valueLabelDisplay="on"
           track={false}
+          sx={{
+            '& .MuiSlider-thumb': {
+              // Custom styling can be applied here if needed
+            },
+            '& .MuiSlider-rail': {
+              backgroundColor: 'grey', // Color of the rail
+            },
+            '& .MuiSlider-track': {
+              backgroundColor: 'green', // Color indicating the amount spent
+            },
+          }}
+          disabled // Disables the slider
         />
         <Typography className="budget-value">
-          ${budget}
+          ${spent} / ${budget}
         </Typography>
       </Box>
     </Box>

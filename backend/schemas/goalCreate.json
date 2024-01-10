@@ -1,14 +1,14 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
+    "required": ["category_id", "goal_amount"],
     "properties": {
+      "category_id": {
+        "type": "integer"
+      },
       "goal_amount": {
         "type": "number",
         "minimum": 0.01
-      },
-      "current_amount": {
-        "type": "number",
-        "minimum": 0
       },
       "description": {
         "type": "string",
@@ -20,4 +20,3 @@
       }
     }
   }
-  

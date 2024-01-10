@@ -1,75 +1,62 @@
-// goals.js
+//goals.js
 const express = require("express");
-const router = express.Router({ mergeParams: true });
-const jsonschema = require("jsonschema");
-
+const router = express.Router();
 const Goal = require("../models/goal");
-const goalNewSchema = require("../schemas/goalNew.json");
+const { ensureCorrectUser } = require("../middleware/auth");
+const jsonschema = require("jsonschema");
+const goalCreateSchema = require("../schemas/goalCreate.json");
 const goalUpdateSchema = require("../schemas/goalUpdate.json");
-const { BadRequestError } = require("../expressErrors");
-const { ensureCorrectUser } = require('../middleware/auth');
 
-// Retrieve a specific goal by its ID
-router.get("/:goalId", ensureCorrectUser, async function (req, res, next) {
-  try {
-    const { userId, goalId } = req.params;
-    const goal = await Goal.get(userId, goalId);
-    return res.json({ goal });
-  } catch (err) {
-    return next(err);
+// POST route to create a new goal
+router.post("/:userId/goals", ensureCorrectUser, async function (req, res, next) {
+  const validator = jsonschema.validate(req.body, goalCreateSchema);
+  if (!validator.valid) {
+    return res.status(400).json({ error: validator.errors.map(e => e.stack) });
   }
-});
 
-// Retrieve all goals for a specific user
-router.get("/", ensureCorrectUser, async function (req, res, next) {
   try {
-    const goals = await Goal.getAll(req.params.userId);
-    return res.json({ goals });
-  } catch (err) {
-    return next(err);
-  }
-});
-
-// Create a new goal
-router.post("/", ensureCorrectUser, async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, goalNewSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
-    }
-    const goal = await Goal.create(req.params.userId, req.body);
-    req.app.get('io').emit('goal_created', { goal, userId: req.params.userId });
+    const { category_id, goal_amount, description } = req.body;
+    const user_id = req.params.userId;
+    const goal = await Goal.create({ user_id, category_id, goal_amount, description });
     return res.status(201).json({ goal });
   } catch (err) {
     return next(err);
   }
 });
 
-// Update a specific goal
-router.patch("/:goalId", ensureCorrectUser, async function (req, res, next) {
+// GET route to retrieve all goals for a user
+router.get("/:userId/goals", ensureCorrectUser, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, goalUpdateSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
-    }
-    const { userId, goalId } = req.params;
-    const goal = await Goal.update(userId, goalId, req.body);
-    req.app.get('io').emit('goal_updated', { goal, userId });
-    return res.json({ goal });
+    const user_id = req.params.userId;
+    const goals = await Goal.findAllForUser(user_id);
+    return res.json({ goals: goals || [] }); // Return an empty array if no goals found
   } catch (err) {
     return next(err);
   }
 });
 
-// Remove a specific goal
-router.delete("/:goalId", ensureCorrectUser, async function (req, res, next) {
+// PATCH route to update a specific goal
+router.patch("/goals/:goalId", ensureCorrectUser, async function (req, res, next) {
+  const validator = jsonschema.validate(req.body, goalUpdateSchema);
+  if (!validator.valid) {
+    return res.status(400).json({ error: validator.errors.map(e => e.stack) });
+  }
+
   try {
-    const { userId, goalId } = req.params;
-    await Goal.remove(userId, goalId);
-    req.app.get('io').emit('goal_removed', { goalId, userId });
-    return res.json({ deleted: goalId });
+    const goalId = req.params.goalId;
+    const updatedGoal = await Goal.update(goalId, req.body);
+    return res.json({ updatedGoal });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// DELETE route to delete a specific goal
+router.delete("/goals/:goalId", ensureCorrectUser, async function (req, res, next) {
+  try {
+    const goalId = req.params.goalId;
+    const deletedGoal = await Goal.remove(goalId);
+    return res.json({ deleted: deletedGoal.id });
   } catch (err) {
     return next(err);
   }
