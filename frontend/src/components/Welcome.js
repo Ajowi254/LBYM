@@ -1,4 +1,3 @@
-// Welcome.js
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import './Welcome.css'; // Ensure this path is correct
@@ -7,11 +6,11 @@ function Welcome() {
   const history = useHistory();
 
   const handleGetStarted = () => {
-    history.push('/intro'); // Update this to the correct path for your intro page
+    history.push('/intro');
   };
 
   const handleSkip = () => {
-    history.push('/login'); // Update this to the correct path for your login page
+    history.push('/login');
   };
 
   return (

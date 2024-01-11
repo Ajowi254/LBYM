@@ -91,27 +91,10 @@ class ExpenseBudApi {
     return res.expenses;
   }
   
-// api.js
-
 static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
   let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
   return res.budget;
 }
-
-static async request(endpoint, data = {}, method = "get") {
-  const url = `${BASE_URL}/${endpoint}`;
-  const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
-  const params = (method === "get") ? data : {};
-
-  try {
-    return (await axios({ url, method, data, params, headers })).data;
-  } catch (err) {
-    console.error('API request error:', err);
-    let message = err.response?.data.error.message || "API Error";
-    throw Array.isArray(message) ? message : [message];
-  }
-}
-// Inside ExpenseBudApi class
 
 static async getBudgets(userId) {
   try {
@@ -144,11 +127,13 @@ static async getBudgets(userId) {
     let res = await this.request(`users/${userId}/expenses/${expenseId}`, data, 'delete');
     return res.deleted;
   }
+
   /** Home Data */
   static async getHomeData(userId) {
     let res = await this.request(`users/${userId}/homepage`);
     return res;
   }
+  
 /** Image Upload */
 /** Update user's profile picture URL */
 static async updateProfilePic(userId, imageUrl) {
@@ -220,13 +205,49 @@ static async deleteGoal(userId, goalId) {
   let res = await this.request(`users/${userId}/goals/${goalId}`, {}, 'delete');
   return res.deleted;
 }
-static async getExpensesForCategory(categoryId) {
+// Fetch expenses for a specific category of a user
+static async getExpensesForCategory(userId, categoryId) {
   try {
-    const res = await this.request(`categories/${categoryId}/expenses`);
-    // Ensure the backend sends the total under an expected key, like 'total'
-    return res.total; 
+    const res = await this.request(`users/${userId}/categories/${categoryId}/expenses`);
+    return res.expenses || []; // If no expenses, return an empty array
   } catch (error) {
     console.error('Error fetching expenses for category:', error);
+    if (error.response && error.response.status === 404) {
+      return []; // Return empty array if no expenses are found
+    }
+    throw error;
+  }
+}
+
+
+static async getAggregatedExpensesByCategory(userId) {
+  try {
+    const res = await this.request(`users/${userId}/expenses/aggregated`);
+    return res.aggregatedExpenses; // Update this according to your actual API response structure
+  } catch (error) {
+    console.error('Error fetching aggregated expenses:', error);
+    throw error;
+  }
+}
+// Update the budget for a specific category of a user
+static async updateBudget(userId, categoryId, budgetLimit) {
+  try {
+    // The payload must be structured according to the backend's expectations
+    const payload = { budgetLimit };
+    const res = await this.request(`users/${userId}/categories/${categoryId}/budget`, payload, 'patch');
+    // Assuming the backend returns the updated budget information
+    return res.updatedBudget;
+  } catch (error) {
+    console.error('Error updating budget:', error);
+    throw error;
+  }
+}
+static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
+  try {
+    const res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
+    return res.budget;
+  } catch (error) {
+    console.error('Error setting or updating budget:', error);
     throw error;
   }
 }

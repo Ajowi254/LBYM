@@ -80,6 +80,37 @@ class Expense {
 
         return result.rows[0];
     }
+
+   // Fetch expenses by category with improved error handling
+   static async fetchByCategory(userId, categoryId) {
+    const result = await db.query(
+        `SELECT * FROM expenses WHERE user_id = $1 AND category_id = $2`, 
+        [userId, categoryId]
+    );
+
+    if (result.rows.length === 0) {
+        return []; // Return an empty array for consistency
+    }
+    return result.rows;
+}
+
+// Total expenses by category
+static async getTotalExpensesByCategory(userId) {
+    const result = await db.query(
+        `SELECT category_id, SUM(amount) AS total
+         FROM expenses
+         WHERE user_id = $1
+         GROUP BY category_id`,
+        [userId]
+    );
+
+    const expenses = result.rows.reduce((acc, { category_id, total }) => {
+        acc[category_id] = total;
+        return acc;
+    }, {});
+
+    return expenses; // Returns an object with category_id as key and total as value
+}
 }
 
 module.exports = Expense;

@@ -1,7 +1,6 @@
 //loginform.js
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import './Login-RegisterForm.css';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -12,37 +11,36 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 const INITIAL_STATE = {
-  username:'',
-  password: ''
-}
+  username: '',
+  password: '',
+};
 
-
-function LoginForm({login}) {
+function LoginForm({ login }) {
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [formErrors, setFormErrors] = useState([]);
   const history = useHistory();
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData(data => ({...data, [name]: value}));
-  }
+    const { name, value } = e.target;
+    setFormData((data) => ({ ...data, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     let result = await login(formData);
     if (result.success) {
-      history.push('/'); 
+      history.push('/');
       setFormData(INITIAL_STATE);
       setFormErrors([]);
     } else {
       setFormErrors(result.err);
     }
-  }
-  
+  };
+
   return (
     <Container maxWidth="sm" className="Login-RegisterForm">
       <Typography component="h1" variant="h5">
-            Login
+        Login
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
@@ -56,7 +54,7 @@ function LoginForm({login}) {
           value={formData.username}
           onChange={handleChange}
           error={formErrors.length}
-          helperText={formErrors.length? 'Incorrect username/password': null}
+          helperText={formErrors.length ? 'Incorrect username/password' : null}
         />
         <TextField
           margin="dense"
@@ -69,13 +67,24 @@ function LoginForm({login}) {
           value={formData.password}
           onChange={handleChange}
           error={formErrors.length}
-          helperText={formErrors.length? 'Incorrect username/password': null}
+          helperText={formErrors.length ? 'Incorrect username/password' : null}
         />
         <Button
           type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          sx={{
+            mt: 3,
+            mb: 2,
+            backgroundColor: '#FF6B6B',
+            width: '138px',
+            height: '48px',
+            borderRadius: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 'auto', // Add this line to center the button horizontally
+          }}
         >
           Login
         </Button>
@@ -85,16 +94,10 @@ function LoginForm({login}) {
               {"Don't have an account? Register"}
             </Link>
           </Grid>
-          {/* <Grid item>
-            <Link href="#" variant="body2">
-              {"Forgot password?"}
-            </Link>
-          </Grid> */}
         </Grid>
       </Box>
-    
     </Container>
-   
-  )
+  );
 }
+
 export default LoginForm;

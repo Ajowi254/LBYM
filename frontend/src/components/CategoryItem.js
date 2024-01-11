@@ -3,7 +3,7 @@ import React, { useState, useEffect, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
-import ExpenseBudApi from '../api/api'; // Corrected import path
+import ExpenseBudApi from '../api/api'; 
 
 import './CategoryItem.css';
 
@@ -18,16 +18,16 @@ function CategoryItem({ icon, name, categoryId, budget }) {
     async function loadSpent() {
       try {
         const expenses = await ExpenseBudApi.getExpensesForCategory(categoryId);
-        setSpent(expenses.total || 0); // Set to 0 if there are no expenses
+        const totalSpent = expenses.reduce((acc, exp) => acc + exp.amount, 0); // Sum up the expenses
+        setSpent(totalSpent);
       } catch (error) {
         console.error("Error loading expenses:", error);
-        // Handle the error appropriately
       }
     }
-
     loadSpent();
   }, [categoryId]);
 
+  // Return statement should be here, inside the function
   return (
     <Box className="category-item">
       <Typography variant="subtitle1" className="category-name">

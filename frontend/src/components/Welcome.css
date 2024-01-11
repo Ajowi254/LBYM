@@ -1,7 +1,15 @@
 /* Welcome.css */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #4ECDC4; /* Background color for the entire page */
+  background-image: url('/home/spuser/plaid/LYBM-BE/frontend/src/assets/seedling.svg'); /* Updated path to the new vector background image */
+  background-size: cover; /* Ensure the vector image covers the entire page */
+  background-repeat: no-repeat; /* Prevent the vector from repeating */
+}
+
 .welcome-container {
-  background-color: #4ECDC4; /* The specified background color */
-  height: 100vh; /* Full height of the viewport */
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,18 +17,18 @@
 }
 
 .icon-container img {
-  margin-bottom: 20px; /* Space below the leaf icon */
+  margin-bottom: 20px;
 }
 
 .welcome-sign img {
-  margin-bottom: 40px; /* Increased space below the welcome sign */
+  margin-bottom: 40px;
 }
 
 .action-buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; /* Take full width to center buttons */
+  width: 100%;
 }
 
 .get-started {

@@ -7,11 +7,11 @@ function Intro() {
   const history = useHistory();
 
   const handleNext = () => {
-    history.push('/connect-bank'); // Adjust this path to your actual route for connecting to a bank
+    history.push('/connect-bank');
   };
 
   const handleSkip = () => {
-    history.push('/login'); // Navigate to the login page
+    history.push('/login');
   };
 
   return (

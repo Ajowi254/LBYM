@@ -62,7 +62,7 @@ function App() {
       }
       setInfoLoaded(true);
     }
-    setInfoLoaded(false);
+
     fetchUserData();
   }, [userToken]);
 

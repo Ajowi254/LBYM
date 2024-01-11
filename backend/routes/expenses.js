@@ -70,13 +70,16 @@ router.patch("/:expenseId", ensureCorrectUser, async function (req, res, next) {
 // DELETE /users/:userId/expenses/:expenseId => { deleted: id }
 router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {
-    await Expense.remove(req.params.userId, req.params.expenseId);
-    req.io.emit('expense_removed', { expense_id: req.params.expenseId, user_id: req.params.userId }); // Emit WebSocket event
-
-    return res.json({ deleted: req.params.expenseId });
+      const deletedExpense = await Expense.remove(req.params.userId, req.params.expenseId);
+      if (!deletedExpense) {
+          throw new NotFoundError(`Expense not found: ${req.params.expenseId}`);
+      }
+      req.io.emit('expense_removed', { expense_id: req.params.expenseId, user_id: req.params.userId });
+      return res.json({ deleted: req.params.expenseId });
   } catch (err) {
-    return next(err);
+      return next(err);
   }
 });
+
 
 module.exports = router;

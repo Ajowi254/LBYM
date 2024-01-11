@@ -10,46 +10,49 @@ import './AccountList.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
-function AccountList({ onTransactionsUpdated }) { // onTransactionsUpdated passed as prop
+function AccountList() {
   const { currentUser } = useContext(UserContext);
   const [accounts, setAccounts] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
-  const [syncLoading, setSyncLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false); // Added state for sync loading
 
   const deleteAccount = async (accountId) => {
     try {
       await ExpenseBudApi.deleteAccount(currentUser.id, accountId);
       setAccounts(accounts => accounts.filter(account => account.id !== accountId));
-      return { success: true };
     } catch (err) {
-      return { success: false, err };
+      console.error('Error deleting account:', err);
     }
   };
 
   const syncTransactions = async (accountId) => {
-    setSyncLoading(true);
     try {
-      let access_token = accounts.find(account => account.id === accountId).access_token;
-      await ExpenseBudApi.transactionsSync({ access_token, accountId });
-      onTransactionsUpdated && onTransactionsUpdated(); // Call the callback on success
+      setSyncLoading(true); // Start loading
+      const account = accounts.find(account => account.id === accountId);
+      await ExpenseBudApi.transactionsSync({ access_token: account.access_token, accountId });
+      // Optionally, refresh the accounts list or update the UI
+      setSyncLoading(false); // End loading
     } catch (err) {
       console.error('Error syncing transactions:', err);
+      setSyncLoading(false); // End loading on error
     }
-    setSyncLoading(false);
   };
 
   async function getAllAccounts() {
     try {
-      let accounts = await ExpenseBudApi.getAllAccounts(currentUser.id);
-      setAccounts(accounts);
+      const accountsData = await ExpenseBudApi.getAllAccounts(currentUser.id);
+      setAccounts(accountsData);
+      setInfoLoaded(true);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching accounts:', err);
+      setInfoLoaded(true);
     }
-    setInfoLoaded(true);
   }
 
   useEffect(() => {
-    getAllAccounts();
+    if (currentUser) {
+      getAllAccounts();
+    }
   }, [currentUser]);
 
   if (!infoLoaded) return <LoadingSpinner />;
@@ -58,10 +61,11 @@ function AccountList({ onTransactionsUpdated }) { // onTransactionsUpdated passe
     <div>
       <Typography component="h1" variant="h5">Accounts</Typography>
       <div className='AccountList-add-account'>
-        <FlashMsg type='info' messages={["The button below currently links to Plaid's sandbox mode. If prompted for username and password, username= user_good, password= pass_good"]}/>
-        <PlaidLink onLinkSuccess={getAllAccounts}/>
+        <PlaidLink onLinkSuccess={getAllAccounts} />
       </div>
-      <Typography variant="subtitle1">After an account is connected, click 'sync transactions' to import transactions. Go to Expenses tab to view import.</Typography>
+      <Typography variant="subtitle1">
+        After an account is connected, click 'sync transactions' to import transactions.
+      </Typography>
       <div className='AccountList-card-group'>
         {accounts.length ? accounts.map(account => (
           <AccountCard 
@@ -71,7 +75,7 @@ function AccountList({ onTransactionsUpdated }) { // onTransactionsUpdated passe
             name={account.institution_name}
             remove={deleteAccount}
             sync={syncTransactions}
-            setSyncLoading={setSyncLoading}
+            setSyncLoading={setSyncLoading} // Pass the setter function to the child component
           />
         )) : <h3>There are currently no accounts.</h3>}
         {!syncLoading && (

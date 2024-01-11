@@ -52,5 +52,21 @@ router.get("/over-budget", authenticateJWT, async function (req, res, next) {
         return next(err);
     }
 });
+// Add this route in your routes-category.js file
+router.get('/users/:userId/categories/:categoryId/expenses', authenticateJWT, async function (req, res, next) {
+    try {
+        const userId = req.params.userId;
+        const categoryId = req.params.categoryId;
+        const expenses = await Category.getExpensesByCategory(userId, categoryId);
+        
+        if (!expenses) {
+            return res.status(404).json({ message: "No expenses found for this category" });
+        }
+
+        return res.json({ expenses });
+    } catch (err) {
+        return next(err);
+    }
+});
 
 module.exports = router;

@@ -25,7 +25,10 @@ class Category {
          GROUP BY e.category_id`,
         [user_id, category_id]
       );
-      return result.rows[0] ? result.rows[0].total_expenses : 0; // Return total or 0 if no expenses
+      if (result.rows.length === 0) {
+        return null; // Or return an empty object {}
+      }
+      return result.rows[0];
     } else {
       // Fetch expenses for all categories
       const result = await db.query(
@@ -39,7 +42,21 @@ class Category {
       return result.rows;
     }
   }
-  
+
+  // Aggregate total expenses for each category for a user
+  static async getTotalExpensesByCategory(user_id) {
+    const result = await db.query(
+      `SELECT category_id, SUM(amount) AS total
+       FROM expenses
+       WHERE user_id = $1
+       GROUP BY category_id`,
+      [user_id]
+    );
+    return result.rows.reduce((acc, { category_id, total }) => {
+      acc[category_id] = total;
+      return acc;
+    }, {});
+  }
   // New method to update the is_over_budget status
   static async updateOverBudgetStatus(categoryId) {
     const result = await db.query(

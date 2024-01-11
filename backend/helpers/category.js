@@ -14,9 +14,6 @@ function mapCategory(plaidCategory) {
     'subway': 'ride share',
     'rail': 'ride share',
     'bus': 'ride share',
-    // Continue adding other Plaid categories that should map to 'ride share'
-    
-    // Other category mappings
     'restaurants': 'eating out',
     'fast food': 'eating out',
     'coffee shop': 'eating out',
@@ -45,7 +42,7 @@ function mapCategory(plaidCategory) {
     'food delivery': 4,
     'going out': 5,
     'ride share': 6,
-    'other': 7, // Retain 'other' as a fallback category
+    'other': 7,
   };
 
   // Return the category id if it exists, otherwise default to 'other'
