@@ -11,6 +11,25 @@ const Expense = require("../models/expense");
 const Goal = require("../models/goal");
 const { mapCategory } = require("../helpers/category");
 
+
+async function getUserIdFromItemId(item_id) {
+  // Query your database to find the user ID associated with the given item ID
+  try {
+      const account = await Account.findByItemId(item_id);
+      if (account) {
+          return account.user_id;  // Assuming your account model has a user_id field
+      } else {
+          // Handle the case where no account is found for the given item ID
+          console.error(`No account found for item_id: ${item_id}`);
+          return null;  // Or handle this scenario as appropriate for your application
+      }
+  } catch (error) {
+      console.error(`Error fetching user ID for item_id ${item_id}:`, error);
+      return null;  // Or handle this error as needed
+  }
+}
+
+
 router.post('/create_link_token', async function (req, res, next) {
   const userId = String(res.locals.user.id) || null;
   const plaidRequest = {
@@ -81,6 +100,7 @@ router.post('/transactions/sync', async function (req, res, next) {
     const transactionResult = await plaidClient.transactionsSync(request);
     let newTransactions = transactionResult.data.added || [];
     let expensesCreated = [];
+    let duplicateExpenses = [];
 
     for (let transaction of newTransactions) {
       let categoryId;
@@ -88,7 +108,6 @@ router.post('/transactions/sync', async function (req, res, next) {
         categoryId = mapCategory(transaction.personal_finance_category.primary);
       } catch (err) {
         console.error('Error mapping category:', err.message);
-        // Optionally: Continue to the next transaction or handle the error differently
         continue; // Skips to the next iteration in the loop
       }
 
@@ -107,18 +126,41 @@ router.post('/transactions/sync', async function (req, res, next) {
         const expense = await Expense.create(res.locals.user.id, expenseData);
         expensesCreated.push(expense);
       } catch (err) {
-        console.error('/transactions/sync error:', err.message);
-        // Handle specific error (e.g., database error)
+        if (err instanceof BadRequestError && err.message.startsWith('Duplicate expense')) {
+          // Log and skip duplicates, but keep track of them
+          duplicateExpenses.push(transaction.transaction_id);
+          console.log('Duplicate transaction skipped:', transaction.transaction_id);
+        } else {
+          console.error('/transactions/sync error:', err.message);
+          // Log and handle other types of errors as needed
+        }
       }
     }
 
-    io.emit('transactions_synced', { user_id: res.locals.user.id, expenses: expensesCreated });
-    return res.json({ message: "Transactions synced successfully", expenses: expensesCreated });
+    const io = req.app.get('io');
+    io.emit('transactions_synced', { 
+    user_id: res.locals.user.id,
+     expenses: expensesCreated,
+     duplicatesSkipped: duplicateExpenses.length
+     });
+
+    return res.json({
+      message: "Transactions synced successfully",
+      expenses: expensesCreated,
+      duplicatesSkipped: duplicateExpenses.length
+    });
+
   } catch (err) {
     console.error('Error syncing transactions:', err.message);
-    return next(err);
+    res.status(500).json({
+      message: 'Error syncing transactions',
+      details: err.message,
+      type: err.name
+    });
   }
 });
+
+
 
 router.post('/auth/get', async function (req, res, next) {
   const access_token = req.body.access_token;
@@ -135,24 +177,42 @@ router.post('/auth/get', async function (req, res, next) {
 // Handle Plaid's webhook for new transactions
 router.post('/transactions/webhook', async function (req, res, next) {
   try {
-    // Assume we receive the necessary data from Plaid's webhook in req.body
-    const { webhook_code, new_transactions } = req.body;
+      const { webhook_code, new_transactions } = req.body;
 
-    if (webhook_code === 'INITIAL_UPDATE' || webhook_code === 'HISTORICAL_UPDATE' || webhook_code === 'DEFAULT_UPDATE') {
-      // Process the new transactions...
-      // For each transaction, map the category, create an expense, update the goal progress
-      // and then emit a WebSocket event with the updated data.
-      
-      // Acknowledge the webhook event
-      res.status(200).json({ acknowledgment: 'Webhook received' });
+      if (['INITIAL_UPDATE', 'HISTORICAL_UPDATE', 'DEFAULT_UPDATE'].includes(webhook_code)) {
+          for (const transaction of new_transactions) {
+              try {
+                  const categoryId = mapCategory(transaction.personal_finance_category.primary);
+                  const userId = await getUserIdFromItemId(transaction.item_id);
 
-      // Here, you'd implement logic similar to your existing transaction sync logic
-      // After processing the new transactions, emit an update
-      io.emit('new_transaction', { user_id: 'someUserId', new_transactions }); // Replace 'someUserId' with actual user ID from your authentication system
-    }
+                  const expenseData = {
+                      amount: transaction.amount,
+                      date: transaction.date,
+                      vendor: transaction.merchant_name,
+                      description: transaction.name,
+                      category_id: categoryId,
+                      user_id: userId,
+                      transaction_id: transaction.transaction_id,
+                  };
+
+                  // Create or update the expense in your database
+                  await Expense.createOrUpdate(expenseData);
+              } catch (error) {
+                  console.error('Error processing transaction from webhook:', error);
+              }
+          }
+
+          // Emit a WebSocket event to update frontend
+          io.emit('new_transaction', { user_id: userId, new_transactions });
+
+          res.status(200).json({ acknowledgment: 'Webhook received and processed' });
+      } else {
+          res.status(200).json({ message: 'Webhook code not handled' });
+      }
   } catch (err) {
-    console.error('Error handling Plaid webhook:', err);
-    return next(err);
+      console.error('Error handling Plaid webhook:', err);
+      return next(err);
   }
 });
+
 module.exports = router;

@@ -28,6 +28,10 @@ function mapCategory(plaidCategory) {
     'online shopping': 'shopping',
     'clothing': 'shopping',
     'electronics': 'shopping',
+    'McDonalds': 'eating out',
+    'Starbucks': 'eating out',
+    'Fun': 'going out',
+
     // Continue adding other mappings as necessary
   };
 

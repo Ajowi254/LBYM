@@ -29,29 +29,31 @@ class Expense {
 
         return result.rows;
     }
-
     static async create(user_id, { amount, date, vendor, description, category_id, transaction_id }) {
+        let createdExpense;
         if (transaction_id) {
-            const duplicateCheck = await db.query(
-                `SELECT transaction_id FROM expenses WHERE transaction_id = $1`,
-                [transaction_id]
+          const duplicateCheck = await db.query(
+            `SELECT transaction_id FROM expenses WHERE transaction_id = $1`,
+            [transaction_id]
+          );
+      
+          if (duplicateCheck.rows[0]) {
+            // Log the duplicate and skip inserting it
+            console.log(`Skipping duplicate expense: ${transaction_id}`);
+          } else {
+            const result = await db.query(
+              `INSERT INTO expenses
+              (amount, date, vendor, description, category_id, user_id, transaction_id)
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
+              RETURNING id, amount, date, vendor, description, category_id, user_id, transaction_id`,
+              [amount, date, vendor, description, category_id, user_id, transaction_id]
             );
-
-            if (duplicateCheck.rows[0]) {
-                throw new BadRequestError(`Duplicate expense: ${transaction_id}`);
-            }
+            createdExpense = result.rows[0];
+          }
         }
-
-        const result = await db.query(
-            `INSERT INTO expenses
-            (amount, date, vendor, description, category_id, user_id, transaction_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING id, amount, date, vendor, description, category_id, user_id, transaction_id`,
-            [amount, date, vendor, description, category_id, user_id, transaction_id]
-        );
-
-        return result.rows[0];
-    }
+        return createdExpense;
+      }
+      
 
     static async update(user_id, expense_id, data) {
         const { setCols, values } = partialUpdateSql(data, {});
@@ -92,6 +94,20 @@ class Expense {
         return []; // Return an empty array for consistency
     }
     return result.rows;
+}
+
+static async createOrUpdate({ amount, date, vendor, description, category_id, user_id, transaction_id }) {
+    const duplicateCheck = await db.query(
+        `SELECT id FROM expenses WHERE transaction_id = $1 AND user_id = $2`,
+        [transaction_id, user_id]
+    );
+
+    if (duplicateCheck.rows.length > 0) {
+        const expenseId = duplicateCheck.rows[0].id;
+        return await this.update(user_id, expenseId, { amount, date, vendor, description, category_id });
+    } else {
+        return await this.create(user_id, { amount, date, vendor, description, category_id, transaction_id });
+    }
 }
 
 // Total expenses by category

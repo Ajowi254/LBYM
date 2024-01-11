@@ -14,7 +14,8 @@ function AccountList() {
   const { currentUser } = useContext(UserContext);
   const [accounts, setAccounts] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
-  const [syncLoading, setSyncLoading] = useState(false); // Added state for sync loading
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [errors, setErrors] = useState([]); // Added state for sync loading
 
   const deleteAccount = async (accountId) => {
     try {
@@ -30,11 +31,20 @@ function AccountList() {
       setSyncLoading(true); // Start loading
       const account = accounts.find(account => account.id === accountId);
       await ExpenseBudApi.transactionsSync({ access_token: account.access_token, accountId });
-      // Optionally, refresh the accounts list or update the UI
-      setSyncLoading(false); // End loading
+     // Refresh accounts list or update UI if necessary
+      // Reset errors if sync is successful
+      setErrors([]);
     } catch (err) {
-      console.error('Error syncing transactions:', err);
-      setSyncLoading(false); // End loading on error
+      if (err.response && err.response.status === 500) {
+        // Handle specific error message from backend
+        console.error('Error syncing transactions:', err.response.data.details);
+        setErrors(prevErrors => [...prevErrors, err.response.data.details]);
+      } else {
+        console.error('Error syncing transactions:', err);
+        setErrors(prevErrors => [...prevErrors, err.message || "An error occurred during sync."]);
+      }
+    } finally {
+      setSyncLoading(false); // End loading regardless of the outcome
     }
   };
 
