@@ -30,10 +30,8 @@ router.delete("/:accountId", ensureCorrectUser, async function (req, res, next) 
   try {
     await Account.remove(req.params.accountId);
     return res.json({ deleted: req.params.accountId });
-
   } catch (err) {
     return next(err);
   }
-})
-
+});
 module.exports = router;

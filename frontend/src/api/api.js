@@ -221,11 +221,13 @@ static async getExpensesForCategory(userId, categoryId) {
 
 static async getTotalExpensesByCategory(userId) {
   try {
-    let res = await this.request(`users/${userId}/total-expenses`);
-    return res.totalExpenses;
+    const res = await this.request(`users/${userId}/total-expenses`);
+    // If the backend returns an empty object for totalExpenses, handle it here
+    return res.totalExpenses || {};
   } catch (error) {
+    // Handle errors appropriately, possibly by logging and returning an empty object
     console.error('Error fetching total expenses by category:', error);
-    throw error;
+    return {}; // Return an empty object to avoid breaking frontend logic
   }
 }
 

@@ -2,7 +2,7 @@
 const db = require("../db");
 
 const { BadRequestError, NotFoundError } = require("../expressErrors");
-
+const Expense = require("./expense");
 class Account {
 
 /** Find all accounts for a single user based on user id.
@@ -51,17 +51,16 @@ static async create({ user_id, access_token, item_id, account_id, institution_id
 /** Delete given account from database; returns undefined. */
 
 static async remove(id) {
-  let result = await db.query(`
-    DELETE
-    FROM accounts
-    WHERE id = $1
-    RETURNING id`,
-    [id]
-  )
-  const expense = result.rows[0];
-  if (!expense) throw new NotFoundError(`No account id: ${id}`);
- }
+  // Delete associated expenses first
+  await Expense.removeByAccountId(id);
 
+  // Then, delete the account
+  const result = await db.query(
+      `DELETE FROM accounts WHERE id = $1 RETURNING id`,
+      [id]
+  );
+  const account = result.rows[0];
+  if (!account) throw new NotFoundError(`No account id: ${id}`);
 }
-
+}
 module.exports = Account;

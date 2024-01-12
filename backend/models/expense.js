@@ -127,6 +127,13 @@ static async getTotalExpensesByCategory(userId) {
 
     return expenses; // Returns an object with category_id as key and total as value
 }
+
+static async removeByAccountId(accountId) {
+    await db.query(
+        `DELETE FROM expenses WHERE account_id = $1`,
+        [accountId]
+    );
+}
 }
 
 module.exports = Expense;

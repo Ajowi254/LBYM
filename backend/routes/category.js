@@ -14,15 +14,26 @@ router.get('/', async function (req, res, next) {
     }
 });
 
+// GET /users/:userId/total-expenses
 router.get("/users/:userId/total-expenses", authenticateJWT, async function (req, res, next) {
     try {
         const userId = req.params.userId;
-        const totalExpenses = await Category.getTotalExpensesByCategory(userId);
+        let totalExpenses = await Category.getTotalExpensesByCategory(userId);
+
+        // Check if totalExpenses is not null or undefined
+        if (!totalExpenses) {
+            // If no expenses found, initialize totalExpenses to an empty object
+            totalExpenses = {};
+        }
+
         return res.json({ totalExpenses });
     } catch (err) {
-        return next(err);
+        // Log the error and return an empty object to indicate no expenses
+        console.error(err);
+        return res.json({ totalExpenses: {} });
     }
 });
+
 
 // Get expenses for a specific category for the logged-in user
 router.get("/:categoryId/expenses", authenticateJWT, async function (req, res, next) {
