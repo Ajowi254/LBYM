@@ -1,5 +1,5 @@
-//accountlist.js
-import { useState, useEffect, useContext } from 'react';
+// AccountList.js
+import React, { useState, useEffect, useContext } from 'react';
 import UserContext from '../../context/UserContext';
 import PlaidLink from './PlaidLink';
 import ExpenseBudApi from '../../api/api';
@@ -10,12 +10,12 @@ import './AccountList.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
-function AccountList() {
+function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
   const { currentUser } = useContext(UserContext);
   const [accounts, setAccounts] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
-  const [errors, setErrors] = useState([]); // Added state for sync loading
+  const [errors, setErrors] = useState([]);
 
   const deleteAccount = async (accountId) => {
     try {
@@ -23,28 +23,22 @@ function AccountList() {
       setAccounts(accounts => accounts.filter(account => account.id !== accountId));
     } catch (err) {
       console.error('Error deleting account:', err);
+      // Ideally, you should also handle this error in the UI, not just the console
     }
   };
 
   const syncTransactions = async (accountId) => {
+    setSyncLoading(true);
     try {
-      setSyncLoading(true); // Start loading
       const account = accounts.find(account => account.id === accountId);
       await ExpenseBudApi.transactionsSync({ access_token: account.access_token, accountId });
-     // Refresh accounts list or update UI if necessary
-      // Reset errors if sync is successful
-      setErrors([]);
-    } catch (err) {
-      if (err.response && err.response.status === 500) {
-        // Handle specific error message from backend
-        console.error('Error syncing transactions:', err.response.data.details);
-        setErrors(prevErrors => [...prevErrors, err.response.data.details]);
-      } else {
-        console.error('Error syncing transactions:', err);
-        setErrors(prevErrors => [...prevErrors, err.message || "An error occurred during sync."]);
-      }
+      const updatedExpenses = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
+      updateExpenses(updatedExpenses); // Update the state with the new expenses
+    } catch (error) {
+      console.error('Error syncing transactions:', error);
+      setErrors(prevErrors => [...prevErrors, error]);
     } finally {
-      setSyncLoading(false); // End loading regardless of the outcome
+      setSyncLoading(false);
     }
   };
 
@@ -76,6 +70,10 @@ function AccountList() {
       <Typography variant="subtitle1">
         After an account is connected, click 'sync transactions' to import transactions.
       </Typography>
+      {errors.map((error, index) => (
+        // Here you should display errors to the user, perhaps using a component like FlashMsg
+        <p key={index} style={{ color: 'red' }}>{error.toString()}</p>
+      ))}
       <div className='AccountList-card-group'>
         {accounts.length ? accounts.map(account => (
           <AccountCard 
@@ -85,10 +83,10 @@ function AccountList() {
             name={account.institution_name}
             remove={deleteAccount}
             sync={syncTransactions}
-            setSyncLoading={setSyncLoading} // Pass the setter function to the child component
+            setSyncLoading={setSyncLoading}
           />
         )) : <h3>There are currently no accounts.</h3>}
-        {!syncLoading && (
+        {syncLoading && (
           <div className='AccountList-sync-loading'>
             <span>Syncing... &nbsp;</span>
             <CircularProgress />

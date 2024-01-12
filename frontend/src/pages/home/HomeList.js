@@ -1,59 +1,63 @@
 // HomeList.js
 import React, { useEffect, useState, useContext } from 'react';
 import UserContext from '../../context/UserContext';
-import ExpenseBudApi from '../../api/api';
+import ExpenseBudApi from '../../api/api'; // Make sure to import the API correctly
 import Box from '@mui/material/Box';
 import CategoryItem from '../../components/CategoryItem';
 import { getIconPath } from '../../utils/iconUtils';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3001');
+const socket = io('http://localhost:3001'); // Ensure this is your actual server address
 
-function HomeList() {
+function HomeList({ updatedExpenses }) { // Receive updated expenses as a prop
   const { currentUser } = useContext(UserContext);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    async function fetchCategoriesAndTotalExpenses() {
-        if (currentUser) {
-            try {
-                const categoriesResponse = await ExpenseBudApi.getCategories();
-                // Initialize totalExpenses as an empty object
-                let totalExpenses = {};
+    async function fetchCategoriesAndExpenses() {
+      if (currentUser) {
+        try {
+          const categoriesResponse = await ExpenseBudApi.getCategories();
+          let totalExpenses = updatedExpenses || {}; // Use updated expenses if provided
 
-                try {
-                    // Attempt to fetch total expenses by category for the user
-                    totalExpenses = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
-                } catch (error) {
-                    // Log the error and maintain totalExpenses as an empty object
-                    console.error('Error fetching total expenses by category:', error);
-                }
+          // If updated expenses are not provided, fetch them
+          if (Object.keys(totalExpenses).length === 0) {
+            totalExpenses = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
+          }
 
-                // Combine categories with their corresponding total expenses
-                const categoriesWithTotalExpenses = categoriesResponse.map(category => ({
-                    ...category,
-                    spent: totalExpenses[category.id] || 0, // Use 0 if no expenses for the category
-                }));
+          const categoriesWithExpenses = categoriesResponse.map(category => ({
+            ...category,
+            spent: totalExpenses[category.id] || 0,
+          }));
 
-                // Update the state with the combined data
-                setCategories(categoriesWithTotalExpenses);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
+          setCategories(categoriesWithExpenses);
+        } catch (error) {
+          console.error('Error fetching categories and expenses:', error);
         }
+      }
     }
 
-    fetchCategoriesAndTotalExpenses();
-}, [currentUser]);
+    fetchCategoriesAndExpenses();
+  }, [currentUser, updatedExpenses]); // Depend on updatedExpenses prop
+
+  // Listen to socket events if needed
+  useEffect(() => {
+    socket.on('expenses_updated', (data) => {
+      // Handle the event
+    });
+
+    // Clean up the effect
+    return () => socket.off('expenses_updated');
+  }, []);
 
   return (
     <Box sx={{ width: '100%', maxWidth: '500px', margin: 'auto', pt: 0, backgroundColor: '#F9FEFF' }}>
-      {categories.map((category) => (
+      {categories.map(category => (
         <CategoryItem
           key={category.id}
           icon={getIconPath(category.category)}
           name={category.category}
-          budget={category.budget || 0} // Set a default budget or fetch it if necessary
+          budget={category.budget || 0}
           spent={category.spent}
           categoryId={category.id}
         />
