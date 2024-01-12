@@ -2,21 +2,34 @@
 require('dotenv').config();
 const app = require("./app");
 const http = require("http");
-const server = http.createServer(app);
+const cors = require('cors');
 const { Server } = require("socket.io");
-const io = new Server(server);
 
 const PORT = process.env.PORT || 3001;
+
+// Apply general CORS for REST API
+app.use(cors({ origin: 'http://localhost:3000' }));
+
+const server = http.createServer(app);
+
+// Configure CORS for Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000', // Your frontend origin
+    methods: ['GET', 'POST'], // Allowed methods for Socket.IO
+  },
+});
+
 app.set('io', io);
+
 io.on('connection', (socket) => {
   console.log('a user connected', socket.id);
 
-  // Handle disconnection
   socket.on('disconnect', () => {
     console.log('user disconnected', socket.id);
   });
 
-  // You can add more event listeners here
+  // Additional event listeners...
 });
 
 server.listen(PORT, function() {
@@ -24,5 +37,4 @@ server.listen(PORT, function() {
   console.log(process.env.PLAID_CLIENT_ID, process.env.PLAID_SECRET, process.env.PLAID_ENVIRONMENT);
 });
 
-// Export the server and io to use them in other parts of the application
 module.exports = { server, io };

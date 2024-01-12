@@ -219,6 +219,15 @@ static async getExpensesForCategory(userId, categoryId) {
   }
 }
 
+static async getTotalExpensesByCategory(userId) {
+  try {
+    let res = await this.request(`users/${userId}/total-expenses`);
+    return res.totalExpenses;
+  } catch (error) {
+    console.error('Error fetching total expenses by category:', error);
+    throw error;
+  }
+}
 
 static async getAggregatedExpensesByCategory(userId) {
   try {

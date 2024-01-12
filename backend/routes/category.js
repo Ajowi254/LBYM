@@ -14,6 +14,16 @@ router.get('/', async function (req, res, next) {
     }
 });
 
+router.get("/users/:userId/total-expenses", authenticateJWT, async function (req, res, next) {
+    try {
+        const userId = req.params.userId;
+        const totalExpenses = await Category.getTotalExpensesByCategory(userId);
+        return res.json({ totalExpenses });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 // Get expenses for a specific category for the logged-in user
 router.get("/:categoryId/expenses", authenticateJWT, async function (req, res, next) {
     try {

@@ -14,45 +14,25 @@ function HomeList() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    async function fetchCategoriesAndExpenses() {
-      if (currentUser) {
-        const budgetsResponse = await ExpenseBudApi.getBudgets(currentUser.id);
-        const categoriesResponse = await ExpenseBudApi.getCategories();
-        
-        const categoriesWithExpenses = await Promise.all(
-          categoriesResponse.map(async (category) => {
-            try {
-              const expenses = await ExpenseBudApi.getExpensesForCategory(currentUser.id, category.id);
-              const totalSpent = expenses.reduce((acc, exp) => acc + exp.amount, 0);
-              return {
-                ...category,
-                budget: budgetsResponse.find(b => b.categoryId === category.id)?.budgetLimit || 0,
-                spent: totalSpent,
-              };
-            } catch (error) {
-              console.error(`Error fetching expenses for category ${category.id}:`, error);
-              return {
-                ...category,
-                budget: 0,
-                spent: 0,
-              };
-            }
-          })
-        );
+      async function fetchCategoriesAndTotalExpenses() {
+          if (currentUser) {
+              try {
+                  const categoriesResponse = await ExpenseBudApi.getCategories();
+                  const totalExpensesResponse = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
+                  
+                  const categoriesWithTotalExpenses = categoriesResponse.map(category => ({
+                      ...category,
+                      spent: totalExpensesResponse[category.id] || 0,
+                  }));
 
-        setCategories(categoriesWithExpenses);
+                  setCategories(categoriesWithTotalExpenses);
+              } catch (error) {
+                  console.error('Error fetching categories and expenses:', error);
+              }
+          }
       }
-    }
 
-    fetchCategoriesAndExpenses();
-
-    socket.on('transactions_updated', (updatedData) => {
-      setCategories(updatedData);
-    });
-
-    return () => {
-      socket.off('transactions_updated');
-    };
+      fetchCategoriesAndTotalExpenses();
   }, [currentUser]);
 
   return (
@@ -62,9 +42,9 @@ function HomeList() {
           key={category.id}
           icon={getIconPath(category.category)}
           name={category.category}
-          budget={category.budget}
+          budget={category.budget || 0} // Set a default budget or fetch it if necessary
           spent={category.spent}
-          categoryId={category.id} // Pass categoryId if needed
+          categoryId={category.id}
         />
       ))}
     </Box>

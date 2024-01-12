@@ -3,15 +3,13 @@ import React, { forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
-
-
 import './CategoryItem.css';
 
 const CustomThumb = forwardRef((props, ref) => (
   <div ref={ref} {...props} className="custom-slider-thumb" />
 ));
 
-function CategoryItem({ icon, name, budget, spent, categoryId }) { // Include categoryId if needed
+function CategoryItem({ icon, name, budget, spent, categoryId }) {
   return (
     <Box className="category-item">
       <Typography variant="subtitle1" className="category-name">
@@ -23,7 +21,7 @@ function CategoryItem({ icon, name, budget, spent, categoryId }) { // Include ca
           components={{ Thumb: CustomThumb }}
           value={spent}
           min={0}
-          max={budget}
+          max={budget} // Ensure this is the max budget for the category
           valueLabelDisplay="on"
           track={false}
           sx={{
