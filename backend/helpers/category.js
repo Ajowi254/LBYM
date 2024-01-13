@@ -1,4 +1,4 @@
-//category.js
+//helpers=category.js
 function mapCategory(plaidCategory) {
   let regex = /\s+|_+/g;
   plaidCategory = plaidCategory.replace(regex, ' ').toLowerCase();

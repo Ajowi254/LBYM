@@ -37,7 +37,6 @@ router.post('/register', async function(req, res, next) {
   }
 });
 
-// auth.js
 
 router.post("/login", async function (req, res, next) {
   try {

@@ -160,8 +160,6 @@ router.post('/transactions/sync', async function (req, res, next) {
   }
 });
 
-
-
 router.post('/auth/get', async function (req, res, next) {
   const access_token = req.body.access_token;
   const request = {

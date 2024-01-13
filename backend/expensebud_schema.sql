@@ -15,7 +15,6 @@ CREATE TABLE categories (
   category VARCHAR(30) UNIQUE NOT NULL
 );
 
-
 CREATE TABLE accounts (
   id SERIAL PRIMARY KEY, 
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -26,7 +25,6 @@ CREATE TABLE accounts (
   institution_name TEXT,
   account_type TEXT
 );
-
 
 CREATE TABLE category_budgets (
   id SERIAL PRIMARY KEY,
@@ -57,4 +55,11 @@ CREATE TABLE goals (
   description TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   due_date DATE
+);
+
+-- Additional table for tracking synced transactions per account
+CREATE TABLE account_transactions (
+  id SERIAL PRIMARY KEY,
+  account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
+  last_synced TIMESTAMP WITH TIME ZONE
 );

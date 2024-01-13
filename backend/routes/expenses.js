@@ -79,7 +79,25 @@ router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) 
   } catch (err) {
       return next(err);
   }
+  
 });
 
-
+router.get("/aggregate", ensureCorrectUser, async function (req, res, next) {
+  try {
+      const aggregatedExpenses = await Expense.aggregateByCategory(req.params.userId);
+      return res.json({ aggregatedExpenses });
+  } catch (err) {
+      return next(err);
+  }
+});
+// GET /users/:userId/total-expenses
+router.get("/:userId/total-expenses", ensureCorrectUser, async function(req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const totalExpenses = await Expense.getTotalExpensesByCategory(userId);
+    return res.json({ totalExpenses });
+  } catch (err) {
+    return next(err);
+  }
+});
 module.exports = router;
