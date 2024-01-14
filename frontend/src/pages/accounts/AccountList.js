@@ -32,7 +32,7 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
     try {
       const account = accounts.find(account => account.id === accountId);
       await ExpenseBudApi.transactionsSync({ access_token: account.access_token, accountId });
-      const updatedExpenses = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
+      const updatedExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
       updateExpenses(updatedExpenses); // Update the state with the new expenses
     } catch (error) {
       console.error('Error syncing transactions:', error);

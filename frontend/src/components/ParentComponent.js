@@ -13,7 +13,7 @@ function ParentComponent() {
     try {
       setSyncLoading(true);
       await ExpenseBudApi.transactionsSync(currentUser.id, { accountId });
-      const updatedExpenses = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
+      const updatedExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
       setExpenses(updatedExpenses);
     } catch (error) {
       console.error('Error syncing transactions:', error);

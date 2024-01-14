@@ -18,25 +18,25 @@ function HomeList({ updatedExpenses }) { // Receive updated expenses as a prop
       if (currentUser) {
         try {
           const categoriesResponse = await ExpenseBudApi.getCategories();
-          let totalExpenses = updatedExpenses || {}; // Use updated expenses if provided
-
-          // If updated expenses are not provided, fetch them
-          if (Object.keys(totalExpenses).length === 0) {
-            totalExpenses = await ExpenseBudApi.getTotalExpensesByCategory(currentUser.id);
+          let totalExpenses = {};
+          try {
+            totalExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
+          } catch (error) {
+            console.error('Error fetching aggregated expenses:', error);
           }
-
+    
           const categoriesWithExpenses = categoriesResponse.map(category => ({
             ...category,
             spent: totalExpenses[category.id] || 0,
           }));
-
+    
           setCategories(categoriesWithExpenses);
         } catch (error) {
           console.error('Error fetching categories and expenses:', error);
         }
       }
     }
-
+    
     fetchCategoriesAndExpenses();
   }, [currentUser, updatedExpenses]); // Depend on updatedExpenses prop
 

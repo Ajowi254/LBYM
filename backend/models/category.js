@@ -43,29 +43,7 @@ class Category {
     }
   }
 
-  // Aggregate total expenses for each category for a user
-
-  static async getTotalExpensesByCategory(user_id) {
-    const result = await db.query(
-        `SELECT category_id, SUM(amount) AS total
-         FROM expenses
-         WHERE user_id = $1
-         GROUP BY category_id`,
-        [user_id]
-    );
-
-    // Check if result.rows is not empty
-    if (result.rows.length) {
-        // Convert the array to an object keyed by category_id
-        return result.rows.reduce((acc, { category_id, total }) => {
-            acc[category_id] = total;
-            return acc;
-        }, {});
-    } else {
-        // Return an empty object if no expenses found
-        return {};
-    }
-}
+  
 
   // New method to update the is_over_budget status
   static async updateOverBudgetStatus(categoryId) {

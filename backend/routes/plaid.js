@@ -1,16 +1,13 @@
 //plaid.js
 /** Routes for Plaid API. */
-
 const express = require("express");
 const router = express.Router();
 const { plaidClient } = require("../config");
 const { io } = require('../server');
-
 const Account = require("../models/account");
 const Expense = require("../models/expense");
 const Goal = require("../models/goal");
 const { mapCategory } = require("../helpers/category");
-
 
 async function getUserIdFromItemId(item_id) {
   // Query your database to find the user ID associated with the given item ID

@@ -19,7 +19,7 @@ function CategoryItem({ icon, name, budget, spent, categoryId }) {
         <Box component="img" src={icon} alt={name} className="category-icon" />
         <Slider
           components={{ Thumb: CustomThumb }}
-          value={spent}
+          value={spent} // Use the spent prop here
           min={0}
           max={budget} // Ensure this is the max budget for the category
           valueLabelDisplay="on"
@@ -32,7 +32,7 @@ function CategoryItem({ icon, name, budget, spent, categoryId }) {
               backgroundColor: 'grey',
             },
             '& .MuiSlider-track': {
-              backgroundColor: 'green',
+              backgroundColor: 'green', // Color of the slider track
             },
           }}
           disabled
@@ -44,5 +44,6 @@ function CategoryItem({ icon, name, budget, spent, categoryId }) {
     </Box>
   );
 }
+
 
 export default CategoryItem;

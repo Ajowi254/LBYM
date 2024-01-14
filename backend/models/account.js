@@ -50,17 +50,37 @@ static async create({ user_id, access_token, item_id, account_id, institution_id
 
 /** Delete given account from database; returns undefined. */
 
-static async remove(id) {
-  // Delete associated expenses first
-  await Expense.removeByAccountId(id);
+static async remove(user_id, account_id) {
+  // Start a transaction
+  await db.query('BEGIN');
 
-  // Then, delete the account
-  const result = await db.query(
-      `DELETE FROM accounts WHERE id = $1 RETURNING id`,
-      [id]
-  );
-  const account = result.rows[0];
-  if (!account) throw new NotFoundError(`No account id: ${id}`);
+  try {
+    // Delete the transactions associated with the account
+    await db.query(
+      `DELETE FROM expenses WHERE user_id = $1 AND account_id = $2`,
+      [user_id, account_id]
+    );
+
+    // Delete the account
+    const result = await db.query(
+      `DELETE FROM accounts WHERE user_id = $1 AND id = $2 RETURNING id`,
+      [user_id, account_id]
+    );
+
+    // Commit the transaction
+    await db.query('COMMIT');
+
+    const account = result.rows[0];
+
+    if (!account) throw new NotFoundError(`No account id: ${account_id}`);
+
+    return account;
+  } catch (err) {
+    // If there was a problem, rollback the transaction
+    await db.query('ROLLBACK');
+    throw err;
+  }
 }
+
 }
 module.exports = Account;

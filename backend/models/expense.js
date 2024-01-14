@@ -110,30 +110,13 @@ static async createOrUpdate({ amount, date, vendor, description, category_id, us
     }
 }
 
-// Total expenses by category
-static async getTotalExpensesByCategory(userId) {
-    const result = await db.query(
-        `SELECT category_id, SUM(amount) AS total
-         FROM expenses
-         WHERE user_id = $1
-         GROUP BY category_id`,
-        [userId]
-    );
-
-    const expenses = result.rows.reduce((acc, { category_id, total }) => {
-        acc[category_id] = total;
-        return acc;
-    }, {});
-
-    return expenses; // Returns an object with category_id as key and total as value
-}
-
 static async removeByAccountId(accountId) {
     await db.query(
         `DELETE FROM expenses WHERE account_id = $1`,
         [accountId]
     );
 }
+
 static async aggregateByCategory(userId) {
     const result = await db.query(`
       SELECT c.id AS category_id, c.category, COALESCE(SUM(e.amount), 0) AS total
