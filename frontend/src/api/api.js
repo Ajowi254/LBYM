@@ -219,16 +219,16 @@ static async getExpensesForCategory(userId, categoryId) {
   }
 }
 
-
 static async getAggregatedExpensesByCategory(userId) {
   try {
-    const res = await this.request(`users/${userId}/expenses/aggregated`);
+    const res = await this.request(`users/${userId}/aggregate`);
     return res.aggregatedExpenses; // Update this according to your actual API response structure
   } catch (error) {
     console.error('Error fetching aggregated expenses:', error);
     throw error;
   }
 }
+
 // Update the budget for a specific category of a user
 static async updateBudget(userId, categoryId, budgetLimit) {
   try {

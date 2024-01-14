@@ -45,5 +45,4 @@ function CategoryItem({ icon, name, budget, spent, categoryId }) {
   );
 }
 
-
 export default CategoryItem;

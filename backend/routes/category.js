@@ -14,8 +14,6 @@ router.get('/', async function (req, res, next) {
     }
 });
 
-
-
 // Get expenses for a specific category for the logged-in user
 router.get("/:categoryId/expenses", authenticateJWT, async function (req, res, next) {
     try {

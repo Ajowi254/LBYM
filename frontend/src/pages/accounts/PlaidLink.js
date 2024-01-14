@@ -1,9 +1,7 @@
 //plaidlink.js
 import { useEffect, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
-
 import ExpenseBudApi from '../../api/api';
-
 import Button from '@mui/material/Button';
 
 function PlaidAuth({plaidData, onLinkSuccess}) {

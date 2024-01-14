@@ -20,7 +20,9 @@ function HomeList({ updatedExpenses }) { // Receive updated expenses as a prop
           const categoriesResponse = await ExpenseBudApi.getCategories();
           let totalExpenses = {};
           try {
-            totalExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
+           
+          totalExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
+
           } catch (error) {
             console.error('Error fetching aggregated expenses:', error);
           }
