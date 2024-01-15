@@ -13,8 +13,10 @@ function ParentComponent() {
     try {
       setSyncLoading(true);
       await ExpenseBudApi.transactionsSync(currentUser.id, { accountId });
-      const updatedExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
-      setExpenses(updatedExpenses);
+      
+      // Fetch aggregated expenses by category after syncing transactions
+      const expenses = await ExpenseBudApi.getSumByCategory(currentUser.id);
+      setExpenses(expenses);
     } catch (error) {
       console.error('Error syncing transactions:', error);
       // handle error, maybe set an error state
@@ -22,7 +24,7 @@ function ParentComponent() {
       setSyncLoading(false);
     }
   };
-
+  
   return (
     <div>
       <AccountList onTransactionsUpdated={syncTransactions} syncLoading={syncLoading} />

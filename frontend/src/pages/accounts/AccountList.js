@@ -32,8 +32,10 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
     try {
       const account = accounts.find(account => account.id === accountId);
       await ExpenseBudApi.transactionsSync({ access_token: account.access_token, accountId });
-      const updatedExpenses = await ExpenseBudApi.getAggregatedExpensesByCategory(currentUser.id);
-      updateExpenses(updatedExpenses); // Update the state with the new expenses
+      
+      // Fetch aggregated expenses by category after syncing transactions
+      const expenses = await ExpenseBudApi.getSumByCategory(currentUser.id);
+      updateExpenses(expenses); // Update the state in the parent component
     } catch (error) {
       console.error('Error syncing transactions:', error);
       setErrors(prevErrors => [...prevErrors, error]);
@@ -41,7 +43,8 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
       setSyncLoading(false);
     }
   };
-
+  
+  
   async function getAllAccounts() {
     try {
       const accountsData = await ExpenseBudApi.getAllAccounts(currentUser.id);

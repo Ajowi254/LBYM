@@ -219,15 +219,6 @@ static async getExpensesForCategory(userId, categoryId) {
   }
 }
 
-static async getAggregatedExpensesByCategory(userId) {
-  try {
-    const res = await this.request(`users/${userId}/aggregate`);
-    return res.aggregatedExpenses; // Update this according to your actual API response structure
-  } catch (error) {
-    console.error('Error fetching aggregated expenses:', error);
-    throw error;
-  }
-}
 
 // Update the budget for a specific category of a user
 static async updateBudget(userId, categoryId, budgetLimit) {
@@ -250,6 +241,11 @@ static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
     console.error('Error setting or updating budget:', error);
     throw error;
   }
+}
+
+static async getSumByCategory(userId) {
+  const result = await axios.get(`/users/${userId}/expenses/sum`);
+  return result.data.expenses;
 }
 }
 export default ExpenseBudApi;

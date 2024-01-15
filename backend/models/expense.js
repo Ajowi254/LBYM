@@ -117,17 +117,21 @@ static async removeByAccountId(accountId) {
     );
 }
 
-static async aggregateByCategory(userId) {
-    const result = await db.query(
-      `SELECT c.id AS category_id, c.category, SUM(e.amount) AS total
-       FROM categories c
-       INNER JOIN expenses e ON e.category_id = c.id AND e.user_id = $1
-       GROUP BY c.id`, 
-      [userId]
-    );
-  
-    return result.rows;
-  };
-}
 
+static async getSumByCategory(userId) {
+    const result = await db.query(
+        `SELECT category_id, SUM(amount) AS total
+        FROM expenses
+        WHERE user_id = $1
+        GROUP BY category_id`,
+        [userId]
+    );
+
+    // If there are no expenses, return an empty object
+    if (result.rows.length === 0) {
+        return {};
+    }
+
+    return result.rows;
+}}
 module.exports = Expense;

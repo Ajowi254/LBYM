@@ -81,13 +81,20 @@ router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) 
   }
   
 });
-
-router.get("/aggregate", ensureCorrectUser, async function (req, res, next) {
+router.get("/sum", ensureCorrectUser, async function (req, res, next) {
   try {
-      const aggregatedExpenses = await Expense.aggregateByCategory(req.params.userId);
-      return res.json({ aggregatedExpenses });
+    const expenses = await Expense.getSumByCategory(req.params.userId);
+    
+    // If there are no expenses, return an empty object
+    if (Object.keys(expenses).length === 0) {
+        return res.json({ expenses: {} });
+    }
+
+    return res.json({ expenses });
   } catch (err) {
-      return next(err);
+    return next(err);
   }
 });
+
+
 module.exports = router;
