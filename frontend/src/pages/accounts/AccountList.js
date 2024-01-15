@@ -44,7 +44,6 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
     }
   };
   
-  
   async function getAllAccounts() {
     try {
       const accountsData = await ExpenseBudApi.getAllAccounts(currentUser.id);

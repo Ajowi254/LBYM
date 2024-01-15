@@ -1,5 +1,3 @@
-// expenses.js
-
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 const jsonschema = require("jsonschema");
@@ -10,12 +8,17 @@ const expenseUpdateSchema = require("../schemas/expenseUpdate.json");
 const { BadRequestError } = require("../expressErrors");
 const { ensureCorrectUser } = require('../middleware/auth');
 
-// GET /users/:userId/expenses/:expenseId => { expense }
-router.get("/:expenseId", ensureCorrectUser, async function (req, res, next) {
+// GET /users/:userId/expenses/sum => { expenses }
+router.get("/sum", ensureCorrectUser, async function (req, res, next) {
   try {
-    const { userId, expenseId } = req.params;
-    const expense = await Expense.get(userId, expenseId);
-    return res.json({ expense });
+    const expenses = await Expense.getSumByCategory(req.params.userId);
+    
+    // If there are no expenses, return an empty array
+    if (expenses.length === 0) {
+        return res.json({ expenses: [] });
+    }
+
+    return res.json({ expenses });
   } catch (err) {
     return next(err);
   }
@@ -26,6 +29,17 @@ router.get("/", ensureCorrectUser, async function (req, res, next) {
   try {
     const expenses = await Expense.findAll(req.params.userId);
     return res.json({ expenses });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// GET /users/:userId/expenses/:expenseId => { expense }
+router.get("/:expenseId", ensureCorrectUser, async function (req, res, next) {
+  try {
+    const { userId, expenseId } = req.params;
+    const expense = await Expense.get(userId, expenseId);
+    return res.json({ expense });
   } catch (err) {
     return next(err);
   }
@@ -79,22 +93,6 @@ router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) 
   } catch (err) {
       return next(err);
   }
-  
 });
-router.get("/sum", ensureCorrectUser, async function (req, res, next) {
-  try {
-    const expenses = await Expense.getSumByCategory(req.params.userId);
-    
-    // If there are no expenses, return an empty object
-    if (Object.keys(expenses).length === 0) {
-        return res.json({ expenses: {} });
-    }
-
-    return res.json({ expenses });
-  } catch (err) {
-    return next(err);
-  }
-});
-
 
 module.exports = router;

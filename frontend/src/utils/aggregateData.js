@@ -18,7 +18,6 @@ function groupAndAggregateData(data) {
   return aggregatedArray;
 }
 
-
 function goalByCategory(arr) {
   return arr.reduce((acc, item) => {
     acc[item.category] = item.amount;

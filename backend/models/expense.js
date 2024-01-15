@@ -11,8 +11,7 @@ class Expense {
             WHERE e.id = $1 AND user_id = $2`,
             [expense_id, user_id]
         );
-
-        const expense = result.rows[0];
+       const expense = result.rows[0];
         if (!expense) throw new NotFoundError(`No expense id: ${expense_id}`);
         return expense;
     }
@@ -26,8 +25,7 @@ class Expense {
             ORDER BY date DESC`,
             [user_id]
         );
-
-        return result.rows;
+    return result.rows;
     }
     static async create(user_id, { amount, date, vendor, description, category_id, transaction_id }) {
         let createdExpense;
@@ -59,7 +57,6 @@ class Expense {
         const { setCols, values } = partialUpdateSql(data, {});
         const expIdPosition = "$" + (values.length + 1);
         const userIdPosition = "$" + (values.length + 2);
-
         const sqlQuery = `
             UPDATE expenses 
             SET ${setCols} 
@@ -89,7 +86,6 @@ class Expense {
         `SELECT * FROM expenses WHERE user_id = $1 AND category_id = $2`, 
         [userId, categoryId]
     );
-
     if (result.rows.length === 0) {
         return []; // Return an empty array for consistency
     }
@@ -117,21 +113,17 @@ static async removeByAccountId(accountId) {
     );
 }
 
-
 static async getSumByCategory(userId) {
     const result = await db.query(
-        `SELECT category_id, SUM(amount) AS total
-        FROM expenses
-        WHERE user_id = $1
-        GROUP BY category_id`,
-        [userId]
+      `SELECT category_id, SUM(amount) AS total
+      FROM expenses
+      WHERE user_id = $1
+      GROUP BY category_id`,
+      [userId]
     );
-
-    // If there are no expenses, return an empty object
-    if (result.rows.length === 0) {
-        return {};
-    }
-
+  
+    // Always return an array
     return result.rows;
-}}
+  }
+}
 module.exports = Expense;
