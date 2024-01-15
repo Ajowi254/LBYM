@@ -26,12 +26,16 @@ router.get("/", ensureCorrectUser, async function (req, res, next) {
  * Authorization required: same user as logged in user
  */
 
+// routes/accounts.js
+
 router.delete("/:accountId", ensureCorrectUser, async function (req, res, next) {
   try {
-    await Account.remove(req.params.accountId);
-    return res.json({ deleted: req.params.accountId });
+    const account = await Account.remove(req.params.userId, req.params.accountId);
+    return res.json({ deleted: account.id });
   } catch (err) {
     return next(err);
   }
 });
+
+
 module.exports = router;
