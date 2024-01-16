@@ -244,9 +244,8 @@ static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
 }
 
 static async getSumByCategory(userId) {
-  const result = await this.request(`/users/${userId}/expenses/sum`);
-  return result.data.expenses;
+  const result = await this.request(`users/${userId}/expenses/sum`);
+  return result.expenses;
 }
-
 }
 export default ExpenseBudApi;
