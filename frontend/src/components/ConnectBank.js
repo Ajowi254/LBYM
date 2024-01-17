@@ -1,7 +1,8 @@
-//ConnectBank.js
+// ConnectBank.js
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import './ConnectBank.css';
+import Connect2bnkNav from './connect2bnkNav'; // Import the Connect2bnkNav component
 
 function ConnectBank({ step }) {
   const history = useHistory();
@@ -30,11 +31,7 @@ function ConnectBank({ step }) {
       </div>
       <img src={iconPath} alt="Connect Bank Icon" className="connect-bank-icon" />
       <img src={contentIconPath} alt="Content Icon" className="content-icon" />
-      <div className="connect-buttons">
-        <button className="connect-button" onClick={handleConnect}>Connect</button>
-        <button className="skip-button" onClick={handleSkip}>Skip</button>
-        <button className="back-button" onClick={handleBack}>Back</button>
-      </div>
+      <Connect2bnkNav />
     </div>
   );
 }
