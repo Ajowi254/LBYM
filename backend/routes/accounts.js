@@ -28,10 +28,11 @@ router.get("/", ensureCorrectUser, async function (req, res, next) {
 
 // routes/accounts.js
 
+// routes/accounts.js
 router.delete("/:accountId", ensureCorrectUser, async function (req, res, next) {
   try {
-    const account = await Account.remove(req.params.userId, req.params.accountId);
-    return res.json({ deleted: account.id });
+    const { account, expenses } = await Account.remove(req.params.userId, req.params.accountId);
+    return res.json({ deleted: account.id, expenses });
   } catch (err) {
     return next(err);
   }

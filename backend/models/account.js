@@ -54,17 +54,41 @@ static async create({ user_id, access_token, item_id, account_id, institution_id
 /** Delete given account from database; returns undefined. */
 
 // models/account.js
+// In models/accounts.js
 
 static async remove(user_id, account_id) {
-  const result = await db.query(
-    `DELETE FROM accounts WHERE user_id = $1 AND id = $2 RETURNING id`,
-    [user_id, account_id]
-  );
+  // Start a transaction
+  await db.query("BEGIN");
 
-  const account = result.rows[0];
-  if (!account) throw new NotFoundError(`No account id: ${account_id}`);
-  return account;
+  try {
+    // Delete the expenses associated with the account
+    await db.query(
+      `DELETE FROM expenses WHERE account_id = $1 AND user_id = $2`,
+      [account_id, user_id]
+    );
+
+    // Recalculate the sum of expenses by category
+    const aggregatedExpenses = await Expense.getSumByCategory(user_id);
+
+    // Delete the account
+    const result = await db.query(
+      `DELETE FROM accounts WHERE id = $1 AND user_id = $2 RETURNING id`,
+      [account_id, user_id]
+    );
+
+    const account = result.rows[0];
+
+    if (!account) throw new NotFoundError(`No account id: ${account_id}`);
+
+    // Commit the transaction
+    await db.query("COMMIT");
+
+    return { account, aggregatedExpenses };
+  } catch (err) {
+    // If there was a problem, rollback the transaction
+    await db.query("ROLLBACK");
+    throw err;
+  }
 }
-
 }
 module.exports = Account;

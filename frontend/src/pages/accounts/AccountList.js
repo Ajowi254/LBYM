@@ -10,12 +10,25 @@ import './AccountList.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
-function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
+function AccountList() {
   const { currentUser } = useContext(UserContext);
   const [accounts, setAccounts] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [expenses, setExpenses] = useState({});
+
+  const updateExpenses = async () => {
+    try {
+      // Fetch the sum of expenses by category from the database
+      const expensesData = await ExpenseBudApi.getSumByCategory(currentUser.id);
+      
+      // Update the state with the new expenses data
+      setExpenses(expensesData);
+    } catch (error) {
+      console.error('Error updating expenses:', error);
+    }
+  };
 
   const deleteAccount = async (accountId) => {
     try {
@@ -23,7 +36,6 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
       setAccounts(accounts => accounts.filter(account => account.id !== accountId));
     } catch (err) {
       console.error('Error deleting account:', err);
-      // Ideally, you should also handle this error in the UI, not just the console
     }
   };
 
@@ -35,7 +47,7 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
       
       // Fetch aggregated expenses by category after syncing transactions
       const expenses = await ExpenseBudApi.getSumByCategory(currentUser.id);
-      updateExpenses(expenses); // Update the state in the parent component
+      await updateExpenses(expenses); // Update the state in the parent component
     } catch (error) {
       console.error('Error syncing transactions:', error);
       setErrors(prevErrors => [...prevErrors, error]);
@@ -73,7 +85,6 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
         After an account is connected, click 'sync transactions' to import transactions.
       </Typography>
       {errors.map((error, index) => (
-        // Here you should display errors to the user, perhaps using a component like FlashMsg
         <p key={index} style={{ color: 'red' }}>{error.toString()}</p>
       ))}
       <div className='AccountList-card-group'>
@@ -86,6 +97,7 @@ function AccountList({ updateExpenses }) { // updateExpenses is passed as a prop
             remove={deleteAccount}
             sync={syncTransactions}
             setSyncLoading={setSyncLoading}
+            updateExpenses={updateExpenses} 
           />
         )) : <h3>There are currently no accounts.</h3>}
         {syncLoading && (

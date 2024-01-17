@@ -80,10 +80,11 @@ class ExpenseBudApi {
     return res.accounts;
   }
 
-  static async deleteAccount(user_id, account_id, data) {
-    let res = await this.request(`users/${user_id}/accounts/${account_id}`, data, 'delete');
-    return res; // Now returns { deleted: account.id, aggregatedExpenses }
-  }
+
+static async deleteAccount(user_id, account_id, data) {
+  let res = await this.request(`users/${user_id}/accounts/${account_id}`, data, 'delete');
+  return res; // Now returns { account: { id }, aggregatedExpenses }
+}
 
   /** Expenses */
   static async getAllExpenses(id) {
