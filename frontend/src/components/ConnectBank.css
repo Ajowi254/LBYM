@@ -1,18 +1,18 @@
 /* ConnectBank.css */
 .connect-bank-container {
-  background-color: #4ECDC4; /* Use the same background color */
-  background-image: url('/home/spuser/plaid/LYBM-BE/frontend/src/assets/seedling.svg'); /* Add this line for the background image */
-  height: 100vh; /* Full height */
+  background-color: #4ECDC4;
+  background-image: url('/home/spuser/plaid/LYBM-BE/frontend/src/assets/seedling.svg');
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around; /* Distribute space evenly */
+  justify-content: space-between; /* Change this to space-between to push the navbar to the bottom */
   text-align: center;
-  color: #fff; /* White text color */
+  color: #fff;
   padding: 20px;
-  position: relative; /* Needed for absolute positioning of children */
+  position: relative; /* Keep this to position the navbar at the bottom */
+  padding-bottom: 60px; /* Add this to prevent the navbar from overlapping content */
 }
-
 .progress-indicator {
   display: flex;
   justify-content: center;
@@ -21,7 +21,6 @@
   left: 0;
   right: 0;
 }
-
 .progress-step {
   background-color: #fff;
   color: #4ECDC4;
@@ -32,28 +31,23 @@
   height: 15px;
   cursor: pointer;
 }
-
 .progress-step.active {
-  background-color: #ff6b6b;
+  background-color: #1A535C;
   color: #fff;
 }
-
 .connect-bank-icon {
   margin-bottom: 20px;
-  align-self: center; /* Add this line to center the icon */
+  align-self: center;
 }
-
 .content-icon {
   margin: 20px 0;
-  align-self: center; /* Add this line to center the icon */
+  align-self: center;
 }
-
 .connect-buttons {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-
 .connect-button, .skip-button, .back-button {
   background-color: #ff6b6b;
   color: #fff;
@@ -67,21 +61,32 @@
   max-width: 250px;
   align-self: center;
 }
-.progress-step.active {
-  background-color: #1A535C;
-  ; /* Change to green when active */
-  color: #fff;
-}
-
-/* Add these styles for swiping effect */
 .progress-indicator {
   transition: transform .5s ease-in-out;
 }
-
 .swipe-left {
   transform: translateX(-100%);
 }
-
 .swipe-right {
   transform: translateX(100%);
+}
+.navbar.connect-navbar {
+  position: fixed; /* Make the navbar fixed */
+  bottom: 0; /* Position it at the bottom */
+  left: 0;
+  right: 0;
+}
+.svg-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 110px;
+}
+.connect-bank-icon, .content-icon {
+  margin-bottom: 20px;
+}
+/* Add this to create space between the images */
+.svg-container img:first-child {
+  margin-bottom: 60px; /* Adjust this value as needed */
 }

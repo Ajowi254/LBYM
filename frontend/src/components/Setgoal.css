@@ -1,1 +1,14 @@
-/* setgoal.css */
+/* SetGoal.css */
+.goal-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; 
+    margin-top: 110px;/* Take up the full height of the parent container */
+  }
+  
+  .goal-icon {
+    /* Add styles for the goal icon */
+  }
+  

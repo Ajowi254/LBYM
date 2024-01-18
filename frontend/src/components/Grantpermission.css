@@ -1,1 +1,13 @@
 /* Grantpermission.css */
+.Grant-permission {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70%; 
+    margin-top: 100px;/* Take up the full height of the parent container */
+  }
+  /* Add this to create space between the images */
+.Grant-permission img:first-child {
+  margin-bottom: 60px; /* Adjust this value as needed */
+}

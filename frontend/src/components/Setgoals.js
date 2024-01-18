@@ -1,13 +1,14 @@
 // SetGoal.js
 import React from 'react';
+import './Setgoal.css'; // Import the CSS file
 
 function SetGoal() {
   const goalIconPath = "/screenshots/Frame 85.svg";
 
   return (
-    <div>
+    <div className="goal-container"> {/* Add a container for the goal icon */}
       <img src={goalIconPath} alt="Goal Icon" className="goal-icon" />
-      {/* Add any other content for Step 2 here */}
+      {/* Remove the navigation bar */}
     </div>
   );
 }

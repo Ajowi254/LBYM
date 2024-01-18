@@ -5,7 +5,7 @@
     bottom: 0;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     background-color: #4ECDC4; /* Change this to match your color scheme */
   }
   
@@ -25,7 +25,7 @@
   
   #grantaway {
     background-color: #FF6B6B; /* Change background color to pink */
-    width: 113px; /* Set width */
+    width: 142px; /* Set width */
     height: 48px; /* Set height */
     border-radius: 50px; /* Set border radius */
     color: white; /* Change text color to white */

@@ -1,15 +1,15 @@
-// connect2bnkNav.js
+// Connect2bnkNav.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './connect2bnkNav.css';
 
 function Connect2bnkNav() {
   return (
-    <div className="navbar">
-      <Link className="nav-button" id="back" to="/intro" style={{ textDecoration: 'none', color: 'inherit' }}>Back</Link>
-      <Link className="nav-button" id="skip" to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Skip</Link>
-      <button className="nav-button" id="connect">
-        <Link to="/plaidlink" style={{ textDecoration: 'none', color: 'inherit' }}>Connect</Link>
+    <div className="navbar connect-navbar">
+      <Link className="nav-button connect-nav-button" id="back" to="/intro">Back</Link>
+      <Link className="nav-button connect-nav-button" id="skip" to="/login">Skip</Link>
+      <button className="nav-button connect-nav-button" id="connect">
+        <Link to="/plaidlink">Connect</Link>
       </button>
     </div>
   );
