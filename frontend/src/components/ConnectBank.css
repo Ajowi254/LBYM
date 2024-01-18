@@ -25,9 +25,10 @@
 .progress-step {
   background-color: #fff;
   color: #4ECDC4;
-  padding: 5px 10px;
+  padding: 5px 5px;
   border-radius: 15px;
   margin: 0 5px;
+  width: 80%; 
   cursor: pointer;
 }
 
@@ -38,10 +39,12 @@
 
 .connect-bank-icon {
   margin-bottom: 20px;
+  align-self: center; /* Add this line to center the icon */
 }
 
 .content-icon {
   margin: 20px 0;
+  align-self: center; /* Add this line to center the icon */
 }
 
 .connect-buttons {
@@ -62,4 +65,22 @@
   width: 80%;
   max-width: 250px;
   align-self: center;
+}
+.progress-step.active {
+  background-color: #1A535C;
+  ; /* Change to green when active */
+  color: #fff;
+}
+
+/* Add these styles for swiping effect */
+.progress-indicator {
+  transition: transform .5s ease-in-out;
+}
+
+.swipe-left {
+  transform: translateX(-100%);
+}
+
+.swipe-right {
+  transform: translateX(100%);
 }

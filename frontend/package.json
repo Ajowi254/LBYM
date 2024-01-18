@@ -25,6 +25,8 @@
     "react-plaid-link": "^3.4.0",
     "react-router-dom": "^5.2.1",
     "react-scripts": "^5.0.1",
+    "react-slick": "^0.29.0",
+    "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.7.3",
     "web-vitals": "^2.1.4"
   },
