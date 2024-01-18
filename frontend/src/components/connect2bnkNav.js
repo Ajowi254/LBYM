@@ -9,7 +9,7 @@ function Connect2bnkNav() {
       <Link className="nav-button connect-nav-button" id="back" to="/intro">Back</Link>
       <Link className="nav-button connect-nav-button" id="skip" to="/login">Skip</Link>
       <button className="nav-button connect-nav-button" id="connect">
-        <Link to="/plaidlink">Connect</Link>
+        <Link to="/plaidlink" style={{ textDecoration: 'none', color: 'inherit' }}>Connect</Link>
       </button>
     </div>
   );

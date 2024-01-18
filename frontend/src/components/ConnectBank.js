@@ -28,9 +28,15 @@ function ConnectBank() {
   return (
     <div className="connect-bank-container">
       <div className="progress-indicator">
-        <div className={`progress-step ${currentStep === 0 ? 'active' : ''}`} onClick={() => setCurrentStep(0)}>Step 1</div>
-        <div className={`progress-step ${currentStep === 1 ? 'active' : ''}`} onClick={() => setCurrentStep(1)}>Step 2</div>
-        <div className={`progress-step ${currentStep === 2 ? 'active' : ''}`} onClick={() => setCurrentStep(2)}>Step 3</div>
+        <div className={`progress-step ${currentStep === 0 ? 'active' : ''}`} onClick={() => setCurrentStep(0)}>
+          <div className="step-label">{currentStep === 0 && 'STEP 1'}</div>
+        </div>
+        <div className={`progress-step ${currentStep === 1 ? 'active' : ''}`} onClick={() => setCurrentStep(1)}>
+          <div className="step-label">{currentStep === 1 && 'STEP 2'}</div>
+        </div>
+        <div className={`progress-step ${currentStep === 2 ? 'active' : ''}`} onClick={() => setCurrentStep(2)}>
+          <div className="step-label">{currentStep === 2 && 'STEP 3'}</div>
+        </div>
       </div>
       {currentStep === 0 && (
         <div className="svg-container">

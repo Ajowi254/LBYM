@@ -11,7 +11,10 @@
   color: #fff;
   padding: 20px;
   position: relative; /* Keep this to position the navbar at the bottom */
-  padding-bottom: 60px; /* Add this to prevent the navbar from overlapping content */
+  padding-bottom: 60px;
+  background-size: contain; /* Adjusts the size of the background image to fit within the container */
+  background-repeat: no-repeat; /* Ensures the background image does not repeat */
+  background-position: center center; /* Centers the background image */ /* Add this to prevent the navbar from overlapping content */
 }
 .progress-indicator {
   display: flex;
@@ -89,4 +92,12 @@
 /* Add this to create space between the images */
 .svg-container img:first-child {
   margin-bottom: 60px; /* Adjust this value as needed */
+}
+.step-label {
+  position: absolute;
+  top: -20px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff; /* Adjust color as needed */
+  text-transform: uppercase;
 }
