@@ -1,0 +1,33 @@
+
+/* SetGoalnav.css */
+.navbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: #4ECDC4; /* Change this to match your color scheme */
+  }
+  
+  .nav-button {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none; /* Remove underline */
+  }
+  
+  #back, #skip {
+    background-color: transparent; /* Remove the box */
+    color: white; /* Change text color to white */
+  }
+  
+  #next {
+    background-color: #FF6B6B; /* Change background color to pink */
+    width: 113px; /* Set width */
+    height: 48px; /* Set height */
+    border-radius: 50px; /* Set border radius */
+    color: white; /* Change text color to white */
+  }
+  

@@ -42,7 +42,7 @@ function ConnectBank() {
           </div>
         )}
         {currentStep === 1 && <SetGoal />} {/* Use SetGoal as the content for Step 2 */}
-        {currentStep === 2 && <div>Step 3 Content</div>}
+        {currentStep === 2 && <Grantpermission />} {/* Use Grantpermission as the content for Step 3 */}
       </Slider>
       <Connect2bnkNav /> {/* This line includes the navigation bar */}
     </div>
