@@ -1,9 +1,8 @@
-//routes.js
+// Routes.js
 import { Route, Switch, Redirect } from 'react-router-dom';
 import ParentComponent from '../components/ParentComponent';
 import RegisterForm from '../pages/login-register/RegisterForm';
 import LoginForm from '../pages/login-register/LoginForm';
-import Landing from '../pages/Landing/Landing';
 import Dashboard from '../pages/dashboard/Dashboard';
 import ProfileForm from '../pages/profile/ProfileForm';
 import GoalsList from '../pages/goals/GoalsList';
@@ -11,6 +10,7 @@ import AccountList from '../pages/accounts/AccountList';
 import HomeList from '../pages/home/HomeList';
 import Main from '../components/Main';
 import Intro from '../components/Intro';
+import Welcome from '../components/Welcome';
 import ConnectBank from '../components/ConnectBank'; 
 import PrivateRoute from './PrivateRoute';
 
@@ -18,28 +18,28 @@ function Routes({register, login}) {
   return (
     <Switch>
       <Route exact path="/">
-        <Landing />
+        <LoginForm login={login} />
       </Route>
 
       <Route exact path="/register">
         <RegisterForm register={register} />
       </Route>
 
-      <Route exact path="/connect-bank">
-        <ConnectBank />
-      </Route>
-      
-      <Route exact path="/intro">
-        <Intro />
-      </Route>
+      <PrivateRoute exact path="/welcome">
+        <Welcome />
+      </PrivateRoute>
 
-      <Route exact path="/login">
-        <LoginForm login={login} />
-      </Route>
+      <PrivateRoute exact path="/intro">
+        <Intro />
+      </PrivateRoute>
+
+      <PrivateRoute exact path="/connect-bank">
+        <ConnectBank />
+      </PrivateRoute>
 
       <PrivateRoute exact path="/dashboard">
         <Main>
-        <Dashboard />
+          <Dashboard />
         </Main>
       </PrivateRoute>
 
@@ -51,25 +51,25 @@ function Routes({register, login}) {
       
       <PrivateRoute exact path="/goals">
         <Main>
-        <GoalsList />
+          <GoalsList />
         </Main>
       </PrivateRoute>
 
       <PrivateRoute exact path="/accounts">
         <Main>
-        <AccountList />
+          <AccountList />
         </Main>
       </PrivateRoute>
 
       <PrivateRoute exact path="/home">
         <Main>
-        <HomeList />
+          <HomeList />
         </Main>
       </PrivateRoute>
 
       <PrivateRoute exact path="/profile">
         <Main>
-        <ProfileForm />
+          <ProfileForm />
         </Main>
       </PrivateRoute>
 

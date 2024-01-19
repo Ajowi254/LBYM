@@ -30,18 +30,18 @@ function App() {
       return { success: false, err };
     }
   }
-
+  
   async function login(loginData) {
     try {
       let token = await ExpenseBudApi.login(loginData);
       setUserToken(token);
-      return { success: true };
+      return { success: true, token };
     } catch (err) {
       console.error('Error during login:', err);
       return { success: false, err };
     }
   }
-
+  
   function logout() {
     setCurrentUser(null);
     setUserToken(null);

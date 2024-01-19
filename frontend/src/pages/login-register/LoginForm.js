@@ -27,11 +27,9 @@ function LoginForm({ login }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let result = await login(formData);
+    const result = await login(formData);
     if (result.success) {
-      history.push('/');
-      setFormData(INITIAL_STATE);
-      setFormErrors([]);
+      history.push('/welcome');
     } else {
       setFormErrors(result.err);
     }
