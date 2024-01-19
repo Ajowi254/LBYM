@@ -1,6 +1,6 @@
 // App.js
 import React, { useState, useEffect, useContext } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom'; // Import useLocation
 import { decodeToken } from 'react-jwt';
 
 import './App.css';
@@ -19,6 +19,8 @@ function App() {
   const [userToken, setUserToken] = useLocalStorage('expensebud_token');
   const [currentUser, setCurrentUser] = useState(null);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+
+  const location = useLocation(); // Get the current location
 
   async function register(registerData) {
     try {
@@ -75,17 +77,15 @@ function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
         <UserContext.Provider value={{ currentUser, setCurrentUser }}>
           <ThemeProvider theme={theme}>
-            {currentUser ? <NavWithDrawer logout={logout} /> : null}
+            {currentUser && ['/home', '/accounts', '/goals', '/dashboard'].includes(location.pathname) ? <NavWithDrawer logout={logout} /> : null}
             <Routes register={register} login={login} />
             {showFeedbackPopup && (
               <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />
             )}
           </ThemeProvider>
         </UserContext.Provider>
-      </BrowserRouter>
     </div>
   );
 }

@@ -7,7 +7,7 @@ function SetGoalnav() {
   return (
     <div className="navbar">
       <Link className="nav-button" id="back" to="/intro" style={{ textDecoration: 'none', color: 'inherit' }}>Back</Link>
-      <Link className="nav-button" id="skip" to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Skip</Link>
+      <Link className="nav-button" id="skip" to="/home">Skip</Link>
       <button className="nav-button" id="next">
         <Link to="/plaidlink" style={{ textDecoration: 'none', color: 'inherit' }}>Next</Link>
       </button>
