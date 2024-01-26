@@ -10,10 +10,11 @@ function Welcome() {
   };
 
   const handleSkip = () => {
-    history.push('/login');
+  
   };
 
   return (
+    
     <div className="welcome-container">
       <div className="icon-container">
         <img src="/screenshots/App Attribution.svg" alt="Leaf Icon" />

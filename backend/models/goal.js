@@ -11,7 +11,7 @@ class Goal {
     );
     return result.rows[0];
   }
-
+  
   static async findAllForUser(user_id) {
     const result = await db.query(
       `SELECT id, user_id, category_id, goal_amount, description
@@ -19,9 +19,9 @@ class Goal {
        WHERE user_id = $1`,
       [user_id]
     );
-    return result.rows;
+    return result.rows.length > 0 ? result.rows : [];
   }
-
+  
   static async update(id, { goal_amount, description }) {
     const result = await db.query(
       `UPDATE goals

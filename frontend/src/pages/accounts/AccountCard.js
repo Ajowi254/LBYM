@@ -1,11 +1,13 @@
 //accountcard.js
 import React, { useState, useContext } from 'react';
 import FlashMsg from '../../components/FlashMsg';
+
 import './AccountList.css';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -39,46 +41,31 @@ function AccountCard({ id, type, name, remove, sync, setSyncLoading, updateExpen
     }
   };
 
-  const assignExpenses = async () => {
-    try {
-      // Fetch the sum of expenses by category
-      const expenses = await ExpenseBudApi.getSumByCategory(currentUser.id);
-      // Update the state in the parent component
-      updateExpenses(expenses);
-    } catch (error) {
-      console.error('Error assigning expenses:', error);
-    }
-  };
-
   return (
-    <Card sx={{ minWidth: 275 }} className='AccountList-card'>
+    <Card sx={{ minWidth: 10, width: 190 }} className='AccountList-card'>
       <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {type}
-        </Typography>
-        <Typography variant="h5" component="div">
+        <Typography>
           {name}
         </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {type}
+        </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small" color="primary" onClick={() => syncTransactions(id)}>
-          Sync transactions
-        </Button>
-        {syncConfirmed && (
-          <Button size="small" color="primary" onClick={assignExpenses}>
-            Assign Expenses
-          </Button>
-        )}
-        <Tooltip title="Delete Account">
-          <IconButton aria-label="delete" onClick={() => remove(id)}>
-            <DeleteIcon />
+      <CardActions >
+        <Button size="small" color="success" sx={{textAlign: 'left'}} onClick={()=>syncTransactions(id)}>Sync transactions</Button>
+        
+        <Tooltip title='Deleting account will also remove all associated expense transactions.'>
+          <IconButton onClick={()=>remove(id)}>
+            <DeleteIcon fontSize="small"/>
           </IconButton>
         </Tooltip>
       </CardActions>
-      {syncError && <FlashMsg type='error' messages={['An error occurred during sync.']} />}
-      {syncConfirmed && <FlashMsg type='success' messages={['Transactions synced successfully!']} />}
+      {syncError.length
+        ? <FlashMsg type='warning' messages={["Transactions already synced."]} />
+        : null}
+      {syncConfirmed && <FlashMsg type='success' messages={['Sync success.']} />}
     </Card>
-  );
+  )
 }
 
 export default AccountCard;

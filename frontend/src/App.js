@@ -1,9 +1,10 @@
 // App.js
-import React, { useState, useEffect, useContext } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom'; // Import useLocation
+import { useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { decodeToken } from 'react-jwt';
 
 import './App.css';
+import ExpensesContext from './context/ExpensesContext';
 import ExpenseBudApi from './api/api';
 import UserContext from './context/UserContext';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -16,78 +17,75 @@ import { ThemeProvider } from '@mui/material/styles';
 
 function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
-  const [userToken, setUserToken] = useLocalStorage('expensebud_token');
+  const [userToken, setUserToken] = useLocalStorage("expensebud_token");
   const [currentUser, setCurrentUser] = useState(null);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [expenses, setExpenses] = useState([]);
 
-  const location = useLocation(); // Get the current location
-
-  async function register(registerData) {
+  async function register(registerData){
     try {
       let result = await ExpenseBudApi.register(registerData);
       setUserToken(result);
-      return { success: true };
-    } catch (err) {
-      console.error('Error during registration:', err);
-      return { success: false, err };
+      return {success: true};
+    } catch(err) {
+      return {success: false, err};
     }
   }
-  
-  async function login(loginData) {
+
+  async function login(loginData){
     try {
       let token = await ExpenseBudApi.login(loginData);
       setUserToken(token);
-      return { success: true, token };
-    } catch (err) {
-      console.error('Error during login:', err);
-      return { success: false, err };
+      return {success: true};
+    } catch(err) {
+      return {success: false, err};
     }
   }
-  
+
   function logout() {
     setCurrentUser(null);
     setUserToken(null);
   }
 
   useEffect(() => {
-    async function fetchUserData() {
+    console.debug("App useEffect load current user");
+    
+    async function getCurrentUser() {
       if (userToken) {
         try {
           ExpenseBudApi.token = userToken;
           let { id } = decodeToken(userToken);
-          let currentUserData = await ExpenseBudApi.getCurrentUser(id);
-          setCurrentUser(currentUserData);
+          let currentUser = await ExpenseBudApi.getCurrentUser(id);
+          setCurrentUser(currentUser);
         } catch (err) {
-          console.error('Error loading current user', err);
-          setCurrentUser(null);
+        console.error('Error loading current user', err);
+        setCurrentUser(null);
         }
       }
       setInfoLoaded(true);
     }
+    setInfoLoaded(false);
+    getCurrentUser();
+  }, [userToken])
 
-    fetchUserData();
-  }, [userToken]);
 
-  const handleFeedbackClose = () => {
-    setShowFeedbackPopup(false);
-    localStorage.setItem('feedbackGiven', 'true');
-  };
-
-  if (!infoLoaded) return <LoadingSpinner />;
+  if (!infoLoaded) return <LoadingSpinner />
 
   return (
     <div className="App">
-        <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+      <BrowserRouter>
+        <UserContext.Provider value={{currentUser, setCurrentUser}}>
           <ThemeProvider theme={theme}>
-            {currentUser && ['/home', '/accounts', '/goals', '/dashboard'].includes(location.pathname) ? <NavWithDrawer logout={logout} /> : null}
+            <NavWithDrawer logout={logout}/>
+            <ExpensesContext.Provider value={{ expenses, setExpenses }}>
             <Routes register={register} login={login} />
-            {showFeedbackPopup && (
-              <FeedbackPopup isOpen={showFeedbackPopup} onClose={handleFeedbackClose} />
-            )}
+            </ExpensesContext.Provider>
           </ThemeProvider>
         </UserContext.Provider>
+      </BrowserRouter>
     </div>
-  );
+  )  
+
 }
 
 export default App;

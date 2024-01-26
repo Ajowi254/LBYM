@@ -1,23 +1,33 @@
-//NavWithDrawer.js
 import React, { useState, useContext, useRef } from "react";
 import UserContext from "../context/UserContext";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import Navbar from "./Nav";
 import { uploadImageToCloudinary } from "../utils/uploadImageToCloudinary";
 import "./NavWithDrawer.css";
 
-const drawerItems = ['Home', 'Goals', 'Accounts', 'Dashboard'];
+import { ReactComponent as HomeIcon } from '../assets/Property 1=Home.svg';
+import { ReactComponent as GoalsIcon } from '../assets/Property 1=Goals.svg';
+import { ReactComponent as StoreIcon } from '../assets/Property 1=Store.svg';
+import { ReactComponent as AlertsIcon } from '../assets/Property 1=Alerts.svg';
+import { ReactComponent as BlobIcon } from '../assets/Blob (1).svg';
+
+const drawerItems = [
+  { name: 'Home', icon: <HomeIcon />, path: '/home' },
+  { name: 'Goals', icon: <GoalsIcon />, path: '/goals' },
+  { name: 'Accounts', icon: <StoreIcon />, path: '/accounts' },
+  { name: 'Dashboard', icon: <AlertsIcon />, path: '/dashboard' },
+];
 
 function NavWithDrawer({ logout }) {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const imageUploader = useRef(null);
   const [imageUrl, setImageUrl] = useState(currentUser?.profileImg || '');
+  const location = useLocation();
 
   const handleImageUpload = async (e) => {
     const [file] = e.target.files;
@@ -36,13 +46,16 @@ function NavWithDrawer({ logout }) {
     <div className='NavWithDrawer'>
       <List style={{ display: 'flex', flexDirection: 'row' }}>
         {drawerItems.map((item) => (
-          <ListItem key={item} disablePadding>
+          <ListItem key={item.name} disablePadding>
             <ListItemButton>
               <NavLink 
-                to={`/${item.toLowerCase()}`} 
+                to={item.path} 
                 activeClassName="active"
               >
-                <ListItemText primary={item} />
+                <div className="icon-container">
+                  {location.pathname === item.path && <BlobIcon className="blob-icon" />}
+                  {item.icon}
+                </div>
               </NavLink>
             </ListItemButton>
           </ListItem>
@@ -52,7 +65,7 @@ function NavWithDrawer({ logout }) {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)', paddingBottom: '50px' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', paddingBottom: '50px' }}>
       <Navbar logout={logout} />
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginRight: '20px' }}>
         {currentUser && (

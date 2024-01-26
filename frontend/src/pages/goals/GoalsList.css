@@ -1,31 +1,15 @@
-.goals-container {
-  position: relative; /* This establishes a positioning context for absolute children */
-  /* ...other styles... */
-}
-
-.add-goal-button-container {
-  position: absolute;
-  top: 10px; /* Adjust as necessary for top spacing */
-  right: 10px; /* Adjust as necessary for right spacing */
-  /* No need for display: flex; or justify-content: flex-end; here because we're positioning absolutely */
-}
-
 .add-goal-button {
-  background-color: #FF6B6B; /* Your desired color */
-  color: white; /* Text color */
-  padding: 10px 20px; /* Your desired padding */
-  border: none; /* No border */
-  border-radius: 20px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  outline: none; /* Remove outline */
-  font-size: 16px; /* Your desired font-size */
-  text-transform: uppercase; /* Uppercase text */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for depth */
-  transition: background-color 0.3s; /* Transition for hover effect */
-  /* Remove margin if using absolute positioning, or adjust as needed */
+  width: 106px !important;
+  height: 48px !important;
+  border-radius: 50px !important;
+  background-color: #FF6B6B !important;
+  color: white;
+  position: absolute !important;
+  right: 0 !important;
 }
-
-/* Add a hover effect for the button */
-.add-goal-button:hover {
-  background-color:#e65a5a; /* slightly lighter or darker shade of the button color for hover effect */;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px; /* Adjust as needed */
 }

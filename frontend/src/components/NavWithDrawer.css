@@ -21,3 +21,15 @@
 .main-content {
   padding-bottom: 50px; /* Adjust this value according to the height of your bottom nav bar */
 }
+.icon-container {
+  position: relative;
+}
+
+.blob-icon {
+  position: absolute;
+  z-index: -1;
+  /* Adjust these values to position the blob correctly */
+  top: 14px;
+  left: -4px;
+}
+

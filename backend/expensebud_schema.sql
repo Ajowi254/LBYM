@@ -52,10 +52,9 @@ CREATE TABLE goals (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   category_id INTEGER REFERENCES categories(id),
   goal_amount NUMERIC(10, 2) NOT NULL,
-  description TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  due_date DATE
+  description TEXT
 );
+
 
 -- Additional table for tracking synced transactions per account
 CREATE TABLE account_transactions (

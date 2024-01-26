@@ -1,7 +1,9 @@
 //plaidlink.js
 import { useEffect, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
+
 import ExpenseBudApi from '../../api/api';
+
 import Button from '@mui/material/Button';
 
 function PlaidAuth({plaidData, onLinkSuccess}) {
@@ -10,6 +12,7 @@ function PlaidAuth({plaidData, onLinkSuccess}) {
   useEffect(() => {
     async function getPublicToken() {
       try {
+        console.log(plaidData);
         let accessToken = await ExpenseBudApi.exchangePublicToken({
           public_token: plaidData.public_token,
           metadata: plaidData.metadata
@@ -27,6 +30,8 @@ function PlaidAuth({plaidData, onLinkSuccess}) {
   }, [])
   return accessToken && (<PlaidLink />)
 }
+
+
 
 function PlaidLink({onLinkSuccess}) {
   const [linkToken, setLinkToken] = useState();
@@ -52,6 +57,8 @@ function PlaidLink({onLinkSuccess}) {
 
       setPublicToken(public_token)
       setPlaidData(data)
+      console.log('onLinkSuccess called'); 
+      onLinkSuccess(); // Call onLinkSuccess when a public token is received
 
     },
   });

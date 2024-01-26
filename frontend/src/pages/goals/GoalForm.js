@@ -1,14 +1,19 @@
 // GoalForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
   const [newGoal, setNewGoal] = useState({
-    category_id: categories[0].id, // Default to the first category's ID
+    category_id: '',
     goal_amount: '',
     description: '',
-    due_date: '',
   });
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      setNewGoal((goal) => ({ ...goal, category_id: categories[0].id }));
+    }
+  }, [categories]);
 
   const handleChange = (event) => {
     setNewGoal({ ...newGoal, [event.target.name]: event.target.value });
@@ -17,7 +22,7 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     handleAddGoal(newGoal);
-    handleClose(); // to close the modal form
+    handleClose();
   };
 
   return (
@@ -60,15 +65,7 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
               onChange={handleChange}
             />
           </Form.Group>
-          <Form.Group>
-            <Form.Label>Due Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="due_date"
-              value={newGoal.due_date}
-              onChange={handleChange}
-            />
-          </Form.Group>
+          
           <Button variant="primary" type="submit">
             Add Goal
           </Button>

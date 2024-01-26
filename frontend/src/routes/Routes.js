@@ -1,6 +1,6 @@
 // Routes.js
 import { Route, Switch, Redirect } from 'react-router-dom';
-import ParentComponent from '../components/ParentComponent';
+
 import RegisterForm from '../pages/login-register/RegisterForm';
 import LoginForm from '../pages/login-register/LoginForm';
 import Dashboard from '../pages/dashboard/Dashboard';
@@ -43,12 +43,6 @@ function Routes({register, login}) {
         </Main>
       </PrivateRoute>
 
-      <PrivateRoute exact path="/overview">
-        <Main>
-          <ParentComponent /> 
-        </Main>
-      </PrivateRoute>
-      
       <PrivateRoute exact path="/goals">
         <Main>
           <GoalsList />

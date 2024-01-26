@@ -1,57 +1,57 @@
-//homelist.js
+// HomeList.js
+
 import React, { useEffect, useState, useContext } from 'react';
 import UserContext from '../../context/UserContext';
-import ExpenseBudApi from '../../api/api'; // Make sure to import the API correctly
 import Box from '@mui/material/Box';
 import CategoryItem from '../../components/CategoryItem';
 import { getIconPath } from '../../utils/iconUtils';
 import io from 'socket.io-client';
+import ExpenseBudApi from '../../api/api';
 
-const socket = io('http://localhost:3001'); // Ensure this is your actual server address
+const socket = io('http://localhost:3001');
+console.log('Socket connected:', socket.connected)
 
-function HomeList({ updatedExpenses }) { // Receive updated expenses as a prop
+function HomeList() {
   const { currentUser } = useContext(UserContext);
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    async function fetchCategoriesAndExpenses() {
-      if (currentUser) {
-        try {
-          const categoriesResponse = await ExpenseBudApi.getCategories();
-
-          // Convert expenses to an array of objects
-          const expensesArray = updatedExpenses
-            ? Object.keys(updatedExpenses).map((category_id) => ({
-                category_id,
-                total: updatedExpenses[category_id] || 0,
-              }))
-            : [];
-
-          const categoriesWithExpenses = categoriesResponse.map((category) => ({
+  const fetchCategoriesAndExpenses = async () => {
+    if (currentUser) {
+      try {
+        const categoriesResponse = await ExpenseBudApi.getCategories();
+        console.log('Fetched categories:', categoriesResponse);
+        const expensesResponse = await ExpenseBudApi.getSumByCategory(currentUser.id);
+        console.log('Fetched expenses:', expensesResponse);
+        const categoriesWithExpenses = categoriesResponse.map((category) => {
+          const expense = expensesResponse.expenses ? expensesResponse.expenses.find((expense) => Number(expense.category_id) === Number(category.id)) : null;
+          return {
             ...category,
-            spent:
-              expensesArray.find((expense) => expense.category_id === category.id)?.total || 0,
-          }));
+            spent: expense?.total || 0,
+          };
+        });
+        
 
-          setCategories(categoriesWithExpenses);
-        } catch (error) {
-          console.error('Error fetching categories or expenses:', error);
-        }
+        console.log('Setting categories state:', categoriesWithExpenses);
+        setCategories(categoriesWithExpenses);
+      } catch (error) {
+        console.error('Error fetching categories or expenses:', error);
       }
     }
+  };
 
-    fetchCategoriesAndExpenses();
-  }, [currentUser, updatedExpenses]); // Depend on updatedExpenses prop
-
-  // Listen to socket events if needed
   useEffect(() => {
-    socket.on('expenses_updated', (data) => {
-      // Handle the event
+    console.log('Running useEffect');
+    fetchCategoriesAndExpenses();
+
+    socket.on('expenses_updated', () => {
+      console.log('expenses_updated event received');
+      fetchCategoriesAndExpenses();
     });
 
-    // Clean up the effect
     return () => socket.off('expenses_updated');
-  }, []);
+  }, [currentUser]);
+
+  console.log('Rendering HomeList with categories:', categories);
 
   return (
     <Box sx={{ width: '100%', maxWidth: '500px', margin: 'auto', pt: 0, backgroundColor: '#F9FEFF' }}>

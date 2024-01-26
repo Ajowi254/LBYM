@@ -80,11 +80,10 @@ class ExpenseBudApi {
     return res.accounts;
   }
 
-
-static async deleteAccount(user_id, account_id, data) {
-  let res = await this.request(`users/${user_id}/accounts/${account_id}`, data, 'delete');
-  return res; // Now returns { account: { id }, aggregatedExpenses }
-}
+  static async deleteAccount(user_id, account_id, data) {
+    let res = await this.request(`users/${user_id}/accounts/${account_id}`, data,'delete');
+    return res;
+  }
 
   /** Expenses */
   static async getAllExpenses(id) {
@@ -193,9 +192,17 @@ static async getGoals(userId) {
 }
 
 static async addGoal(userId, data) {
-  let res = await this.request(`users/${userId}/goals`, data, 'post');
-  return res.goal;
+  const url = `${BASE_URL}/users/${userId}/goals`;
+  const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
+  try {
+    let response = await axios.post(url, data, { headers });
+    return response.data.goal;
+  } catch (error) {
+    console.error('Error adding goal:', error);
+    throw error;
+  }
 }
+
 
 static async updateGoal(userId, goalId, data) {
   let res = await this.request(`users/${userId}/goals/${goalId}`, data, 'patch');

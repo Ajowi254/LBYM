@@ -1,5 +1,6 @@
 nav {
   justify-content: center;
+  
 }
 
 nav a {
@@ -10,3 +11,4 @@ nav a {
 nav a.active {
   text-decoration: underline;
 }
+

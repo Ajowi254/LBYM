@@ -1,62 +1,55 @@
 //goals.js
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const Goal = require("../models/goal");
-const { ensureCorrectUser } = require("../middleware/auth");
+const { BadRequestError } = require("../expressErrors");
+const { ensureCorrectUser } = require('../middleware/auth');
 const jsonschema = require("jsonschema");
 const goalCreateSchema = require("../schemas/goalCreate.json");
 const goalUpdateSchema = require("../schemas/goalUpdate.json");
 
 // POST route to create a new goal
-router.post("/:userId/goals", ensureCorrectUser, async function (req, res, next) {
-  const validator = jsonschema.validate(req.body, goalCreateSchema);
-  if (!validator.valid) {
-    return res.status(400).json({ error: validator.errors.map(e => e.stack) });
-  }
-
+router.post("/", ensureCorrectUser, async function (req, res, next) {
   try {
-    const { category_id, goal_amount, description } = req.body;
-    const user_id = req.params.userId;
-    const goal = await Goal.create({ user_id, category_id, goal_amount, description });
+    const validator = jsonschema.validate(req.body, goalCreateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+    const { userId } = req.params;
+    const goal = await Goal.create({ ...req.body, user_id: userId });
     return res.status(201).json({ goal });
   } catch (err) {
     return next(err);
   }
 });
 
-// GET route to retrieve all goals for a user
-router.get("/:userId/goals", ensureCorrectUser, async function (req, res, next) {
+
+router.get("/", ensureCorrectUser, async function (req, res, next) {
   try {
-    const user_id = req.params.userId;
-    const goals = await Goal.findAllForUser(user_id);
-    return res.json({ goals: goals || [] }); // Return an empty array if no goals found
+    const { userId } = req.params;
+    const goals = await Goal.findAllForUser(userId);
+    return res.json({ goals: goals.length > 0 ? goals : [] });
   } catch (err) {
     return next(err);
   }
 });
 
-// PATCH route to update a specific goal
-router.patch("/goals/:goalId", ensureCorrectUser, async function (req, res, next) {
-  const validator = jsonschema.validate(req.body, goalUpdateSchema);
-  if (!validator.valid) {
-    return res.status(400).json({ error: validator.errors.map(e => e.stack) });
-  }
-
+router.patch("/:goalId", ensureCorrectUser, async function (req, res, next) {
   try {
-    const goalId = req.params.goalId;
-    const updatedGoal = await Goal.update(goalId, req.body);
-    return res.json({ updatedGoal });
+    const { goalId } = req.params;
+    const goal = await Goal.update(goalId, req.body);
+    return res.json({ goal });
   } catch (err) {
     return next(err);
   }
 });
 
-// DELETE route to delete a specific goal
-router.delete("/goals/:goalId", ensureCorrectUser, async function (req, res, next) {
+router.delete("/:goalId", ensureCorrectUser, async function (req, res, next) {
   try {
-    const goalId = req.params.goalId;
-    const deletedGoal = await Goal.remove(goalId);
-    return res.json({ deleted: deletedGoal.id });
+    const { goalId } = req.params;
+    await Goal.remove(goalId);
+    return res.json({ deleted: goalId });
   } catch (err) {
     return next(err);
   }

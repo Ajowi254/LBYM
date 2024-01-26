@@ -11,7 +11,7 @@ function Intro() {
   };
 
   const handleSkip = () => {
-    history.push('/login');
+
   };
 
   return (

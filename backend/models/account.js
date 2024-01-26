@@ -2,7 +2,7 @@
 const db = require("../db");
 
 const { BadRequestError, NotFoundError } = require("../expressErrors");
-const Expense = require("./expense");
+
 class Account {
 
 /** Find all accounts for a single user based on user id.
@@ -49,46 +49,19 @@ static async create({ user_id, access_token, item_id, account_id, institution_id
 }
 
 /** Delete given account from database; returns undefined. */
-// In models/account.js
 
-/** Delete given account from database; returns undefined. */
+static async remove(id) {
+  let result = await db.query(`
+    DELETE
+    FROM accounts
+    WHERE id = $1
+    RETURNING id`,
+    [id]
+  )
+  const expense = result.rows[0];
+  if (!expense) throw new NotFoundError(`No account id: ${id}`);
+ }
 
-// models/account.js
-// In models/accounts.js
-
-static async remove(user_id, account_id) {
-  // Start a transaction
-  await db.query("BEGIN");
-
-  try {
-    // Delete the expenses associated with the account
-    await db.query(
-      `DELETE FROM expenses WHERE account_id = $1 AND user_id = $2`,
-      [account_id, user_id]
-    );
-
-    // Recalculate the sum of expenses by category
-    const aggregatedExpenses = await Expense.getSumByCategory(user_id);
-
-    // Delete the account
-    const result = await db.query(
-      `DELETE FROM accounts WHERE id = $1 AND user_id = $2 RETURNING id`,
-      [account_id, user_id]
-    );
-
-    const account = result.rows[0];
-
-    if (!account) throw new NotFoundError(`No account id: ${account_id}`);
-
-    // Commit the transaction
-    await db.query("COMMIT");
-
-    return { account, aggregatedExpenses };
-  } catch (err) {
-    // If there was a problem, rollback the transaction
-    await db.query("ROLLBACK");
-    throw err;
-  }
 }
-}
+
 module.exports = Account;

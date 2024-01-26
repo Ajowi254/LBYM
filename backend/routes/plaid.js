@@ -9,28 +9,12 @@ const Expense = require("../models/expense");
 const Goal = require("../models/goal");
 const { mapCategory } = require("../helpers/category");
 
-async function getUserIdFromItemId(item_id) {
-  // Query your database to find the user ID associated with the given item ID
-  try {
-      const account = await Account.findByItemId(item_id);
-      if (account) {
-          return account.user_id;  // Assuming your account model has a user_id field
-      } else {
-          // Handle the case where no account is found for the given item ID
-          console.error(`No account found for item_id: ${item_id}`);
-          return null;  // Or handle this scenario as appropriate for your application
-      }
-  } catch (error) {
-      console.error(`Error fetching user ID for item_id ${item_id}:`, error);
-      return null;  // Or handle this error as needed
-  }
-}
-
-
 router.post('/create_link_token', async function (req, res, next) {
+  // Get the client_user_id by searching for the current user
   const userId = String(res.locals.user.id) || null;
   const plaidRequest = {
     user: {
+      // This should correspond to a unique id for the current user.
       client_user_id: userId
     },
     client_name: 'Plaid App',
@@ -45,7 +29,7 @@ router.post('/create_link_token', async function (req, res, next) {
     const createTokenResponse = await plaidClient.linkTokenCreate(plaidRequest);
     return res.json(createTokenResponse.data);
   } catch (err) {
-    console.error('create_link_token error', err);
+    console.error('create_link_token error')
     return next(err);
   }
 });
@@ -135,11 +119,7 @@ router.post('/transactions/sync', async function (req, res, next) {
     }
 
     const io = req.app.get('io');
-    io.emit('transactions_synced', { 
-    user_id: res.locals.user.id,
-     expenses: expensesCreated,
-     duplicatesSkipped: duplicateExpenses.length
-     });
+    io.emit('expenses_updated', { user_id: res.locals.user.id });
 
     return res.json({
       message: "Transactions synced successfully",
@@ -157,6 +137,7 @@ router.post('/transactions/sync', async function (req, res, next) {
   }
 });
 
+ 
 router.post('/auth/get', async function (req, res, next) {
   const access_token = req.body.access_token;
   const request = {
@@ -198,7 +179,7 @@ router.post('/transactions/webhook', async function (req, res, next) {
           }
 
           // Emit a WebSocket event to update frontend
-          io.emit('new_transaction', { user_id: userId, new_transactions });
+          io.emit('expenses_updated', { user_id: userId });
 
           res.status(200).json({ acknowledgment: 'Webhook received and processed' });
       } else {
@@ -209,5 +190,6 @@ router.post('/transactions/webhook', async function (req, res, next) {
       return next(err);
   }
 });
+
 
 module.exports = router;

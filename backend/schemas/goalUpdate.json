@@ -1,23 +1,14 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "properties": {
-      "goal_amount": {
-        "type": "number",
-        "minimum": 0.01
-      },
-      "current_amount": {
-        "type": "number",
-        "minimum": 0
-      },
-      "description": {
-        "type": "string",
-        "maxLength": 255
-      },
-      "due_date": {
-        "type": "string",
-        "format": "date"
-      }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "goal_amount": {
+      "type": "number",
+      "minimum": 0.01
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 255
     }
   }
-  
+}
