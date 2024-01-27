@@ -31,9 +31,9 @@ function GoalsList() {
     getAllGoals();
   }, [currentUser]);
   
-
   const handleAddGoal = async (goalData) => {
     try {
+      console.log(goalData); // Log the data being sent
       const newGoal = await ExpenseBudApi.addGoal(currentUser.id, goalData);
       if (newGoal) { // Check if a new goal was returned
         setGoals((goals) => [...goals, newGoal]);

@@ -21,9 +21,16 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleAddGoal(newGoal);
+    // Ensure goal_amount is a number
+    const goalData = {
+      ...newGoal,
+      goal_amount: parseFloat(newGoal.goal_amount),
+      category_id: parseInt(newGoal.category_id)
+    };
+    handleAddGoal(goalData);
     handleClose();
   };
+  
 
   return (
     <Modal show={show} onHide={handleClose}>
