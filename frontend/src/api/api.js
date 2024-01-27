@@ -205,9 +205,17 @@ static async addGoal(userId, data) {
 
 
 static async updateGoal(userId, goalId, data) {
-  let res = await this.request(`users/${userId}/goals/${goalId}`, data, 'patch');
-  return res.updatedGoal;
+  const url = `${BASE_URL}/users/${userId}/goals/${goalId}`;
+  const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
+  try {
+    let response = await axios.patch(url, data, { headers });
+    return response.data.goal;
+  } catch (error) {
+    console.error('Error updating goal:', error);
+    throw error;
+  }
 }
+
 
 static async deleteGoal(userId, goalId) {
   let res = await this.request(`users/${userId}/goals/${goalId}`, {}, 'delete');
