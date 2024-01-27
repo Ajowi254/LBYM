@@ -35,13 +35,17 @@ function GoalsList() {
   const handleAddGoal = async (goalData) => {
     try {
       const newGoal = await ExpenseBudApi.addGoal(currentUser.id, goalData);
-      setGoals((goals) => [...goals, newGoal]);
-      setShowForm(false);
+      if (newGoal) { // Check if a new goal was returned
+        setGoals((goals) => [...goals, newGoal]);
+        setShowForm(false);
+      } else {
+        console.error('No goal returned from addGoal function');
+      }
     } catch (error) {
       console.error('Error adding goal:', error);
     }
   };
-
+  
   const handleDeleteGoal = async (goalId) => {
     try {
       await ExpenseBudApi.deleteGoal(currentUser.id, goalId);
@@ -51,7 +55,6 @@ function GoalsList() {
     }
   };
   
-
   return (
     <>
       <div className="header">
@@ -71,17 +74,17 @@ function GoalsList() {
           categories={categories}
         />
       )}
-      {goals.length > 0 ? (
-        goals.map((goal) => (
-          <GoalsCard 
-            key={goal.id}
-            goal={goal}
-            onDeleteGoal={handleDeleteGoal}
-          />
-        ))
-      ) : (
-        <p>No goals yet.</p>
-      )}
+       {goals.length > 0 ? (
+      goals.map((goal) => (
+        <GoalsCard 
+          key={goal.id}
+          goal={goal}
+          handleDeleteGoal={handleDeleteGoal} // Pass handleDeleteGoal as a prop named 'handleDeleteGoal'
+        />
+      ))
+    ) : (
+      <p>No goals yet.</p>
+    )}
     </>
   );
 }

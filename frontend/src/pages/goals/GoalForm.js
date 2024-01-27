@@ -11,7 +11,7 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
 
   useEffect(() => {
     if (categories.length > 0) {
-      setNewGoal((goal) => ({ ...goal, category_id: categories[0].id }));
+      setNewGoal((goal) => ({ ...goal, category_id: categories[0].id.toString() })); // Ensure category_id is a string
     }
   }, [categories]);
 
@@ -42,7 +42,7 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.name}
+                  {category.category}
                 </option>
               ))}
             </Form.Control>

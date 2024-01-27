@@ -1,14 +1,12 @@
 /* Welcome.css */
-.welcomePage {
+.welcome-container {
   margin: 0;
   padding: 0;
+  height: 100vh;
   background-color: #4ECDC4;
   background-image: url('/home/spuser/plaid/LYBM-BE/frontend/src/assets/seedling.svg');
   background-size: cover;
   background-repeat: no-repeat;
-}
-.welcome-container {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
