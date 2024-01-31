@@ -7,9 +7,59 @@
   position: absolute !important;
   right: 0 !important;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 20px; /* Adjust as needed */
+}
+
+.goal-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 40px;
+}
+
+.icon {
+  /* Add your styles for the SVG icon here */
+}
+
+.goal-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.goal-title {
+  /* Add your styles for the goal title here */
+}
+
+.goal-amount-box {
+  width: 200px;
+  height: 50px;
+  border: 1px solid black; /* Add a black border */
+  background-color: transparent; /* Make it colorless */
+  color: black; /* Change the text color to black */
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-button {
+  background-color: transparent; /* Make button background transparent */
+  border: none; /* Remove border */
+  display: flex; /* Use flexbox to center the SVG */
+  justify-content: center; /* Center the SVG horizontally */
+  align-items: center; /* Center the SVG vertically */
+}
+
+.w-6 {
+  width: 24px; /* Set width to 24px */
+}
+
+.h-6 {
+  height: 24px; /* Set height to 24px */
 }

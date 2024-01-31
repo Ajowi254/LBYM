@@ -7,6 +7,7 @@ import GoalForm from "./GoalForm";
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import './GoalsList.css';
+import { getIconPath } from '../../utils/iconUtils';
 
 function GoalsList() {
   const { currentUser } = useContext(UserContext);
@@ -30,12 +31,12 @@ function GoalsList() {
     }
     getAllGoals();
   }, [currentUser]);
-  
+
   const handleAddGoal = async (goalData) => {
     try {
-      console.log(goalData); // Log the data being sent
-      const newGoal = await ExpenseBudApi.addGoal(currentUser.id, goalData);
-      if (newGoal) { // Check if a new goal was returned
+      const category = categories.find(category => category.id === goalData.category_id);
+      const newGoal = await ExpenseBudApi.addGoal(currentUser.id, { ...goalData, category: category.category });
+      if (newGoal) {
         setGoals((goals) => [...goals, newGoal]);
         setShowForm(false);
       } else {
@@ -45,6 +46,7 @@ function GoalsList() {
       console.error('Error adding goal:', error);
     }
   };
+  
   
   const handleDeleteGoal = async (goalId) => {
     try {
