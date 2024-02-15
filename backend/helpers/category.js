@@ -5,51 +5,50 @@ function mapCategory(plaidCategory) {
 
   // Expanded mapping from Plaid categories to your application's categories
   const categoryMapping = {
-    'transportation': 'ride share',
-    'travel': 'ride share',
-    'taxi': 'ride share',
-    'uber': 'ride share',
-    'lyft': 'ride share',
-    'public transit': 'ride share',
-    'subway': 'ride share',
-    'rail': 'ride share',
-    'bus': 'ride share',
-    'restaurants': 'eating out',
-    'fast food': 'eating out',
-    'coffee shop': 'eating out',
-    'bar': 'going out',
-    'vacation': 'going out',
-    'nightlife': 'going out',
-    'entertainment': 'going out',
-    'grocery': 'groceries',
-    'supermarket': 'groceries',
-    'market': 'groceries',
-    'delivery': 'food delivery',
-    'online shopping': 'shopping',
-    'clothing': 'shopping',
-    'electronics': 'shopping',
-    'McDonalds': 'eating out',
-    'Starbucks': 'eating out',
-    'Fun': 'going out',
-
+    'grocery': 'Groceries',
+    'supermarket': 'Groceries',
+    'market': 'Groceries',
+    'restaurants': 'Eating Out',
+    'fast food': 'Eating Out',
+    'coffee shop': 'Eating Out',
+    'McDonalds': 'Eating Out',
+    'Starbucks': 'Eating Out',
+    'online shopping': 'Shopping',
+    'clothing': 'Shopping',
+    'electronics': 'Shopping',
+    'delivery': 'Food Delivery',
+    'bar': 'Going Out',
+    'vacation': 'Going Out',
+    'nightlife': 'Going Out',
+    'entertainment': 'Going Out',
+    'Fun': 'Going Out',
+    'transportation': 'Ride Share',
+    'travel': 'Ride Share',
+    'taxi': 'Ride Share',
+    'uber': 'Ride Share',
+    'lyft': 'Ride Share',
+    'public transit': 'Ride Share',
+    'subway': 'Ride Share',
+    'rail': 'Ride Share',
+    'bus': 'Ride Share',
     // Continue adding other mappings as necessary
   };
 
   // First, check if the Plaid category is in the mapping and get the corresponding category
-  let appCategory = categoryMapping[plaidCategory] || 'other';
+  let appCategory = categoryMapping[plaidCategory] || 'Other';
 
   // Now map the appCategory to your database category IDs
   let dbCategory = {
-    'groceries': 1,
-    'eating out': 2,
-    'shopping': 3,
-    'food delivery': 4,
-    'going out': 5,
-    'ride share': 6,
-    'other': 7,
+    'Groceries': 1,
+    'Eating Out': 2,
+    'Shopping': 3,
+    'Food Delivery': 4,
+    'Going Out': 5,
+    'Ride Share': 6,
+    'Other': 7,
   };
 
-  // Return the category id if it exists, otherwise default to 'other'
+  // Return the category id if it exists, otherwise default to 'Other'
   return dbCategory[appCategory];
 }
 

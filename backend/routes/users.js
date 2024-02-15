@@ -83,6 +83,17 @@ router.delete("/:userId/profile_pic", authenticateJWT, ensureCorrectUser, async 
   }
 });
 
+// GET route to get user's profile picture
+router.get("/:userId/profile_pic", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const url = await User.getProfilePic(userId); // Assuming you have a method to get the profile picture from the database
+    return res.json({ url });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.get("/:userId/homepage", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
   try {
     const homepageData = await User.getHomepageData(req.params.userId);

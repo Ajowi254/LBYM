@@ -9,20 +9,22 @@
 
 .NavWithDrawer {
   position: fixed;
+  z-index: 1;
   bottom: 0;
   width: 100%;
   background-color: #F7FFF7;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  height: 50px; /* Adjust this value according to your needs */
+  height: 70px; /* Adjust this value according to your needs */
+  border-top: 1px solid #4ECDC44D; /* Top border */
+  box-shadow: 2px 0px 9px 0px #4ECDC440; /* Box shadow */
 }
 
-.main-content {
-  padding-bottom: 50px; /* Adjust this value according to the height of your bottom nav bar */
-}
+
 .icon-container {
   position: relative;
+  margin: 0 10px; /* Space on the left and right side of each icon */
 }
 
 .blob-icon {
@@ -32,4 +34,3 @@
   top: 14px;
   left: -4px;
 }
-

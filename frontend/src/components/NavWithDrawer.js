@@ -1,3 +1,4 @@
+//navwithdrawer.js
 import React, { useState, useContext, useRef } from "react";
 import UserContext from "../context/UserContext";
 import { NavLink, useLocation } from "react-router-dom";
@@ -23,7 +24,7 @@ const drawerItems = [
   { name: 'Dashboard', icon: <AlertsIcon />, path: '/dashboard' },
 ];
 
-function NavWithDrawer({ logout }) {
+function NavWithDrawer({ logout, hideAvatar }) {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const imageUploader = useRef(null);
   const [imageUrl, setImageUrl] = useState(currentUser?.profileImg || '');
@@ -40,13 +41,11 @@ function NavWithDrawer({ logout }) {
         console.error("Error uploading image:", error);
       }
     }
-  };
-
-  const drawer = (
+  };const drawer = (
     <div className='NavWithDrawer'>
-      <List style={{ display: 'flex', flexDirection: 'row' }}>
-        {drawerItems.map((item) => (
-          <ListItem key={item.name} disablePadding>
+      <List style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '0 20px' }}>
+        {drawerItems.map((item, index) => (
+          <ListItem key={item.name} disablePadding style={{ flex: index === 0 || index === drawerItems.length - 1 ? '0.5' : '1.5' }}>
             <ListItemButton>
               <NavLink 
                 to={item.path} 
@@ -63,12 +62,12 @@ function NavWithDrawer({ logout }) {
       </List>
     </div>
   );
-
+  
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', paddingBottom: '50px' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column'}}>
       <Navbar logout={logout} />
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginRight: '20px' }}>
-        {currentUser && (
+        {currentUser && !hideAvatar && ( // Use hideAvatar to decide whether to render the avatar or not
           <>
             <Avatar
               sx={{ width: 36, height: 36 }}

@@ -1,19 +1,23 @@
 // GoalForm.js
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import Select from 'react-select'; // Import react-select
+import { Dialog, DialogTitle, DialogContent, TextField, Button } from '@mui/material';
+import Select from 'react-select';
 import { getIconPath } from '../../utils/iconUtils';
+import './GoalForm.css';
 
-const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
-  const [newGoal, setNewGoal] = useState({
+const GoalForm = ({ open, handleClose, handleAddGoal, categories }) => {
+  const initialGoalState = {
     category_id: '',
     goal_amount: '',
     description: '',
-  });
+    category: '',
+  };
+
+  const [newGoal, setNewGoal] = useState(initialGoalState);
 
   useEffect(() => {
     if (categories.length > 0) {
-      setNewGoal((goal) => ({ ...goal, category_id: categories[0].id.toString() })); // Ensure category_id is a string
+      setNewGoal((goal) => ({ ...goal, category_id: categories[0].id.toString(), category: categories[0].category }));
     }
   }, [categories]);
 
@@ -22,12 +26,11 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
   };
 
   const handleSelectChange = selectedOption => {
-    setNewGoal({ ...newGoal, category_id: selectedOption.value });
+    setNewGoal({ ...newGoal, category_id: selectedOption.value, category: selectedOption.label });
   };
-  
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Ensure goal_amount is a number
     const goalData = {
       ...newGoal,
       goal_amount: parseFloat(newGoal.goal_amount),
@@ -35,63 +38,56 @@ const GoalForm = ({ show, handleClose, handleAddGoal, categories }) => {
     };
     handleAddGoal(goalData);
     handleClose();
+    setNewGoal(initialGoalState); // reset the form fields
   };
-  
+
+  const handleCloseForm = () => {
+    handleClose();
+    setNewGoal(initialGoalState); // reset the form fields
+  };
+
   const options = categories.map(category => ({
     value: category.id,
     label: category.category,
     icon: getIconPath(category.category),
   }));
 
-  const formatOptionLabel = ({ label, icon }) => (
-    <div>
-      <img src={icon} alt={label} className="icon" />
-      {label}
-    </div>
-  );
-  
-
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Add a New Goal</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group>
-            <Form.Label>Category</Form.Label>
-            <Select
+<Dialog open={open} onClose={handleCloseForm}>
+  <DialogTitle>Add a New Goal</DialogTitle>
+  <DialogContent>
+    <form onSubmit={handleSubmit} className="goal-form">
+    <Select
+  className="goal-form-select" // Changed class name
   name="category_id"
-  value={options.find(option => option.value.toString() === newGoal.category_id)}
+  value={options.find(option => option.value === newGoal.category_id)}
   onChange={handleSelectChange}
   options={options}
+  styles={{ menu: base => ({ ...base, position: 'relative' }) }}
 />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Goal Amount</Form.Label>
-            <Form.Control
-              type="number"
-              name="goal_amount"
-              value={newGoal.goal_amount}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type="text"
-              name="description"
-              value={newGoal.description}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          
-          <Button variant="primary" type="submit">
-            Add Goal
-          </Button>
-        </Form>
-      </Modal.Body>
-    </Modal>
+<TextField
+  className="goal-form-amount" // Changed class name
+  type="number"
+  name="goal_amount"
+  value={newGoal.goal_amount}
+  onChange={handleChange}
+  label="Goal Amount"
+/>
+<TextField
+   className="goal-form-description" // Changed class name
+   type="text"
+   name="description"
+   value={newGoal.description}
+   onChange={handleChange}
+   label="Description"
+/>
+      <Button variant="contained" color="primary" type="submit" className="goal-form button">
+        Add Goal
+      </Button>
+    </form>
+  </DialogContent>
+</Dialog>
+
   );
 };
 

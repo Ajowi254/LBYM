@@ -155,6 +155,20 @@ static async updateProfilePic(userId, url) {
   return user;
 }
 
+/** Get the profile picture URL of a user. */
+static async getProfilePic(userId) {
+  const result = await db.query(`
+    SELECT profile_pic_url 
+    FROM users 
+    WHERE id = $1`,
+    [userId]
+  );
+
+  const user = result.rows[0];
+  if (!user) throw new NotFoundError(`No user with id: ${userId}`);
+  return user.profile_pic_url; // Return the image URL
+}
+
 /** Remove a user's profile picture URL. */
 static async deleteProfilePic(userId) {
   const result = await db.query(`

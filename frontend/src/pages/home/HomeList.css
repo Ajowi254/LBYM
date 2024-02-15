@@ -1,0 +1,16 @@
+/* Homelist.css */
+.home-page {
+  width: 100% !important;
+  height: 100vh !important; /* Set the height to the height of the viewport */
+  overflow: hidden; /* Hide the scrollbar */
+  /* Add any other styles from the .goals-page class in GoalsList.css */
+
+  /* Use CSS Grid to create a flexible layout */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 20px ;
+
+  /* Use media queries to change the layout based on the screen size */
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}

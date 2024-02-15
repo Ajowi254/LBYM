@@ -157,16 +157,21 @@ static async removeByAccountId(accountId) {
 
 
 static async getSumByCategory(userId) {
-  const result = await db.query(
-    `SELECT category_id, SUM(amount) AS total
-    FROM expenses
-    WHERE user_id = $1
-    GROUP BY category_id`,
-    [userId]
-  );
+  try {
+    const result = await db.query(
+      `SELECT category_id, SUM(amount) AS total
+      FROM expenses
+      WHERE user_id = $1
+      GROUP BY category_id`,
+      [userId]
+    );
 
-  // Always return an array
-  return result.rows;
+    // Always return an array
+    return result.rows;
+  } catch (err) {
+    console.error(`Error occurred while fetching sum by category: ${err}`);
+    throw err;
+  }
 }
 }
 module.exports = Expense;

@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { Card, Button, Form } from 'react-bootstrap';
-import { getIconPath } from '../../utils/iconUtils'; // Import getIconPath
+// GoalsCard.js
+import React from 'react';
+import { Button, Form } from 'react-bootstrap';
+import { getIconPath } from '../../utils/iconUtils';
 import ExpenseBudApi from "../../api/api";
+import './GoalsCard.css';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
-const GoalCard = ({ goal, handleDeleteGoal }) => {
-  const [amount, setAmount] = useState(goal.goal_amount);
+const GoalsCard = ({ goal, handleDeleteGoal }) => {
+  const [amount, setAmount] = useLocalStorage(`goal-${goal.id}`, goal.goal_amount);
 
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
@@ -20,13 +23,19 @@ const GoalCard = ({ goal, handleDeleteGoal }) => {
 
   return (
     <div className="goal-card">
-      <img src={getIconPath(goal.category)} alt={goal.category} className="icon" /> {/* Use getIconPath to get the path of the SVG */}
-      <div className="goal-details">
+      <div className="goal-title-icon">
         <div className="goal-title">{goal.category}</div>
-        <div className="goal-amount-box">
-          {amount}
-        </div>
-        {goal.description && <p>Description: {goal.description}</p>}
+        <img src={getIconPath(goal.category)} alt={goal.category} className="icon" />
+      </div>
+      <div className="goal-details">
+      <Form.Control
+  className="goal-amount-box"
+  type="text"
+  value={`$${amount}`}
+  onChange={event => handleAmountChange(event.target.value.slice(1))}
+  onBlur={handleAmountBlur}
+/>
+{goal.description && <p className="description-text">Description: {goal.description}</p>}
       </div>
       <Button className="delete-button" onClick={() => handleDeleteGoal(goal.id)}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -37,4 +46,4 @@ const GoalCard = ({ goal, handleDeleteGoal }) => {
   );
 };
 
-export default GoalCard;
+export default GoalsCard;

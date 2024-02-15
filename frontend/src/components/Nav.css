@@ -1,6 +1,7 @@
+/* Nav.css */
 nav {
   justify-content: center;
-  
+  border-bottom: 1px solid #1A535C;
 }
 
 nav a {
@@ -11,4 +12,34 @@ nav a {
 nav a.active {
   text-decoration: underline;
 }
+
+.date-icon {
+  position: relative;
+}
+
+.date {
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #1A535C;
+  position: absolute;
+  top: 65%; /* Adjust as needed */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+}
+
+.avatar-link {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.auth-links {
+  margin-left: auto;
+}
+
 

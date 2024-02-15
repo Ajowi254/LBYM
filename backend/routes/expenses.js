@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 const jsonschema = require("jsonschema");
-
 const Expense = require("../models/expense");
 const expenseNewSchema = require("../schemas/expenseNew.json");
 const expenseUpdateSchema = require("../schemas/expenseUpdate.json");
@@ -16,9 +15,12 @@ const { ensureCorrectUser } = require('../middleware/auth');
 
 router.get("/sum", ensureCorrectUser, async function (req, res, next) {
   try {
-    const expenses = await Expense.getSumByCategory(req.params.userId);
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      throw new BadRequestError("User ID must be a number");
+    }
+    const expenses = await Expense.getSumByCategory(userId);
     
-    // If there are no expenses, return an empty array
     if (expenses.length === 0) {
         return res.json({ expenses: [] });
     }
@@ -31,7 +33,11 @@ router.get("/sum", ensureCorrectUser, async function (req, res, next) {
 
 router.get("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {
-    const { userId, expenseId } = req.params;
+    const userId = parseInt(req.params.userId);
+    const expenseId = parseInt(req.params.expenseId);
+    if (isNaN(userId) || isNaN(expenseId)) {
+      throw new BadRequestError("User ID and Expense ID must be numbers");
+    }
     const expense = await Expense.get(userId, expenseId);
     return res.json({ expense });
 
@@ -45,7 +51,6 @@ router.get("/:expenseId", ensureCorrectUser, async function (req, res, next) {
  *
  * Authorization required: same user as logged in user
  */
-
 router.get("/", ensureCorrectUser, async function (req, res, next) {
   try {
     const expenses = await Expense.findAll(req.params.userId);
@@ -55,14 +60,12 @@ router.get("/", ensureCorrectUser, async function (req, res, next) {
     return next(err);
   }
 })
-
 /** POST /users/:userId/expenses { expense } => { expense }
  * Expense should be: { amount, date, vendor, description, category_id, transaction_id } 
  * Vendor, description and transaction_id are optional. 
  * Returns { id, amount, date, vendor, description, category_id, user_id, transaction_id } 
  * Authorization required: same user as logged in user
  */
-
 router.post("/", ensureCorrectUser, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, expenseNewSchema);
@@ -116,6 +119,4 @@ router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) 
   }
 })
   
-
-
 module.exports = router;

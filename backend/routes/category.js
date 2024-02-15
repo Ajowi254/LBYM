@@ -14,14 +14,15 @@ router.get('/', async function (req, res, next) {
     }
 });
 
-// Get expenses for a specific category for the logged-in user
 router.get("/:categoryId/expenses", authenticateJWT, async function (req, res, next) {
     try {
         const userId = req.user.id;
-        const categoryId = req.params.categoryId;
+        const categoryId = parseInt(req.params.categoryId);
+        if (isNaN(categoryId)) {
+          throw new BadRequestError("Category ID must be a number");
+        }
         const expenses = await Category.getExpensesByCategory(userId, categoryId);
         
-        // Handle the case where there are no expenses
         if (!expenses || expenses.length === 0) {
             return res.json({ expenses: [] });
         }
@@ -31,7 +32,6 @@ router.get("/:categoryId/expenses", authenticateJWT, async function (req, res, n
         return next(err);
     }
 });
-
 // Get expenses by category for the logged-in user
 router.get("/expenses", authenticateJWT, async function (req, res, next) {
     try {
@@ -55,8 +55,11 @@ router.get("/over-budget", authenticateJWT, async function (req, res, next) {
 // Add this route in your routes-category.js file
 router.get('/users/:userId/categories/:categoryId/expenses', authenticateJWT, async function (req, res, next) {
     try {
-        const userId = req.params.userId;
-        const categoryId = req.params.categoryId;
+        const userId = parseInt(req.params.userId);
+        const categoryId = parseInt(req.params.categoryId);
+        if (isNaN(userId) || isNaN(categoryId)) {
+          throw new BadRequestError("User ID and Category ID must be numbers");
+        }
         const expenses = await Category.getExpensesByCategory(userId, categoryId);
         
         if (!expenses) {
@@ -68,5 +71,4 @@ router.get('/users/:userId/categories/:categoryId/expenses', authenticateJWT, as
         return next(err);
     }
 });
-
 module.exports = router;

@@ -1,18 +1,24 @@
+/* Goallist.css */
 .add-goal-button {
   width: 106px !important;
   height: 48px !important;
   border-radius: 50px !important;
   background-color: #FF6B6B !important;
-  color: white;
-  position: absolute !important;
-  right: 0 !important;
+  color: white !important; /* Set the font color to white */
+  position: sticky !important; /* Change from absolute to sticky */
+  right: 68px !important; /* Add this line */
+  top: 20px; 
 }
+
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 20px; /* Adjust as needed */
+  color: #1A535C !important;
+  margin-bottom: 25px;
+  padding-left: 10px;
 }
 
 .goal-card {
@@ -23,8 +29,10 @@
 }
 
 .icon {
-  /* Add your styles for the SVG icon here */
+  width: 24px; /* Set a specific width */
+  height: 24px; /* Set a specific height */
 }
+
 
 .goal-details {
   display: flex;
@@ -37,7 +45,7 @@
 }
 
 .goal-amount-box {
-  width: 200px;
+  width: 230px;
   height: 50px;
   border: 1px solid black; /* Add a black border */
   background-color: transparent; /* Make it colorless */

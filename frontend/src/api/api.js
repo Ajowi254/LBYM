@@ -152,17 +152,36 @@ static async updateProfilePic(userId, imageUrl) {
   }
 }
 
+/** Get user's profile picture URL */
+static async getProfilePic(userId) {
+  const url = `${BASE_URL}/users/${userId}/profile_pic`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data.url; // Assuming the response contains the image URL
+  } catch (error) {
+    console.error('Error getting profile picture:', error);
+    throw error;
+  }
+}
+
 // Inside ExpenseBudApi class
 
 static async getCategories() {
   try {
     const res = await this.request('categories');
-    return res.categories; // Ensure this matches the expected format from your API
+    console.log('Fetched categories:', res.categories);
+    return res.categories;
   } catch (error) {
     console.error('Error fetching categories:', error);
     throw error;
   }
 }
+
 
 /** Delete user's profile picture */
 static async deleteProfilePic(userId) {
@@ -261,6 +280,7 @@ static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
 
 static async getSumByCategory(userId) {
   const result = await this.request(`users/${userId}/expenses/sum`);
+  console.log('Fetched expenses:', result.expenses);
   return result.expenses;
 }
 }

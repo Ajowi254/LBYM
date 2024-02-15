@@ -1,65 +1,85 @@
-/* Categoryitem.css */
+/* CategoryItem.css */
 .category-item {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
-    border-bottom: 1px solid #A0A0A0;
-  }
-  
-  .category-item:last-child {
-    border-bottom: none;
-  }
-  
-  .category-name {
-    margin-bottom: 1rem;
-    font-weight: bold;
-    font-size: 0.9rem;
-  }
-  
-  .slider-container {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .category-icon {
-    width: 64px;
-    height: 64px;
-    margin-right: 1rem;
-  }
-  
-  .custom-slider-thumb {
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 10px solid #1A535C;
-    ; /* Triangle color, change as needed */
-    position: absolute;
-    cursor: pointer;
-    margin-top: -7px; /* Adjust this value to position the thumb correctly */
-  }
-  
-  /* Additional styling for hover, active, focus states */
-  .custom-slider-thumb:hover {
-    border-top-color: #ccc; /* Color change on hover */
-  }
-  
-  /* Styling to remove the default track fill color */
-  .MuiSlider-track {
-    display: none;
-  }
-  
-  /* Ensure the rail (track line) is always visible */
-  .MuiSlider-rail {
-    opacity: 1; /* Full visibility */
-    background-color: #D0D0D0; /* Rail color, change as needed */
-  }
-  
-  .budget-value {
-    margin-left: 16px; /* Adjust the spacing as needed */
-    font-weight: bold;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 10px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #4ECDC44D;
+  width: 100%;
+}
+
+.category-name {
+  margin-bottom: 0rem;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 12px;
+  font-weight: bold !important;
+  line-height: 1;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #1A535C;
+  text-transform: uppercase;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  width: 75%;
+  padding-left: 20px;
+  margin-top: 0;
+}
+
+.category-icon {
+  width: 90px;
+  height: 60px;
+  margin-right: 3.5rem;
+  margin-top: 0;
+}
+
+.slider-wrapper {
+  position: relative;
+  height: 40px; /* Add a height to accommodate the thumb and value */
+}
+
+.slider-style {
+  -webkit-appearance: none;
+  width: 150%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  position: relative; /* Add relative positioning */
+  top: 20px; /* Push the slider down to make room for the thumb */
+}
+
+.slider-style::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 15px solid #1A535C;
+  cursor: pointer;
+  position: relative; /* Add relative positioning */
+  top: -15px; /* Position the thumb above the slider */
+}
+
+
+.thumb-value {
+  position: absolute;
+  top: -10px; /* Adjust this value as needed */
+  left: 9%;
+  transform: translateX(-50%);
+  background-color: transparent;
+  font-weight: bold;
+  color: #1A535C;
+  z-index: 1; /* Ensure the value is displayed above the thumb */
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important; /* Hide the scrollbar */
+  padding-bottom: 50px;
+}

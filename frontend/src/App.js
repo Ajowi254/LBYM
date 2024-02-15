@@ -42,11 +42,6 @@ function App() {
     }
   }
 
-  function logout() {
-    setCurrentUser(null);
-    setUserToken(null);
-  }
-
   useEffect(() => {
     console.debug("App useEffect load current user");
     
@@ -66,8 +61,26 @@ function App() {
     }
     setInfoLoaded(false);
     getCurrentUser();
-  }, [userToken])
+  }, [userToken]);
 
+  // Add the useEffect hook for fetching the profile picture
+  useEffect(() => {
+    console.debug("App useEffect fetch profile picture");
+    
+    async function getProfilePicture() {
+      if (userToken) {
+        try {
+          ExpenseBudApi.token = userToken;
+          let { id } = decodeToken(userToken);
+          let profileImg = await ExpenseBudApi.getProfilePic(id); // Assuming you have a method to get the profile picture from the database
+          setCurrentUser((prevUser) => ({ ...prevUser, profileImg }));
+        } catch (err) {
+          console.error('Error fetching profile picture', err);
+        }
+      }
+    }
+    getProfilePicture();
+  }, [userToken, setCurrentUser]); // Run this effect when the userToken or setCurrentUser changes
 
   if (!infoLoaded) return <LoadingSpinner />
 
@@ -76,16 +89,17 @@ function App() {
       <BrowserRouter>
         <UserContext.Provider value={{currentUser, setCurrentUser}}>
           <ThemeProvider theme={theme}>
-            <NavWithDrawer logout={logout}/>
-            <ExpensesContext.Provider value={{ expenses, setExpenses }}>
-            <Routes register={register} login={login} />
-            </ExpensesContext.Provider>
+            
+            <div style={{ flexGrow: 1, overflow: 'auto' }}>
+              <ExpensesContext.Provider value={{ expenses, setExpenses }}>
+                <Routes register={register} login={login} />
+              </ExpensesContext.Provider>
+            </div>
           </ThemeProvider>
         </UserContext.Provider>
       </BrowserRouter>
     </div>
   )  
-
 }
 
 export default App;

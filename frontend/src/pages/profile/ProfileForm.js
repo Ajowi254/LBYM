@@ -6,7 +6,9 @@ import { uploadImageToCloudinary } from '../../utils/uploadImageToCloudinary';
 import FlashMsg from "../../components/FlashMsg";
 import DialogModal from "../../components/DialogModal";
 import errorMap from "../../utils/errorMap";
-
+import useLocalStorage from '../../hooks/useLocalStorage';
+import Nav from '../../components/Nav.js';
+import NavWithDrawer from '../../components/NavWithDrawer.js';
 import './ProfileForm.css';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -16,6 +18,7 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 
 function ProfileForm() {
+  const [userToken, setUserToken] = useLocalStorage("expensebud_token");
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const uploadedImage = useRef(null);
   const imageUploader = useRef(null);
@@ -28,7 +31,11 @@ function ProfileForm() {
     email: currentUser.email,
     profileImg: currentUser.profileImg || ''
   };
-
+  
+  function logout() {
+    setCurrentUser(null);
+    setUserToken(null);
+  }
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [formErrors, setFormErrors] = useState({});
   const [saveStatus, setSaveStatus] = useState(false);
@@ -88,6 +95,7 @@ function ProfileForm() {
 
   return (
     <Container maxWidth="xs" className="ProfileForm">
+      <Nav />
       <Typography component="h1" variant="h5">Profile</Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" }}>
@@ -170,13 +178,22 @@ function ProfileForm() {
           error={formErrors.password}
           helperText={formErrors.password? 'Incorrect password': null}
         />
-        <Button
+         <Button
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
           Save Changes
+        </Button>
+        <Button
+          fullWidth
+          variant="contained"
+          color="secondary"
+          onClick={logout} // attach the logout function here
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Logout
         </Button>
         <DialogModal
           buttonMsg="Delete Account"
@@ -186,6 +203,7 @@ function ProfileForm() {
         />
       </Box>
       {saveStatus && <FlashMsg type='success' messages={['Changes updated successfully.']} />}
+      <NavWithDrawer hideAvatar={true} /> 
     </Container>
   );
 }

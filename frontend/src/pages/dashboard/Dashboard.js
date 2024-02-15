@@ -8,7 +8,8 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import FlashMsg from '../../components/FlashMsg';
 import FeedbackPopup from '../../components/FeedbackPopup'; // Import the FeedbackPopup component
 import { groupAndAggregateData, goalByCategory } from '../../utils/aggregateData';
-
+import Nav from '../../components/Nav.js';
+import NavWithDrawer from '../../components/NavWithDrawer.js';
 import './Dashboard.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -110,6 +111,7 @@ function Dashboard() {
 
   return (
     <div className="Dashboard">
+       <Nav />
       <Typography component="h1" variant="h5">
         Dashboard
       </Typography>
@@ -162,6 +164,7 @@ function Dashboard() {
         </>
       )}
       <FeedbackPopup open={feedbackOpen} onClose={handleFeedbackClose} onSubmit={handleFeedbackSubmit} />
+      <NavWithDrawer hideAvatar={true} /> 
     </div>
   );
 }
