@@ -119,7 +119,7 @@ router.post('/transactions/sync', async function (req, res, next) {
     }
 
     const io = req.app.get('io');
-    io.emit('expenses_updated', { user_id: res.locals.user.id });
+    io.to(`user_${res.locals.user.id}`).emit('expenses_updated', { user_id: res.locals.user.id });
 
     return res.json({
       message: "Transactions synced successfully",
@@ -136,6 +136,7 @@ router.post('/transactions/sync', async function (req, res, next) {
     });
   }
 });
+
 
  
 router.post('/auth/get', async function (req, res, next) {

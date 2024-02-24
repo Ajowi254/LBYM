@@ -1,30 +1,28 @@
 // CategoryItem.js
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import './CategoryItem.css';
 
-function CategoryItem({ icon, name, budget, spent = 0, categoryId }) {
-  console.log(`Received props in CategoryItem:`, { icon, name, budget, spent, categoryId }); // Added this line
-
+function CategoryItem({ icon, name, budget, spent = 0 }) {
   const budgetNumber = Number(budget);
   const spentNumber = Number(spent);
-  const spentClamped = Math.min(Math.max(spentNumber, 0), budgetNumber);
-
+  const spentWithinBudget = Math.min(spentNumber, budgetNumber);
+  const spentOverBudget = Math.max(0, spentNumber - budgetNumber);
   const sliderRef = useRef();
   const thumbValueRef = useRef();
+  const [sliderValue, setSliderValue] = useState(spentWithinBudget + spentOverBudget);
 
-  console.log('Spent for category:', categoryId, ':', spent);
-  console.log('Budget for category:', categoryId, ':', budget);
+  // Add a state for the slider color
+  const [sliderColor, setSliderColor] = useState('#1A535C');
 
   useEffect(() => {
     const slider = sliderRef.current;
     const thumbValue = thumbValueRef.current;
 
     const updateThumbValuePosition = () => {
-      console.log('Updating thumb value position');
-      const percent = (slider.value - slider.min) / (slider.max - slider.min);
-      thumbValue.style.left = `calc(${percent * 100}% - ${thumbValue.offsetWidth / 2}px)`;
+      const percent = (spentNumber / (budgetNumber + spentOverBudget)) * 100;
+      thumbValue.style.left = `calc(${percent}% - ${thumbValue.offsetWidth / 2}px)`;
     };
 
     slider.addEventListener('input', updateThumbValuePosition);
@@ -32,14 +30,25 @@ function CategoryItem({ icon, name, budget, spent = 0, categoryId }) {
 
     updateThumbValuePosition();
 
+    // Update the slider color based on the budget and spent amount
+    if (budgetNumber === 0 && spentNumber > 0) {
+      setSliderColor('#1A535C');
+    } else if (spentNumber <= 0) {
+      setSliderColor('transparent');
+    } else if (spentNumber > budgetNumber) {
+      setSliderColor('red');
+    } else {
+      setSliderColor('#1A535C');
+    }
+
     return () => {
       slider.removeEventListener('input', updateThumbValuePosition);
       window.removeEventListener('resize', updateThumbValuePosition);
     };
-  }, []);
+  }, [spentNumber, budgetNumber, spentOverBudget]);
 
   return (
-    <Box className="category-item">
+    <Box className="category-item" style={{ backgroundColor: 'transparent' }}>
       <Typography variant="subtitle1" className="category-name">
         {name}
       </Typography>
@@ -50,11 +59,22 @@ function CategoryItem({ icon, name, budget, spent = 0, categoryId }) {
             ref={sliderRef}
             type="range"
             min="0"
-            max={budgetNumber}
-            value={spentClamped}
+            max={budgetNumber + spentOverBudget}
+            value={sliderValue}
+            disabled
             className="slider-style"
           />
-          <div ref={thumbValueRef} className="thumb-value">${spentClamped}</div>
+          <div
+            className="slider-fill"
+            style={{ width: `${(spentWithinBudget / (budgetNumber + spentOverBudget)) * 100}%`, backgroundColor: sliderColor }}
+          />
+          <div
+            className="slider-fill-overbudget"
+            style={{ width: `${(spentOverBudget / (budgetNumber + spentOverBudget)) * 100}%`, backgroundColor: '#FF6B6B' }}
+          />
+          <div ref={thumbValueRef} className="thumb-value" style={{ color: spentNumber > budgetNumber ? 'red' : '#1A535C' }}>
+            ${spentNumber}
+          </div>
         </div>
       </Box>
     </Box>

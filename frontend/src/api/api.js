@@ -91,28 +91,6 @@ class ExpenseBudApi {
     return res.expenses;
   }
   
-static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
-  let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
-  return res.budget;
-}
-
-static async getBudgets(userId) {
-  try {
-    const res = await this.request(`users/${userId}/budgets`);
-    if (res && res.budgets) {
-      // Format the response if necessary or directly return the budgets
-      return res.budgets.map(budget => ({
-        categoryId: budget.category_id,
-        budgetLimit: budget.budget_limit
-      }));
-    }
-    return []; // Return an empty array if no budgets are found
-  } catch (error) {
-    console.error('Error fetching budgets:', error);
-    throw error;
-  }
-}
-
   static async addExpense(userId, data) {
     let res = await this.request(`users/${userId}/expenses`, data, 'post');
     return res.expense;
@@ -128,12 +106,31 @@ static async getBudgets(userId) {
     return res.deleted;
   }
 
+  static async getSumByCategory(userId) {
+    const result = await this.request(`users/${userId}/expenses/sum`);
+    console.log('Fetched expenses:', result.expenses);
+    return result.expenses;
+  }
+  
+static async getExpensesForCategory(userId, categoryId) {
+  try {
+    const res = await this.request(`users/${userId}/categories/${categoryId}/expenses`);
+    return res.expenses || []; // If no expenses, return an empty array
+  } catch (error) {
+    console.error('Error fetching expenses for category:', error);
+    if (error.response && error.response.status === 404) {
+      return []; // Return empty array if no expenses are found
+    }
+    throw error;
+  }
+}
+
   /** Home Data */
   static async getHomeData(userId) {
     let res = await this.request(`users/${userId}/homepage`);
     return res;
   }
-  
+
 /** Image Upload */
 /** Update user's profile picture URL */
 static async updateProfilePic(userId, imageUrl) {
@@ -169,20 +166,6 @@ static async getProfilePic(userId) {
   }
 }
 
-// Inside ExpenseBudApi class
-
-static async getCategories() {
-  try {
-    const res = await this.request('categories');
-    console.log('Fetched categories:', res.categories);
-    return res.categories;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    throw error;
-  }
-}
-
-
 /** Delete user's profile picture */
 static async deleteProfilePic(userId) {
   const url = `${BASE_URL}/users/${userId}/profile_pic`;
@@ -199,6 +182,20 @@ static async deleteProfilePic(userId) {
     throw error;
   }
 }
+
+ /**categories*/
+static async getCategories() {
+  try {
+    const res = await this.request('categories');
+    console.log('Fetched categories:', res.categories);
+    return res.categories;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+}
+
+/**goals*/
 // Ensure the getGoals method handles no goals situation by checking for empty response and setting default value.
 static async getGoals(userId) {
   try {
@@ -222,7 +219,6 @@ static async addGoal(userId, data) {
   }
 }
 
-
 static async updateGoal(userId, goalId, data) {
   const url = `${BASE_URL}/users/${userId}/goals/${goalId}`;
   const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
@@ -235,26 +231,12 @@ static async updateGoal(userId, goalId, data) {
   }
 }
 
-
 static async deleteGoal(userId, goalId) {
   let res = await this.request(`users/${userId}/goals/${goalId}`, {}, 'delete');
   return res.deleted;
 }
-// Fetch expenses for a specific category of a user
-static async getExpensesForCategory(userId, categoryId) {
-  try {
-    const res = await this.request(`users/${userId}/categories/${categoryId}/expenses`);
-    return res.expenses || []; // If no expenses, return an empty array
-  } catch (error) {
-    console.error('Error fetching expenses for category:', error);
-    if (error.response && error.response.status === 404) {
-      return []; // Return empty array if no expenses are found
-    }
-    throw error;
-  }
-}
 
-
+/**budgets*/
 // Update the budget for a specific category of a user
 static async updateBudget(userId, categoryId, budgetLimit) {
   try {
@@ -268,6 +250,7 @@ static async updateBudget(userId, categoryId, budgetLimit) {
     throw error;
   }
 }
+
 static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
   try {
     const res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
@@ -277,11 +260,74 @@ static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
     throw error;
   }
 }
-
-static async getSumByCategory(userId) {
-  const result = await this.request(`users/${userId}/expenses/sum`);
-  console.log('Fetched expenses:', result.expenses);
-  return result.expenses;
+static async getRemainingBudget(userId) {
+  try {
+    const res = await this.request(`users/${userId}/budgets/remaining`);
+    return res.remainingBudgets;
+  } catch (error) {
+    console.error('Error fetching remaining budgets:', error);
+    throw error;
+  }
 }
+
+static async getBudgetByCategory(userId) {
+  const url = `${BASE_URL}/users/${userId}/goals/budget`;
+  const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
+  try {
+    let response = await axios.get(url, { headers });
+    console.log('Fetched budgets:', response.data.budgets);
+    return response.data.budgets;
+  } catch (error) {
+    console.error('Error fetching budgets:', error);
+    throw error;
+  }
+}
+
+static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
+  let res = await this.request(`users/${userId}/budgets`, { categoryId, budgetLimit }, 'post');
+  return res.budget;
+}
+
+static async getBudgets(userId) {
+  try {
+    const res = await this.request(`users/${userId}/budgets`);
+    if (res && res.budgets) {
+      // Format the response if necessary or directly return the budgets
+      return res.budgets.map(budget => ({
+        categoryId: budget.category_id,
+        budgetLimit: budget.budget_limit
+      }));
+    }
+    return []; // Return an empty array if no budgets are found
+  } catch (error) {
+    console.error('Error fetching budgets:', error);
+    throw error;
+  }
+}
+
+/**notifications*/
+static async getNotifications(userId) {
+  try {
+    const res = await this.request(`users/${userId}/notifications`);
+    return res.notifications || []; // If no notifications, return an empty array
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    if (error.response && error.response.status === 404) {
+      return []; // Return empty array if no notifications are found
+    }
+    throw error;
+  }
+}
+
+static async getNotifications(userId) {
+  let res = await this.request(`users/${userId}/notifications`);
+  return res.notifications;
+}
+
+static async markNotificationAsRead(userId, notificationId) {
+  let res = await this.request(`users/${userId}/notifications/${notificationId}`, {}, 'put');
+  return res.notification;
+}
+
 }
 export default ExpenseBudApi;

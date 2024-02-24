@@ -22,6 +22,17 @@ class Goal {
     return result.rows.length > 0 ? result.rows : [];
   }
   
+  static async getBudgetByCategory(user_id) {
+    const result = await db.query(
+      `SELECT category_id, SUM(goal_amount) AS total_budget
+       FROM goals
+       WHERE user_id = $1
+       GROUP BY category_id`,
+      [user_id]
+    );
+    return result.rows.length > 0 ? result.rows : [];
+  }
+  
   static async update(id, { goal_amount, description }) {
     const result = await db.query(
       `UPDATE goals

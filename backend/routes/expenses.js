@@ -8,11 +8,6 @@ const expenseUpdateSchema = require("../schemas/expenseUpdate.json");
 const { BadRequestError } = require("../expressErrors");
 const { ensureCorrectUser } = require('../middleware/auth');
 
-/** GET /users/:userId/expenses/:expenseId => { expense }
- * Returns { id, amount, date, vendor, description, category_id, category, user_id, transaction_id }
- * Authorization required: same user as logged in user
- */
-
 router.get("/sum", ensureCorrectUser, async function (req, res, next) {
   try {
     const userId = parseInt(req.params.userId);
@@ -46,11 +41,6 @@ router.get("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   }
 })
 
-/** GET /users/:userId/expenses => { expenses } 
- * Returns { expenses: [{id, amount, date, vendor, description, category_id, category, transaction_id},...] }
- *
- * Authorization required: same user as logged in user
- */
 router.get("/", ensureCorrectUser, async function (req, res, next) {
   try {
     const expenses = await Expense.findAll(req.params.userId);
@@ -60,12 +50,7 @@ router.get("/", ensureCorrectUser, async function (req, res, next) {
     return next(err);
   }
 })
-/** POST /users/:userId/expenses { expense } => { expense }
- * Expense should be: { amount, date, vendor, description, category_id, transaction_id } 
- * Vendor, description and transaction_id are optional. 
- * Returns { id, amount, date, vendor, description, category_id, user_id, transaction_id } 
- * Authorization required: same user as logged in user
- */
+
 router.post("/", ensureCorrectUser, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, expenseNewSchema);
@@ -82,12 +67,6 @@ router.post("/", ensureCorrectUser, async function (req, res, next) {
   }
 })
 
-/** PATCH /users/:userId/expenses/:expenseId { expense } => { expense }
- * Data can include: { amount, date, vendor, description, category_id  }
- * Returns { id, amount, date, vendor, description, category_id }
- * Authorization required: same user as logged in user
- */
-
 router.patch("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, expenseUpdateSchema);
@@ -103,10 +82,6 @@ router.patch("/:expenseId", ensureCorrectUser, async function (req, res, next) {
     return next(err);
   }
 })
-
-/** DELETE /users/:userId/expenses/:expenseId  =>  { deleted: id }
- * Authorization required: same user as logged in user
- */
 
 router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {

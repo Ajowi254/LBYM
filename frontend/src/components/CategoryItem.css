@@ -1,4 +1,5 @@
 /* CategoryItem.css */
+
 .category-item {
   display: flex;
   flex-direction: column;
@@ -13,14 +14,28 @@
   margin-bottom: 0rem;
   font-family: 'Kumbh Sans', sans-serif;
   font-size: 12px;
-  font-weight: bold !important;
+  font-weight: bold;
   line-height: 1;
   letter-spacing: 0em;
   text-align: center;
-  color: #1A535C;
   text-transform: uppercase;
 }
 
+/* Default color for the slider-fill and slider-fill-overbudget */
+.slider-fill,
+.slider-fill-overbudget {
+  position: absolute;
+  height: 15px;
+  background-color: #1A535C;
+  z-index: 2;
+}
+
+.slider-fill-overbudget {
+  z-index: 3;
+  background-color: #FF6B6B;
+}
+
+/* Rest of the styles */
 .slider-container {
   display: flex;
   align-items: center;
@@ -38,7 +53,7 @@
 
 .slider-wrapper {
   position: relative;
-  height: 40px; /* Add a height to accommodate the thumb and value */
+  height: 40px;
 }
 
 .slider-style {
@@ -48,8 +63,9 @@
   border-radius: 5px;
   background: #d3d3d3;
   outline: none;
-  position: relative; /* Add relative positioning */
-  top: 20px; /* Push the slider down to make room for the thumb */
+  position: relative;
+  top: 20px;
+  z-index: 1;
 }
 
 .slider-style::-webkit-slider-thumb {
@@ -61,25 +77,24 @@
   border-right: 8px solid transparent;
   border-top: 15px solid #1A535C;
   cursor: pointer;
-  position: relative; /* Add relative positioning */
-  top: -15px; /* Position the thumb above the slider */
+  position: relative;
+  top: -15px;
 }
-
 
 .thumb-value {
   position: absolute;
-  top: -10px; /* Adjust this value as needed */
+  top: -10px;
   left: 9%;
   transform: translateX(-50%);
   background-color: transparent;
   font-weight: bold;
   color: #1A535C;
-  z-index: 1; /* Ensure the value is displayed above the thumb */
+  z-index: 4;
 }
 
 .category-list {
   display: flex;
   flex-direction: column;
-  overflow: hidden !important; /* Hide the scrollbar */
+  overflow: hidden !important;
   padding-bottom: 50px;
 }

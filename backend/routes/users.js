@@ -102,5 +102,14 @@ router.get("/:userId/homepage", authenticateJWT, ensureCorrectUser, async functi
     return next(err);
   }
 });
+router.post("/:userId/subscribe", authenticateJWT, ensureCorrectUser, async function (req, res, next) {
+  try {
+    const user = await User.saveSubscription(req.params.userId, req.body);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 
 module.exports = router;

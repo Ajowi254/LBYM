@@ -183,6 +183,20 @@ static async deleteProfilePic(userId) {
   if (!user) throw new NotFoundError(`No user with id: ${userId}`);
   return user;
 }
+static async saveSubscription(userId, subscription) {
+  const result = await db.query(`
+    UPDATE users 
+    SET subscription = $1 
+    WHERE id = $2 
+    RETURNING id, username, first_name AS "firstName", last_name AS "lastName", email, subscription`,
+    [subscription, userId]
+  );
+
+  const user = result.rows[0];
+  if (!user) throw new NotFoundError(`No user with id: ${userId}`);
+  return user;
+}
+
 }
 
 module.exports = User;

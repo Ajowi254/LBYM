@@ -24,12 +24,22 @@ router.post("/", ensureCorrectUser, async function (req, res, next) {
   }
 });
 
-
 router.get("/", ensureCorrectUser, async function (req, res, next) {
   try {
     const { userId } = req.params;
     const goals = await Goal.findAllForUser(userId);
     return res.json({ goals: goals.length > 0 ? goals : [] });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// New route to get the total budget for each category
+router.get("/budget", ensureCorrectUser, async function (req, res, next) {
+  try {
+    const { userId } = req.params;
+    const budgets = await Goal.getBudgetByCategory(userId);
+    return res.json({ budgets: budgets.length > 0 ? budgets : [] });
   } catch (err) {
     return next(err);
   }

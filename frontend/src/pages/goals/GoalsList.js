@@ -11,7 +11,6 @@ import { getIconPath } from '../../utils/iconUtils';
 import Nav from '../../components/Nav.js';
 import NavWithDrawer from '../../components/NavWithDrawer.js';
 
-
 function GoalsList() {
   const { currentUser } = useContext(UserContext);
   const [goals, setGoals] = useState([]);
@@ -21,7 +20,6 @@ function GoalsList() {
 
   // Add a loading state
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     console.log('Running useEffect in GoalsList');
     async function getAllGoals() {

@@ -7,7 +7,8 @@ CREATE TABLE users (
   email TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   isFirstLogin BOOLEAN DEFAULT true,
-  profile_pic_url TEXT
+  profile_pic_url TEXT,
+  subscription JSONB
 );
 
 CREATE TABLE categories (
@@ -55,10 +56,18 @@ CREATE TABLE goals (
   description TEXT
 );
 
-
 -- Additional table for tracking synced transactions per account
 CREATE TABLE account_transactions (
   id SERIAL PRIMARY KEY,
   account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
   last_synced TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE notifications (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  message TEXT NOT NULL,
+  type TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

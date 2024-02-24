@@ -25,4 +25,14 @@ router.get('/', ensureCorrectUser, async function(req, res, next) {
   }
 });
 
+router.get('/remaining', ensureCorrectUser, async function(req, res, next) {
+  try {
+    const { userId } = req.params;
+    const remainingBudgets = await Budget.calculateRemainingBudget(userId);
+    return res.json({ remainingBudgets });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

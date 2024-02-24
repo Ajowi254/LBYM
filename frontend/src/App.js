@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { decodeToken } from 'react-jwt';
-
 import './App.css';
 import ExpensesContext from './context/ExpensesContext';
 import ExpenseBudApi from './api/api';
@@ -11,40 +10,46 @@ import useLocalStorage from './hooks/useLocalStorage';
 import Routes from './routes/Routes';
 import NavWithDrawer from './components/NavWithDrawer';
 import LoadingSpinner from './components/LoadingSpinner';
+import NotificationBanner from './components/NotificationBanner';
 import theme from './theme/theme';
-import FeedbackPopup from './components/FeedbackPopup';
 import { ThemeProvider } from '@mui/material/styles';
 
 function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [userToken, setUserToken] = useLocalStorage("expensebud_token");
   const [currentUser, setCurrentUser] = useState(null);
-  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [expenses, setExpenses] = useState([]);
-
+  const [firstLogin, setFirstLogin] = useLocalStorage("firstLogin", "true");
+  const [notifications, setNotifications] = useState([]);
+  
   async function register(registerData){
+    console.debug("Register function called with data:", registerData);
     try {
       let result = await ExpenseBudApi.register(registerData);
       setUserToken(result);
+      setFirstLogin("true");
+      console.debug("Register function result:", result);
       return {success: true};
     } catch(err) {
+      console.error("Register function error:", err);
       return {success: false, err};
     }
   }
-
+  
   async function login(loginData){
+    console.debug("Login function called with data:", loginData);
     try {
       let token = await ExpenseBudApi.login(loginData);
       setUserToken(token);
+      console.debug("Login function result:", token);
       return {success: true};
     } catch(err) {
+      console.error("Login function error:", err);
       return {success: false, err};
     }
   }
-
   useEffect(() => {
     console.debug("App useEffect load current user");
-    
     async function getCurrentUser() {
       if (userToken) {
         try {
@@ -63,16 +68,14 @@ function App() {
     getCurrentUser();
   }, [userToken]);
 
-  // Add the useEffect hook for fetching the profile picture
   useEffect(() => {
     console.debug("App useEffect fetch profile picture");
-    
     async function getProfilePicture() {
       if (userToken) {
         try {
           ExpenseBudApi.token = userToken;
           let { id } = decodeToken(userToken);
-          let profileImg = await ExpenseBudApi.getProfilePic(id); // Assuming you have a method to get the profile picture from the database
+          let profileImg = await ExpenseBudApi.getProfilePic(id);
           setCurrentUser((prevUser) => ({ ...prevUser, profileImg }));
         } catch (err) {
           console.error('Error fetching profile picture', err);
@@ -80,8 +83,17 @@ function App() {
       }
     }
     getProfilePicture();
-  }, [userToken, setCurrentUser]); // Run this effect when the userToken or setCurrentUser changes
+  }, [userToken, setCurrentUser]); 
 
+  useEffect(() => {
+    async function fetchNotifications() {
+      if (currentUser) {
+        const userNotifications = await ExpenseBudApi.getNotifications(currentUser.id);
+        setNotifications(userNotifications);
+      }
+    }
+    fetchNotifications();
+  }, [currentUser]);
   if (!infoLoaded) return <LoadingSpinner />
 
   return (
@@ -89,10 +101,10 @@ function App() {
       <BrowserRouter>
         <UserContext.Provider value={{currentUser, setCurrentUser}}>
           <ThemeProvider theme={theme}>
-            
             <div style={{ flexGrow: 1, overflow: 'auto' }}>
               <ExpensesContext.Provider value={{ expenses, setExpenses }}>
                 <Routes register={register} login={login} />
+                <NotificationBanner notifications={notifications} /> {/* Pass notifications to NotificationBanner */}
               </ExpensesContext.Provider>
             </div>
           </ThemeProvider>
@@ -101,5 +113,4 @@ function App() {
     </div>
   )  
 }
-
 export default App;

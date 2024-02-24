@@ -15,6 +15,7 @@ const expensesRoutes = require("./routes/expenses");
 const accountsRoutes = require("./routes/accounts");
 const budgetsRoutes = require("./routes/budget");
 const goalsRoutes = require("./routes/goals");
+const notificationsRoutes = require("./routes/notifications");
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/users/:userId/accounts", accountsRoutes);
 app.use("/users/:userId/budgets", budgetsRoutes);
 app.use("/users/:userId/expenses", expensesRoutes);
 app.use("/users/:userId/goals", goalsRoutes);
+app.use("/users/:userId/notifications", notificationsRoutes);
 // General users route comes after the more specific nested routes
 app.use("/users", usersRoutes);
 
