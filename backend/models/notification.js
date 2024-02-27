@@ -4,6 +4,14 @@ var admin = require("../firebase.js"); // import the Firebase Admin SDK instance
 
 class Notification {
   static async create({ userId, message, type }) {
+    // Check if a notification with the same message already exists for the user
+    const existingNotification = await Notification.findByUserIdAndMessage(userId, message);
+    if (existingNotification) {
+      // Do not create a new notification
+      return existingNotification;
+    }
+  
+    // Otherwise, create a new notification as before
     const result = await db.query(
       `INSERT INTO notifications (user_id, message, type)
        VALUES ($1, $2, $3)
@@ -19,7 +27,7 @@ class Notification {
       },
       topic: `user_${userId}`  // assuming each user subscribes to their own unique topic
     };
-
+  
     // Send a message to devices subscribed to the provided topic.
     admin.messaging().send(fcmMessage)
       .then((response) => {
@@ -29,13 +37,9 @@ class Notification {
       .catch((error) => {
         console.log('Error sending message:', error);
       });
-
+  
     return result.rows[0];
-  } catch (error) {
-    console.error('Error creating notification:', error);
-    throw error;  // re-throw the error to be handled by the caller
   }
-
   
   static async findAllForUser(userId) {
     const result = await db.query(

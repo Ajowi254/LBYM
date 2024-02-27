@@ -108,9 +108,11 @@ class Expense {
       `SELECT id FROM expenses WHERE transaction_id = $1 AND user_id = $2`,
       [transaction_id, user_id]
     );
-
+  
     if (duplicateCheck.rows.length > 0) {
       const expenseId = duplicateCheck.rows[0].id;
+      // Delete any existing notifications related to the expense category
+      await Notification.removeByUserIdAndCategoryId(user_id, category_id);
       return await this.update(user_id, expenseId, { amount, date, vendor, description, category_id });
     } else {
       return await this.create(user_id, { amount, date, vendor, description, category_id, transaction_id });

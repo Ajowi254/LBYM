@@ -5,6 +5,10 @@ const Notification = require("./notification");
 const Goal = require("./goal");
 class Budget {
   static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
+    // Delete any existing notifications related to the budget category
+    await Notification.removeByUserIdAndCategoryId(userId, categoryId);
+  
+    // Update or insert the budget as before
     const result = await db.query(
       `INSERT INTO category_budgets (user_id, category_id, budget_limit)
        VALUES ($1, $2, $3)

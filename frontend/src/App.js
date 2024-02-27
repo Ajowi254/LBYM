@@ -21,6 +21,7 @@ function App() {
   const [expenses, setExpenses] = useState([]);
   const [firstLogin, setFirstLogin] = useLocalStorage("firstLogin", "true");
   const [notifications, setNotifications] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   
   async function register(registerData){
     console.debug("Register function called with data:", registerData);
@@ -86,25 +87,28 @@ function App() {
   }, [userToken, setCurrentUser]); 
 
   useEffect(() => {
-    async function fetchNotifications() {
+    async function fetchBudgetsAndNotifications() {
       if (currentUser) {
+        const userBudgets = await ExpenseBudApi.getRemainingBudget(currentUser.id);
+        setBudgets(userBudgets);
+
         const userNotifications = await ExpenseBudApi.getNotifications(currentUser.id);
-        setNotifications(userNotifications);
+        setNotifications(userNotifications.slice(-1));
       }
     }
-    fetchNotifications();
+    fetchBudgetsAndNotifications();
   }, [currentUser]);
   if (!infoLoaded) return <LoadingSpinner />
 
   return (
     <div className="App">
       <BrowserRouter>
-        <UserContext.Provider value={{currentUser, setCurrentUser}}>
+        <UserContext.Provider value={{currentUser, setCurrentUser, notifications, setNotifications}}>
           <ThemeProvider theme={theme}>
             <div style={{ flexGrow: 1, overflow: 'auto' }}>
               <ExpensesContext.Provider value={{ expenses, setExpenses }}>
                 <Routes register={register} login={login} />
-                <NotificationBanner notifications={notifications} /> {/* Pass notifications to NotificationBanner */}
+                <NotificationBanner /> 
               </ExpensesContext.Provider>
             </div>
           </ThemeProvider>

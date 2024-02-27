@@ -1,5 +1,6 @@
+//grantpermnav.js
 import React, { useContext, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom'; // Import useHistory
+import { Link, useHistory } from 'react-router-dom'; 
 import ExpenseBudApi from '../api/api';
 import UserContext from '../context/UserContext';
 import './GrantpermNav.css';
@@ -13,6 +14,7 @@ function GrantpermNav() {
     try {
       const fetchedNotifications = await ExpenseBudApi.getNotifications(currentUser.id);
       setNotifications(fetchedNotifications);
+      const remainingBudget = await ExpenseBudApi.getRemainingBudget(currentUser.id);
       history.push('/home'); // Navigate to the homepage
     } catch (err) {
       console.error('Error fetching notifications:', err);

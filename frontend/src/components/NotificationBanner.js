@@ -5,8 +5,11 @@ import UserContext from '../context/UserContext';
 
 function NotificationBanner() {
   const { currentUser, notifications, setNotifications } = useContext(UserContext);
+  console.log('Current user:', currentUser); // Log the current user
+  console.log('Notifications:', notifications); // Log the notifications
 
   const handleDismissClick = async (notificationId) => {
+    console.log('Dismissing notification:', notificationId); 
     // Mark the notification as read in the backend
     await ExpenseBudApi.markNotificationAsRead(currentUser.id, notificationId);
 
