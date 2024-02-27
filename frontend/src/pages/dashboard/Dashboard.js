@@ -13,6 +13,7 @@ import NavWithDrawer from '../../components/NavWithDrawer.js';
 import './Dashboard.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import NotificationBanner from '../../components/NotificationBanner.js';
 
 function Dashboard() {
   const { currentUser } = useContext(UserContext);
@@ -112,6 +113,7 @@ function Dashboard() {
   return (
     <div className="Dashboard">
        <Nav />
+       <NotificationBanner /> 
       <Typography component="h1" variant="h5">
         Dashboard
       </Typography>

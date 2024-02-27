@@ -7,6 +7,7 @@ import './HomeList.css';
 import ExpenseBudApi from '../../api/api';
 import Nav from '../../components/Nav.js';
 import NavWithDrawer from '../../components/NavWithDrawer.js';
+import NotificationBanner from '../../components/NotificationBanner.js'; // Import NotificationBanner
 
 function HomeList() {
   const { currentUser } = useContext(UserContext);
@@ -35,6 +36,7 @@ function HomeList() {
   return (
     <div className="home-page">
       <Nav />
+      <NotificationBanner /> 
       {categories.map((category) => (
         <CategoryItem
           key={category.id}

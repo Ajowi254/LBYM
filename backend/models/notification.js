@@ -7,7 +7,6 @@ class Notification {
     // Check if a notification with the same message already exists for the user
     const existingNotification = await Notification.findByUserIdAndMessage(userId, message);
     if (existingNotification) {
-      // Do not create a new notification
       return existingNotification;
     }
   
@@ -80,7 +79,6 @@ static async findByUserIdAndMessage(userId, message) {
   );
   return result.rows[0];
 }
-
 }
 
 module.exports = Notification;

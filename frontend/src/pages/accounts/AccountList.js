@@ -11,6 +11,7 @@ import Nav from '../../components/Nav';
 import NavWithDrawer from '../../components/NavWithDrawer';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
+import NotificationBanner from '../../components/NotificationBanner.js';
 
 function AccountList() {
   const { currentUser } = useContext(UserContext);
@@ -69,6 +70,7 @@ function AccountList() {
   return (
     <div>
       <Nav />
+      <NotificationBanner /> 
       <Typography component="h1" variant="h5">
         Accounts
       </Typography>

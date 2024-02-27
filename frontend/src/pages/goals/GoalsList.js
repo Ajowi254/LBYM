@@ -10,6 +10,7 @@ import './GoalsList.css';
 import { getIconPath } from '../../utils/iconUtils';
 import Nav from '../../components/Nav.js';
 import NavWithDrawer from '../../components/NavWithDrawer.js';
+import NotificationBanner from '../../components/NotificationBanner.js';
 
 function GoalsList() {
   const { currentUser } = useContext(UserContext);
@@ -82,6 +83,7 @@ function GoalsList() {
     <>
       <div className="header">
       <Nav />
+      <NotificationBanner /> 
         <Typography component="h1" variant="h5">SPENDING</Typography>
         <Button
           className="add-goal-button"

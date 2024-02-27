@@ -325,7 +325,7 @@ static async getNotifications(userId) {
 }
 
 static async markNotificationAsRead(userId, notificationId) {
-  let res = await this.request(`users/${userId}/notifications/${notificationId}`, {}, 'put');
+  let res = await this.request(`users/${userId}/notifications/${notificationId}`, {}, 'patch');
   return res.notification;
 }
 
