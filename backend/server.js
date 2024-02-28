@@ -33,8 +33,6 @@ app.set('io', io);
 io.on('connection', (socket) => {
   console.log('a user connected', socket.id);
 
-  // Join the room with the same name as the user ID
-  socket.join(`user_${res.locals.user.id}`);
 
   socket.on('disconnect', () => {
     console.log('user disconnected', socket.id);

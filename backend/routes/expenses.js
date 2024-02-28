@@ -59,13 +59,22 @@ router.post("/", ensureCorrectUser, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
     const { userId } = req.params;
-    const expense = await Expense.create(userId, req.body);
-    return res.status(201).json({ expense });
+    const newExpense = await Expense.create(userId, req.body);
 
+    // Fetch all expenses again after the update
+    const updatedExpenses = await Expense.getSumByCategory(userId);
+
+    // Emit the expenses_updated event with all expenses
+    const io = req.app.get('io');
+    io.emit('expenses_updated', { userId, expenses: updatedExpenses });
+
+    return res.status(201).json({ expense: newExpense });
   } catch (err) {
     return next(err);
   }
-})
+});
+
+
 
 router.patch("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {
@@ -75,13 +84,17 @@ router.patch("/:expenseId", ensureCorrectUser, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
     const { userId, expenseId } = req.params;
-    const expense = await Expense.update(userId, expenseId,req.body);
-    return res.json({ expense })
+    const updatedExpense = await Expense.update(userId, expenseId, req.body);
 
+    // Emit the expenses_updated event
+    const io = req.app.get('io');
+    io.emit('expenses_updated', { userId, expenses: [updatedExpense] });
+
+    return res.json({ expense: updatedExpense });
   } catch(err) {
     return next(err);
   }
-})
+});
 
 router.delete("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {

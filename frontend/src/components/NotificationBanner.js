@@ -1,8 +1,7 @@
+//notificationbanner.js
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from '../context/UserContext';
 import ExpenseBudApi from '../api/api';
-
-// Import the CSS file if it's not already imported
 import './Nav.css';
 
 function NotificationBanner() {
