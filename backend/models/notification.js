@@ -44,19 +44,20 @@ class Notification {
     const result = await db.query(
       `SELECT id, user_id, message, type, is_read, created_at
        FROM notifications
-       WHERE user_id = $1`,
+       WHERE user_id = $1 AND is_read = false`,
       [userId]
     );
     return result.rows;
   }
+  
 
-  static async markAsRead(id) {
+  static async markAsRead(userId, notificationId) {
     const result = await db.query(
       `UPDATE notifications
        SET is_read = true
-       WHERE id = $1
+       WHERE id = $1 AND user_id = $2
        RETURNING id, user_id, message, type, is_read, created_at`,
-      [id]
+      [notificationId, userId]
     );
     return result.rows[0];
   }

@@ -24,15 +24,22 @@ router.get('/', ensureCorrectUser, async function(req, res, next) {
     return next(err);
   }
 });
-
 router.get('/remaining', ensureCorrectUser, async function(req, res, next) {
   try {
     const { userId } = req.params;
-    const remainingBudgets = await Budget.calculateRemainingBudget(userId);
+    const { remainingBudgets, newNotifications } = await Budget.calculateRemainingBudget(userId);
+
+    // Emit the "notification" event for each new notification
+    const io = req.app.get('io'); // Change 'socketio' to 'io'
+    for (let notification of newNotifications) {
+      io.emit("notification", { userId, notification });
+    }
+
     return res.json({ remainingBudgets });
   } catch (err) {
     return next(err);
   }
 });
+
 
 module.exports = router;

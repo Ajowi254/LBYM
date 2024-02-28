@@ -1,14 +1,36 @@
 //notificationbanner.js
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from '../context/UserContext';
-import ExpenseBudApi from '../api/api';
+import socketIOClient from "socket.io-client";
 import './Nav.css';
+import ExpenseBudApi from '../api/api';
+
+const ENDPOINT = "http://localhost:3001";
 
 function NotificationBanner() {
   const { currentUser, notifications, setNotifications } = useContext(UserContext);
-
-  // Add a state variable to control whether the banner is shown or not
   const [isShown, setIsShown] = useState(true);
+
+  useEffect(() => {
+    const socket = socketIOClient(ENDPOINT);
+
+    socket.on('connect', () => {
+      console.log('Successfully connected to the server');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from the server');
+    });
+
+    socket.on("notifications_updated", data => {
+      if (data.userId === currentUser.id) {
+        setNotifications(data.notifications);
+        setIsShown(true);
+      }
+    });
+
+    return () => socket.disconnect();
+  }, [currentUser, setNotifications]);
 
   const handleDismissClick = async (notificationId) => {
     console.log('Dismissing notification:', notificationId);
@@ -16,8 +38,6 @@ function NotificationBanner() {
     await ExpenseBudApi.markNotificationAsRead(currentUser.id, notificationId);
 
     setNotifications(notifications.filter(notification => notification.id !== notificationId));
-
-    // Hide the banner immediately when the dismiss button is clicked
     setIsShown(false);
   };
 

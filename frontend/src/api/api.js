@@ -329,5 +329,6 @@ static async markNotificationAsRead(userId, notificationId) {
   return res.notification;
 }
 
+
 }
 export default ExpenseBudApi;

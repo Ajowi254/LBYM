@@ -9,10 +9,14 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 const GoalsCard = ({ goal, handleDeleteGoal }) => {
   const [amount, setAmount] = useLocalStorage(`goal-${goal.id}`, goal.goal_amount);
 
-  const handleAmountChange = (event) => {
-    setAmount(event.target.value);
+  const handleAmountChange = (value) => {
+    if (value && value.startsWith('$')) {
+      setAmount(value.slice(1));
+    } else {
+      setAmount(value);
+    }
   };
-
+  
   const handleAmountBlur = async () => {
     try {
       await ExpenseBudApi.updateGoal(goal.user_id, goal.id, { goal_amount: amount });
@@ -32,7 +36,7 @@ const GoalsCard = ({ goal, handleDeleteGoal }) => {
   className="goal-amount-box"
   type="text"
   value={`$${amount}`}
-  onChange={event => handleAmountChange(event.target.value.slice(1))}
+  onChange={event => handleAmountChange(event.target.value)}
   onBlur={handleAmountBlur}
 />
 {goal.description && <p className="description-text">Description: {goal.description}</p>}
