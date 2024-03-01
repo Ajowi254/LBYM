@@ -1,4 +1,5 @@
-//notificationbanner.js
+// components/NotificationBanner.js
+
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from '../context/UserContext';
 import socketIOClient from "socket.io-client";
@@ -9,7 +10,7 @@ const ENDPOINT = "http://localhost:3001";
 
 function NotificationBanner() {
   const { currentUser, notifications, setNotifications } = useContext(UserContext);
-  const [isShown, setIsShown] = useState(true);
+  const [isShown, setIsShown] = useState(false); // Change initial state to false
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
@@ -22,9 +23,12 @@ function NotificationBanner() {
       console.log('Disconnected from the server');
     });
 
-    socket.on("notifications_updated", data => {
+    // Listen for 'notification' events instead of 'notifications_updated'
+    socket.on("notification", data => {
+      console.log('Received notification event with data:', data);
       if (data.userId === currentUser.id) {
-        setNotifications(data.notifications);
+        console.log('Updating notifications state with new notification:', data.notification);
+        setNotifications(prevNotifications => [data.notification, ...prevNotifications]);
         setIsShown(true);
       }
     });

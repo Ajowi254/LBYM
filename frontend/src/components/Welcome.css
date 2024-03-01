@@ -33,7 +33,7 @@
   border: none;
   border-radius: 20px; /* Rounded corners for the button */
   padding: 10px 30px; /* Reduced padding for a smaller button */
-  margin: 20px 0; /* Space above and below the button */
+  margin: 140px !important; /* Space above and below the button */
   color: #fff;
   cursor: pointer;
   font-size: 16px; /* Adjusted font size for the button */
@@ -46,5 +46,6 @@
   color: #fff;
   cursor: pointer;
   font-size: 16px; /* Font size for 'Skip' button */
-  margin-bottom: 20px; /* Space at the bottom */
+  margin-bottom: 20px;
+  margin: -80px !important;  /* Space at the bottom */
 }

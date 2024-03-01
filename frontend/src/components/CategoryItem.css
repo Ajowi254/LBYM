@@ -21,21 +21,22 @@
   text-transform: uppercase;
 }
 
-/* Default color for the slider-fill and slider-fill-overbudget */
 .slider-fill,
 .slider-fill-overbudget {
   position: absolute;
   height: 15px;
-  background-color: #1A535C;
-  z-index: 2;
+  z-index: 1;
+}
+
+.slider-fill {
+  background-color: green !important;
 }
 
 .slider-fill-overbudget {
-  z-index: 3;
-  background-color: #FF6B6B;
+  background-color: red !important;
+  z-index: 2;
 }
 
-/* Rest of the styles */
 .slider-container {
   display: flex;
   align-items: center;
@@ -89,7 +90,7 @@
   background-color: transparent;
   font-weight: bold;
   color: #1A535C;
-  z-index: 4;
+  z-index: 3;
 }
 
 .category-list {

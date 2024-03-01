@@ -75,7 +75,6 @@ router.post("/", ensureCorrectUser, async function (req, res, next) {
 });
 
 
-
 router.patch("/:expenseId", ensureCorrectUser, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, expenseUpdateSchema);

@@ -27,11 +27,14 @@ router.get('/', ensureCorrectUser, async function(req, res, next) {
 router.get('/remaining', ensureCorrectUser, async function(req, res, next) {
   try {
     const { userId } = req.params;
+    console.log('GET /remaining called with userId:', userId);
     const { remainingBudgets, newNotifications } = await Budget.calculateRemainingBudget(userId);
+    console.log('Received remainingBudgets and newNotifications from calculateRemainingBudget:', remainingBudgets, newNotifications);
 
     // Emit the "notification" event for each new notification
     const io = req.app.get('io'); // Change 'socketio' to 'io'
     for (let notification of newNotifications) {
+      console.log('Emitting notification event for notification:', notification);
       io.emit("notification", { userId, notification });
     }
 

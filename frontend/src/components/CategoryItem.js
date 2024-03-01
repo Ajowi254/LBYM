@@ -1,5 +1,5 @@
-// CategoryItem.js
-import React, { useRef, useEffect, useState } from 'react';
+//categoryitem.js
+import React, { useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import './CategoryItem.css';
@@ -11,17 +11,13 @@ function CategoryItem({ icon, name, budget, spent = 0 }) {
   const spentOverBudget = Math.max(0, spentNumber - budgetNumber);
   const sliderRef = useRef();
   const thumbValueRef = useRef();
-  const [sliderValue, setSliderValue] = useState(spentWithinBudget + spentOverBudget);
-
-  // Add a state for the slider color
-  const [sliderColor, setSliderColor] = useState('#1A535C');
 
   useEffect(() => {
     const slider = sliderRef.current;
     const thumbValue = thumbValueRef.current;
 
     const updateThumbValuePosition = () => {
-      const percent = (spentNumber / (budgetNumber + spentOverBudget)) * 100;
+      const percent = ((spentWithinBudget + spentOverBudget) / (budgetNumber + spentOverBudget)) * 100;
       thumbValue.style.left = `calc(${percent}% - ${thumbValue.offsetWidth / 2}px)`;
     };
 
@@ -29,17 +25,6 @@ function CategoryItem({ icon, name, budget, spent = 0 }) {
     window.addEventListener('resize', updateThumbValuePosition);
 
     updateThumbValuePosition();
-
-    // Update the slider color based on the budget and spent amount
-    if (budgetNumber === 0 && spentNumber > 0) {
-      setSliderColor('#1A535C');
-    } else if (spentNumber <= 0) {
-      setSliderColor('transparent');
-    } else if (spentNumber > budgetNumber) {
-      setSliderColor('red');
-    } else {
-      setSliderColor('#1A535C');
-    }
 
     return () => {
       slider.removeEventListener('input', updateThumbValuePosition);
@@ -60,19 +45,24 @@ function CategoryItem({ icon, name, budget, spent = 0 }) {
             type="range"
             min="0"
             max={budgetNumber + spentOverBudget}
-            value={sliderValue}
+            value={spentWithinBudget + spentOverBudget}
             disabled
             className="slider-style"
           />
-          <div
-            className="slider-fill"
-            style={{ width: `${(spentWithinBudget / (budgetNumber + spentOverBudget)) * 100}%`, backgroundColor: sliderColor }}
-          />
-          <div
-            className="slider-fill-overbudget"
-            style={{ width: `${(spentOverBudget / (budgetNumber + spentOverBudget)) * 100}%`, backgroundColor: '#FF6B6B' }}
-          />
-          <div ref={thumbValueRef} className="thumb-value" style={{ color: spentNumber > budgetNumber ? 'red' : '#1A535C' }}>
+          {spentNumber > 0 && (
+            <div
+              className="slider-fill"
+              style={{
+                width: '100%',
+                background: budgetNumber === 0 
+                  ? 'green' 
+                  : spentNumber <= budgetNumber 
+                    ? 'green' 
+                    : `linear-gradient(to right, green ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%, red ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%)`
+              }}
+            />
+          )}
+          <div ref={thumbValueRef} className="thumb-value" style={{ color: 'black' }}>
             ${spentNumber}
           </div>
         </div>

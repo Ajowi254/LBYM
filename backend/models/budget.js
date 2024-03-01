@@ -28,6 +28,7 @@ class Budget {
     return result.rows;
   }
   static async calculateRemainingBudget(userId) {
+    console.log('calculateRemainingBudget called with userId:', userId);
     // Get the budget and expenses for each category
     const budgets = await Goal.getBudgetByCategory(userId); // Use Goal model to get budgets
     const expenses = await Expense.getSumByCategory(userId);
@@ -58,6 +59,14 @@ class Budget {
   
     // Wait for all notifications to be created
     let newNotifications = await Promise.all(notificationPromises);
+    console.log('New notifications created:', newNotifications);
+    // Emit a Socket.IO event for each new notification
+    const io = require('../server').io; // Import the io instance from server.js
+    newNotifications.forEach(notification => {
+      console.log('Emitting notification event for notification:', notification);
+      io.emit('notification', { userId, notification });
+    });
+
     
     // Return the budgets (or remaining budgets, if you prefer) and new notifications
     return { budgets, newNotifications };

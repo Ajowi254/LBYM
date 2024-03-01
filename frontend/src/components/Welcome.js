@@ -10,7 +10,7 @@ function Welcome() {
 
   // If the user has already seen the welcome page, redirect them to the dashboard
   if (firstLogin === "false") {
-    history.push('/dashboard');
+    history.push('/home');
     return null;
   }
 
