@@ -8,6 +8,7 @@
   align-items: center;
   justify-content: space-around; /* Distribute space evenly */
   text-align: center;
+  background-size: cover;
   color: #fff; /* White text color */
   padding: 50px 0; /* Add padding at the top and bottom */
 }
@@ -33,4 +34,18 @@
   color: #fff;
   margin-bottom: 50px; /* Space from the bottom */
   cursor: pointer;
+  margin-top: -80px !important;
 }
+
+@media (max-width: 600px) {
+  .intro-container {
+   /* Reduce padding on smaller screens */
+  }
+}
+
+.intro-container .lets-do-this,
+.intro-container .skip {
+  margin-top: -80px;
+}
+
+

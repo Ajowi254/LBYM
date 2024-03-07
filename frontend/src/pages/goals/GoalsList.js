@@ -19,7 +19,6 @@ function GoalsList() {
   const [categories, setCategories] = useState([]);
   const [showGoalForm, setShowGoalForm] = useState(false);
 
-  // Add a loading state
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     console.log('Running useEffect in GoalsList');
@@ -31,7 +30,6 @@ function GoalsList() {
           console.log('Fetched categories:', fetchedCategories);
           setCategories(fetchedCategories);
 
-          // Add the category to each goal object
           const goalsWithCategory = fetchedGoals.map(goal => {
             const category = fetchedCategories.find(category => category.id === goal.category_id);
             return { ...goal, category: category.category };
@@ -42,7 +40,6 @@ function GoalsList() {
           console.error('Error fetching goals:', error);
         }
       }
-      // Set loading to false once the data has been fetched
       setLoading(false);
     }
     getAllGoals();
@@ -77,8 +74,6 @@ function GoalsList() {
       console.error('Error deleting goal:', error);
     }
   };
-  
-  // Only render GoalsCard components once the data has been fetched
   return (
     <>
       <div className="header">
@@ -117,5 +112,4 @@ function GoalsList() {
     </>
   );
 }
-
 export default GoalsList;

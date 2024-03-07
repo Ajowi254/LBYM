@@ -33,7 +33,7 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setRegistrationError({}); // Reset registration errors
-
+  
     // Validate user input
     if (!formData.username || !formData.email) {
       setRegistrationError({
@@ -41,11 +41,12 @@ function RegisterForm() {
       });
       return;
     }
-
+  
     try {
       const token = await ExpenseBudApi.register(formData);
+      console.log("Register result: ", token); // Add this line
       localStorage.setItem('userToken', token);
-      history.push('/login'); // Redirect to login page after successful registration
+      history.push('/login');// Redirect to login page after successful registration
     } catch (error) {
       if (error instanceof AxiosError) {
         // Access the error message from the server response

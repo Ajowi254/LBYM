@@ -12,7 +12,7 @@
   padding: 20px;
   position: relative; /* Keep this to position the navbar at the bottom */
   padding-bottom: 60px;
-  background-size: contain; /* Adjusts the size of the background image to fit within the container */
+  background-size: cover; /* Adjusts the size of the background image to fit within the container */
   background-repeat: no-repeat; /* Ensures the background image does not repeat */
   background-position: center center; /* Centers the background image */ /* Add this to prevent the navbar from overlapping content */
 }

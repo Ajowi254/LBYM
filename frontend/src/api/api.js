@@ -260,15 +260,35 @@ static async setOrUpdateBudget(userId, categoryId, budgetLimit) {
     throw error;
   }
 }
+
 static async getRemainingBudget(userId) {
+  // Check if the userId is defined
+  if (!userId) {
+    console.error('User ID is missing');
+    return;
+  }
+
+  const url = `${BASE_URL}/users/${userId}/budgets/remaining`;
+  const headers = { Authorization: `Bearer ${this.token}`, "Content-Type": "application/json" };
+  
+  // Check if the token exists
+  if (!this.token) {
+    console.error('Token is missing');
+    return;
+  }
+
   try {
-    const res = await this.request(`users/${userId}/budgets/remaining`);
-    return res.remainingBudgets;
+    let response = await axios.get(url, { headers });
+    console.log('Fetched remaining budgets:', response.data.remainingBudgets);
+    return response.data.remainingBudgets;
   } catch (error) {
     console.error('Error fetching remaining budgets:', error);
     throw error;
   }
 }
+
+
+
 
 static async getBudgetByCategory(userId) {
   const url = `${BASE_URL}/users/${userId}/goals/budget`;
@@ -328,7 +348,5 @@ static async markNotificationAsRead(userId, notificationId) {
   let res = await this.request(`users/${userId}/notifications/${notificationId}`, {}, 'patch');
   return res.notification;
 }
-
-
 }
 export default ExpenseBudApi;

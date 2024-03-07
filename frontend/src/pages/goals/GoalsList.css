@@ -10,7 +10,6 @@
   top: 20px; 
 }
 
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -32,7 +31,6 @@
   width: 24px; /* Set a specific width */
   height: 24px; /* Set a specific height */
 }
-
 
 .goal-details {
   display: flex;

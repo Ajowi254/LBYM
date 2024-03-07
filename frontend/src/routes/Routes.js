@@ -67,7 +67,7 @@ function Routes({register, login}) {
         </Main>
       </PrivateRoute>
 
-      <Redirect to="/" />
+      <Redirect to="/welcome" />
     </Switch>
   )
 }

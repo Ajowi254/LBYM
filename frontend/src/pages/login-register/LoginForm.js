@@ -27,11 +27,16 @@ function LoginForm({ login }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login(formData);
-    if (result.success) {
-      history.push('/welcome');
-    } else {
-      setFormErrors(result.err);
+    try {
+      const result = await login(formData);
+      console.log("Login result: ", result); // Add this line
+      if (result.success) {
+        history.push('/welcome');
+      } else {
+        setFormErrors(result.err);
+      }
+    } catch (error) {
+      console.error("Login error: ", error);
     }
   };
 
@@ -41,32 +46,32 @@ function LoginForm({ login }) {
         Login
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-        <TextField
-          margin="dense"
-          required
-          fullWidth
-          id="username"
-          label="Username"
-          name="username"
-          autoFocus
-          value={formData.username}
-          onChange={handleChange}
-          error={formErrors.length}
-          helperText={formErrors.length ? 'Incorrect username/password' : null}
-        />
-        <TextField
-          margin="dense"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          value={formData.password}
-          onChange={handleChange}
-          error={formErrors.length}
-          helperText={formErrors.length ? 'Incorrect username/password' : null}
-        />
+      <TextField
+  margin="dense"
+  required
+  fullWidth
+  id="username"
+  label="Username"
+  name="username"
+  autoFocus
+  value={formData.username}
+  onChange={handleChange}
+  error={formErrors.length > 0} // Change this line
+  helperText={formErrors.length > 0 ? 'Incorrect username/password' : null}
+/>
+<TextField
+  margin="dense"
+  required
+  fullWidth
+  name="password"
+  label="Password"
+  type="password"
+  id="password"
+  value={formData.password}
+  onChange={handleChange}
+  error={formErrors.length > 0} // And this line
+  helperText={formErrors.length > 0 ? 'Incorrect username/password' : null}
+/>
         <Button
           type="submit"
           fullWidth

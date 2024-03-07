@@ -5,7 +5,7 @@ import ExpenseBudApi from '../api/api';
 import UserContext from '../context/UserContext';
 import './GrantpermNav.css';
 
-function GrantpermNav() {
+function GrantpermNav({ setCurrentStep }) {
   const { currentUser } = useContext(UserContext);
   const history = useHistory(); // Get the history object
 
@@ -20,7 +20,7 @@ function GrantpermNav() {
 
   return (
     <div className="navbar">
-      <Link className="nav-button" id="back" to="/intro" style={{ textDecoration: 'none', color: 'inherit' }}>Back</Link>
+      <button className="nav-button" id="back" onClick={() => setCurrentStep(prevStep => prevStep - 1)}>Back</button>
       <Link className="nav-button" id="skip" to="/home">Skip</Link>
       <button className="nav-button" id="grantaway" onClick={fetchRemainingBudget}>
         Grant Away

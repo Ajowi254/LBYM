@@ -9,11 +9,10 @@ function Intro() {
   const handleNext = () => {
     history.push('/connect-bank');
   };
-
   const handleSkip = () => {
-
+    history.push('/home');
   };
-
+  
   return (
     <div className="intro-container">
       <img src="/screenshots/Frame 66 (3).svg" alt="Intro Icon" className="intro-icon" />

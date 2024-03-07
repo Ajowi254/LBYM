@@ -35,6 +35,7 @@ class Budget {
     
     // Initialize an empty array to hold the promises for creating notifications
     let notificationPromises = [];
+    let remainingBudgets = [];
   
     // Calculate the remaining budget for each category
     for (let budget of budgets) {
@@ -42,6 +43,12 @@ class Budget {
       let totalExpense = expense ? parseFloat(expense.total) : 0;
       let remainingBudget = parseFloat(budget.total_budget) - totalExpense; // Use total_budget from Goal model
   
+// Store each remaining budget in the array
+remainingBudgets.push({
+  categoryId: budget.category_id,
+  remainingBudget: remainingBudget
+});
+
       // Create the notification message
       let message;
       if (remainingBudget > 0) {
@@ -69,7 +76,8 @@ class Budget {
 
     
     // Return the budgets (or remaining budgets, if you prefer) and new notifications
-    return { budgets, newNotifications };
+    return { budgets, remainingBudgets, newNotifications };
   }
 }
 module.exports = Budget;
+

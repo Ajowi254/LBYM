@@ -1,4 +1,3 @@
-//categoryitem.js
 import React, { useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -17,7 +16,10 @@ function CategoryItem({ icon, name, budget, spent = 0 }) {
     const thumbValue = thumbValueRef.current;
 
     const updateThumbValuePosition = () => {
-      const percent = ((spentWithinBudget + spentOverBudget) / (budgetNumber + spentOverBudget)) * 100;
+      let percent = ((spentWithinBudget + spentOverBudget) / (budgetNumber + spentOverBudget)) * 100;
+      // Ensure the thumb value is always visible
+      percent = Math.max(percent, 0);
+      percent = Math.min(percent, 100);
       thumbValue.style.left = `calc(${percent}% - ${thumbValue.offsetWidth / 2}px)`;
     };
 
@@ -47,21 +49,19 @@ function CategoryItem({ icon, name, budget, spent = 0 }) {
             max={budgetNumber + spentOverBudget}
             value={spentWithinBudget + spentOverBudget}
             disabled
-            className="slider-style"
+            className={`slider-style ${spentNumber > budgetNumber ? 'overbudget' : ''}`}
           />
-          {spentNumber > 0 && (
-            <div
-              className="slider-fill"
-              style={{
-                width: '100%',
-                background: budgetNumber === 0 
-                  ? 'green' 
-                  : spentNumber <= budgetNumber 
-                    ? 'green' 
-                    : `linear-gradient(to right, green ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%, red ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%)`
-              }}
-            />
-          )}
+          <div
+            className="slider-fill"
+            style={{
+              width: `${(spentNumber / (budgetNumber + spentOverBudget)) * 100}%`,
+              background: budgetNumber === 0 
+                ? '#1A535C' 
+                : spentNumber <= budgetNumber 
+                  ? `linear-gradient(to right, #1A535C ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%, transparent ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%, transparent 100%)` 
+                  : `linear-gradient(to right, #1A535C ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%, #FF6B6B ${spentWithinBudget / (budgetNumber + spentOverBudget) * 100}%, #FF6B6B 100%)`
+            }}
+          />
           <div ref={thumbValueRef} className="thumb-value" style={{ color: 'black' }}>
             ${spentNumber}
           </div>

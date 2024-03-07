@@ -1,15 +1,15 @@
 //privateroute.js
 import React, { useContext } from "react";
 import { Redirect, Route } from "react-router-dom";
-
 import UserContext from "../context/UserContext";
 
 const PrivateRoute = ({children, exact, path}) => {
   const {currentUser} = useContext(UserContext);
-  console.debug('PrivateRoute', 'current user=', currentUser)
+  console.debug('PrivateRoute', 'current user=', currentUser); // Existing log
+  console.log("Accessing private route. Current user: ", currentUser); // Add this line
 
   if (!currentUser) {
-    return <Redirect to='/login' />
+    return <Redirect to='/' />
   }
  
   return (
@@ -18,5 +18,6 @@ const PrivateRoute = ({children, exact, path}) => {
     </Route>
   )
 }
+
 
 export default PrivateRoute;

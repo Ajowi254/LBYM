@@ -1,16 +1,22 @@
-/* Homelist.css */
 .home-page {
   width: 100% !important;
-  height: 100vh !important; /* Set the height to the height of the viewport */
-  overflow: hidden; /* Hide the scrollbar */
-  /* Add any other styles from the .goals-page class in GoalsList.css */
+  height: 100%; /* Change from auto to 100% */
+  overflow: visible; /* Change from auto to visible */
+  padding-bottom: 0; /* Change from 50px to 0 */
+  display: grid;
+ 
+  grid-gap: 0; /* Change from -5px to 0 */
+}
 
-  /* Use CSS Grid to create a flexible layout */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-gap: 20px ;
-
-  /* Use media queries to change the layout based on the screen size */
-  @media (max-width: 600px) {
+@media (max-width: 600px) {
+  .home-page {
     grid-template-columns: 1fr;
   }
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* Change from auto to visible */
+  padding-bottom: 0;
 }

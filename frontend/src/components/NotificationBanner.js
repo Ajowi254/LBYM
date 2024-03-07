@@ -1,16 +1,17 @@
-// components/NotificationBanner.js
-
-import React, { useContext, useEffect, useState } from 'react';
+//notificationbanner.js
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import UserContext from '../context/UserContext';
 import socketIOClient from "socket.io-client";
 import './Nav.css';
-import ExpenseBudApi from '../api/api';
+import './NotificationBanner.css';
 
+import ExpenseBudApi from '../api/api';
 const ENDPOINT = "http://localhost:3001";
 
 function NotificationBanner() {
   const { currentUser, notifications, setNotifications } = useContext(UserContext);
   const [isShown, setIsShown] = useState(false); // Change initial state to false
+  const timerRef = useRef(null); // Add a ref to store the timer
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
@@ -28,36 +29,47 @@ function NotificationBanner() {
       console.log('Received notification event with data:', data);
       if (data.userId === currentUser.id) {
         console.log('Updating notifications state with new notification:', data.notification);
-        setNotifications(prevNotifications => [data.notification, ...prevNotifications]);
+        setNotifications(prevNotifications => {
+          console.log('Previous notifications:', prevNotifications);
+          console.log('New notification:', data.notification);
+          return [...prevNotifications, data.notification];
+        });
+        console.log('Setting isShown to true');
         setIsShown(true);
       }
     });
 
     return () => socket.disconnect();
-  }, [currentUser, setNotifications]);
+  }, []);
 
   const handleDismissClick = async (notificationId) => {
     console.log('Dismissing notification:', notificationId);
 
     await ExpenseBudApi.markNotificationAsRead(currentUser.id, notificationId);
 
-    setNotifications(notifications.filter(notification => notification.id !== notificationId));
+    setNotifications(prevNotifications => prevNotifications.filter(notification => notification.id !== notificationId));
+    console.log('Setting isShown to false');
     setIsShown(false);
   };
-
   useEffect(() => {
     if (notifications.length > 0) {
       // Show the banner when there are notifications
+      console.log('Notifications exist, setting isShown to true');
       setIsShown(true);
-
-      const timer = setTimeout(() => {
+  
+      // Clear the previous timer
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+  
+      // Start a new timer
+      timerRef.current = setTimeout(() => {
         // Hide the banner after 20 seconds
+        console.log('Timer expired, setting isShown to false');
         setIsShown(false);
-      }, 8000);
-
-      return () => clearTimeout(timer);
+      }, 20000);
     }
-  }, [notifications, setNotifications]);
+  }, [notifications]); 
 
   if (!Array.isArray(notifications) || notifications.length === 0) {
     return null;
@@ -65,14 +77,17 @@ function NotificationBanner() {
 
   const latestNotification = notifications[0];
 
+  console.log('Rendering NotificationBanner with latest notification:', latestNotification);
+
   return (
-    <div className={`notification-banner ${isShown ? 'show' : 'hide'}`} style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1001 }}>
-      <div className="notification" style={{ backgroundColor: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '3px' }}>
+    <div className={`notification-banner ${isShown ? 'show' : 'hide'}`}>
+      <div className="notification">
         {latestNotification.message}
         <button onClick={() => handleDismissClick(latestNotification.id)}>Dismiss</button>
       </div>
     </div>
   );
+  
 }
 
 export default NotificationBanner;

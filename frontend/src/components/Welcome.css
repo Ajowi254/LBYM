@@ -10,7 +10,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding-top: 90px;
+  
 }
 
 .icon-container img {
@@ -32,12 +33,14 @@
   background-color: #ff6b6b; /* Color for the 'Get Started' button */
   border: none;
   border-radius: 20px; /* Rounded corners for the button */
-  padding: 10px 30px; /* Reduced padding for a smaller button */
+  padding: 10px 25px; /* Remove horizontal padding */
   margin: 140px !important; /* Space above and below the button */
   color: #fff;
   cursor: pointer;
-  font-size: 16px; /* Adjusted font size for the button */
+  font-size: 14px; /* Decrease font size for the button */
   font-weight: bold;
+  min-width: 130px; /* Increase minimum width */
+  text-align: center; /* Center the text within the button */
 }
 
 .skip {
@@ -47,5 +50,7 @@
   cursor: pointer;
   font-size: 16px; /* Font size for 'Skip' button */
   margin-bottom: 20px;
-  margin: -80px !important;  /* Space at the bottom */
+  margin: -70px !important;  /* Space at the bottom */
 }
+
+

@@ -61,16 +61,18 @@ function HomeList() {
     <div className="home-page">
       <Nav />
       <NotificationBanner /> 
-      {categories.map((category) => (
-        <CategoryItem
-          key={category.id}
-          icon={getIconPath(category.category)}
-          name={category.category}
-          budget={category.budget || 0}
-          spent={category.spent}
-          categoryId={category.id}
-        />
-      ))}
+      <div className="category-list">
+        {categories.map((category) => (
+          <CategoryItem
+            key={category.id}
+            icon={getIconPath(category.category)}
+            name={category.category}
+            budget={category.budget || 0}
+            spent={category.spent}
+            categoryId={category.id}
+          />
+        ))}
+      </div>
       <NavWithDrawer hideAvatar={true} />
     </div>
   );

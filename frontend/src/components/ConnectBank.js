@@ -57,9 +57,10 @@ function ConnectBank() {
           <Grantpermission />
         )}
       </Slider>
-      {currentStep === 0 && <Connect2bnkNav />} {/* Show Connect2bnkNav for Step 1 */}
-      {currentStep === 1 && <SetGoalnav />} {/* Show SetGoalnav for Step 2 */}
-      {currentStep === 2 && <GrantpermNav />} {/* Show GrantpermNav for Step 2 */}
+      {currentStep === 0 && <Connect2bnkNav setCurrentStep={setCurrentStep} />} {/* Pass setCurrentStep as a prop */}
+{currentStep === 1 && <SetGoalnav setCurrentStep={setCurrentStep} />} {/* Pass setCurrentStep as a prop */}
+{currentStep === 2 && <GrantpermNav setCurrentStep={setCurrentStep} />} {/* Pass setCurrentStep as a prop */}
+
     </div>
   );
 }

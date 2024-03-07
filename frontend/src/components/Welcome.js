@@ -8,12 +8,6 @@ function Welcome() {
   const history = useHistory();
   const [firstLogin, setFirstLogin] = useLocalStorage("firstLogin", "true");
 
-  // If the user has already seen the welcome page, redirect them to the dashboard
-  if (firstLogin === "false") {
-    history.push('/home');
-    return null;
-  }
-
   const handleGetStarted = () => {
     setFirstLogin("false"); // Set firstLogin to false after the user has seen the welcome page
     history.push('/intro');
@@ -21,6 +15,7 @@ function Welcome() {
 
   const handleSkip = () => {
     setFirstLogin("false"); // Set firstLogin to false if the user skips the welcome page
+    history.push('/home'); // Redirect to /home when the "Skip" button is clicked
   };
 
   return (

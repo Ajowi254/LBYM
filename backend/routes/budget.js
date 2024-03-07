@@ -23,11 +23,11 @@ router.get('/', ensureCorrectUser, async function(req, res, next) {
   } catch (err) {
     return next(err);
   }
-});
-router.get('/remaining', ensureCorrectUser, async function(req, res, next) {
+});router.get('/remaining', ensureCorrectUser, async function(req, res, next) {
   try {
     const { userId } = req.params;
-    console.log('GET /remaining called with userId:', userId);
+    console.log('GET /remaining called with userId:', userId); // Log the userId
+
     const { remainingBudgets, newNotifications } = await Budget.calculateRemainingBudget(userId);
     console.log('Received remainingBudgets and newNotifications from calculateRemainingBudget:', remainingBudgets, newNotifications);
 
@@ -44,5 +44,6 @@ router.get('/remaining', ensureCorrectUser, async function(req, res, next) {
   }
 });
 
-
 module.exports = router;
+
+
